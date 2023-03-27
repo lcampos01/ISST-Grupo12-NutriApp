@@ -3,7 +3,7 @@ import 'package:nutri_app/pages/add_public_page.dart';
 import 'package:nutri_app/pages/fav_page.dart';
 import 'package:nutri_app/pages/home_page.dart';
 import 'package:nutri_app/pages/profile_page.dart';
-import 'package:nutri_app/pages/search_page.dart';
+import 'package:nutri_app/pages/search_page.dart' ;
 
 void main() {
   runApp(const MyApp());
