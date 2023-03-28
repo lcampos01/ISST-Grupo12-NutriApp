@@ -4,6 +4,7 @@ import 'package:nutri_app/pages/fav_page.dart';
 import 'package:nutri_app/pages/home_page.dart';
 import 'package:nutri_app/pages/profile_page.dart';
 import 'package:nutri_app/pages/search_page.dart' ;
+import 'package:nutri_app/signPages/sign.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.light,
       ),
+      //home: SignPage(),
       home: SafeArea(child:NavigationScreen()),
     );
   }
