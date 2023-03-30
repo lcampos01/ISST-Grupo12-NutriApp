@@ -48,21 +48,26 @@ class SignUpPage extends StatelessWidget {
                 obscureText: true,
               ),
               SizedBox(height: 35),
-              Container(
-                padding: EdgeInsets.all(14),
-                margin: EdgeInsets.symmetric(horizontal: 100),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 23, 142, 56),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    "Sign up",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    )
+              GestureDetector(
+                onTap: () {
+                  //logica del boton SIGN UP
+                },
+                child: Container(
+                  padding: EdgeInsets.all(14),
+                  margin: EdgeInsets.symmetric(horizontal: 100),
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 23, 142, 56),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Sign up",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      )
+                    ),
                   ),
                 ),
               ),
