@@ -134,6 +134,31 @@ class _ItemPageState extends State<ItemPage> {
             GestureDetector(
               onTap: () {
                 //logica del boton Ver detalles
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: Text('Detalles'), 
+                    content: Container(
+                      height: 300,
+                      child: Column(
+                        children: [
+                          Text('1 Detalle'),   //cambiar
+                          Text('2 Detalle'),   //cambiar
+                          Text('3 Detalle'),   //cambiar
+                          Text('4 Detalle'),   //cambiar
+                          Text('5 Detalle'),   //cambiar
+                          Text('6 Detalle'),   //cambiar
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'OK'),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
               },
               child: Container(
                 padding: EdgeInsets.all(10),
