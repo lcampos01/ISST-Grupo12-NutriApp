@@ -69,7 +69,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
       bottomNavigationBar: BottomAppBar(
         notchMargin: 10.0,
         shape: CircularNotchedRectangle(),
-        
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.min,
@@ -103,7 +102,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     ],
                   ),
                 ),
-                    
                 MaterialButton(
                   minWidth: 40,
                   onPressed: () {
@@ -155,8 +153,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                             ),
                           ],
                         ),
-                      ),
-                        
+                      ), 
                       MaterialButton(
                         minWidth: 40,
                         onPressed: () {
