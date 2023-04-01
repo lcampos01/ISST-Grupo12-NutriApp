@@ -192,15 +192,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   MultiSelectChipDisplay(
                     items: _selectedAllergens.map((e) => MultiSelectItem(e, e)).toList(),
+                    //decoration: BoxDecoration(border: Border.all(width: 4, color: Colors.green)),
                     onTap: (value) {
                       setState(() {
                         _selectedAllergens.remove(value);
                       });
                     },
-                    chipColor: Colors.white,
+                    chipColor: Colors.grey.shade200,
                     textStyle: TextStyle(color: Colors.green),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), 
-                    //                              side: BorderSide(color: Colors.green, width: 4)
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20), 
+                    //  side: BorderSide(color: Colors.green, width: 4)
                     ),
 
                     ),
