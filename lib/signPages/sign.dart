@@ -45,40 +45,43 @@ class _SignPageState extends State<SignPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            SizedBox(height: 150),
-
-            //logo
-            Center(
-              child: Image(
-                image: AssetImage('assets/logo.png'),
+      backgroundColor: Colors.white,
+      child: Expanded(
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              SizedBox(height: 150),
+      
+              //logo
+              Center(
+                child: Image(
+                  image: AssetImage('assets/logo.png'),
+                ),
               ),
-            ),
-            
-            SizedBox(height: 50),
-
-            //Pantallas SIGN IN / SIGN UP
-            Center(
-              child: CupertinoSlidingSegmentedControl(
-                groupValue: indexBarra,
-                onValueChanged: (changeFromGroupValue){
-                  setState(() {
-                    indexBarra = changeFromGroupValue!;
-                  });
-                },
-                children: barra,
+              
+              SizedBox(height: 50),
+      
+              //Pantallas SIGN IN / SIGN UP
+              Center(
+                child: CupertinoSlidingSegmentedControl(
+                  groupValue: indexBarra,
+                  onValueChanged: (changeFromGroupValue){
+                    setState(() {
+                      indexBarra = changeFromGroupValue!;
+                    });
+                  },
+                  children: barra,
+                ),
               ),
-            ),
-            Expanded(
-              child: IndexedStack(
-                index: indexBarra,
-                children: screens,
+              Expanded(
+                child: IndexedStack(
+                  index: indexBarra,
+                  children: screens,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
