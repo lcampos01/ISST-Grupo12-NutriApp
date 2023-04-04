@@ -14,6 +14,14 @@ async
 2.18
 file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.10.0/
 file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.10.0/lib/
+barcode
+2.12
+file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/barcode-2.2.3/
+file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/barcode-2.2.3/lib/
+barcode_widget
+2.12
+file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/barcode_widget-2.0.3/
+file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/barcode_widget-2.0.3/lib/
 boolean_selector
 2.17
 file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/boolean_selector-2.1.1/
@@ -130,6 +138,10 @@ process
 2.14
 file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/process-4.2.4/
 file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/process-4.2.4/lib/
+qr
+2.16
+file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/qr-3.0.1/
+file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/qr-3.0.1/lib/
 source_span
 2.14
 file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/source_span-1.9.1/

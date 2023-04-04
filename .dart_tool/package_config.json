@@ -8,6 +8,18 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "barcode",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/barcode-2.2.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "barcode_widget",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/barcode_widget-2.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "boolean_selector",
       "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/boolean_selector-2.1.1",
       "packageUri": "lib/",
@@ -194,6 +206,12 @@
       "languageVersion": "2.14"
     },
     {
+      "name": "qr",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/qr-3.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///C:/Flutter/flutter_windows_3.7.3-stable/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -266,7 +284,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-03-14T18:47:08.238037Z",
+  "generated": "2023-04-04T21:48:03.941862Z",
   "generator": "pub",
   "generatorVersion": "3.0.0-259.0.dev"
 }
