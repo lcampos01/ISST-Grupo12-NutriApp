@@ -1,31 +1,82 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:nutri_app/pages/add_public_page.dart';
 import 'package:nutri_app/pages/fav_page.dart';
 import 'package:nutri_app/pages/home_page.dart';
 import 'package:nutri_app/pages/profile_page.dart';
-import 'package:nutri_app/pages/search_page.dart' ;
+import 'package:nutri_app/pages/search_page.dart';
 import 'package:nutri_app/signPages/sign.dart';
+
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  //var prueba = true;
+  var respuestaAPI;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  //Petición a la API
+  void fetchData() async {
+    var client = http.Client();
+    final response = await client.get(Uri.parse('www.google.com'));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        respuestaAPI = jsonDecode(response.body);
+      });
+    } else {
+      print('Error de conexión con la API: ${response.statusCode}');
+    }
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "NutriApp",
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-      ),
-      //home: SignPage(),
-      home: SafeArea(child:NavigationScreen()),
-    );
+    //No ha cargado todavía la petición a la API
+    if (respuestaAPI == null) {
+      return const Center(
+        //Pondría un spinner o algo así de loading..
+        child: CircularProgressIndicator(),
+      );
+    } //El usuario tiene la sesión iniciada
+    else if (respuestaAPI) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: "NutriApp",
+        theme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.light,
+        ),
+        home: SafeArea(child: NavigationScreen()),
+      );
+    } //El usuario no tiene sesión iniciada
+    else {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: "NutriApp",
+        theme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.light,
+        ),
+        home: SignPage(),
+      );
+    }
   }
 }
 
@@ -35,7 +86,6 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
-  
   int currentTab = 0;
   final List<Widget> screens = [
     HomePage(),
@@ -59,10 +109,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
         backgroundColor: Color.fromARGB(255, 23, 142, 56),
         foregroundColor: Colors.white,
         onPressed: () {
-          Navigator.of(context).push(PageRouteBuilder(pageBuilder: (context, animation, _) {
-            return AddPublicPage();
-          },
-          opaque: false,
+          Navigator.of(context).push(PageRouteBuilder(
+            pageBuilder: (context, animation, _) {
+              return AddPublicPage();
+            },
+            opaque: false,
           ));
         },
       ),
@@ -91,12 +142,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     children: [
                       Icon(
                         Icons.home,
-                        color: currentTab == 0 ? Color.fromARGB(255, 23, 142, 56) : Color.fromARGB(255, 115, 119, 144),
+                        color: currentTab == 0
+                            ? Color.fromARGB(255, 23, 142, 56)
+                            : Color.fromARGB(255, 115, 119, 144),
                       ),
                       Text(
                         'Home',
                         style: TextStyle(
-                          color: currentTab == 0 ? Color.fromARGB(255, 23, 142, 56) : Color.fromARGB(255, 115, 119, 144),
+                          color: currentTab == 0
+                              ? Color.fromARGB(255, 23, 142, 56)
+                              : Color.fromARGB(255, 115, 119, 144),
                         ),
                       ),
                     ],
@@ -112,77 +167,89 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.search,
-                          color: currentTab == 1 ? Color.fromARGB(255, 23, 142, 56) : Color.fromARGB(255, 115, 119, 144),
-                        ),
-                        Text(
-                          'Search',
-                          style: TextStyle(
-                            color: currentTab == 1 ? Color.fromARGB(255, 23, 142, 56) : Color.fromARGB(255, 115, 119, 144),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                ),
-                Row(
                     children: [
-                      MaterialButton(
-                        minWidth: 40,
-                        onPressed: () {
-                          setState(() {
-                            currentScreen = FavPage();
-                            currentTab = 2;
-                          });
-                        },
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.favorite,
-                              color: currentTab == 2 ? Color.fromARGB(255, 23, 142, 56) : Color.fromARGB(255, 115, 119, 144),
-                            ),
-                            Text(
-                              'Favorite',
-                              style: TextStyle(
-                                color: currentTab == 2 ? Color.fromARGB(255, 23, 142, 56) : Color.fromARGB(255, 115, 119, 144),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ), 
-                      MaterialButton(
-                        minWidth: 40,
-                        onPressed: () {
-                          setState(() {
-                            currentScreen = ProfilePage();
-                            currentTab = 3;
-                          });
-                        },
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.person,
-                              color: currentTab == 3 ? Color.fromARGB(255, 23, 142, 56) : Color.fromARGB(255, 115, 119, 144),
-                            ),
-                            Text(
-                              'Profile',
-                              style: TextStyle(
-                                color: currentTab == 3 ? Color.fromARGB(255, 23, 142, 56) : Color.fromARGB(255, 115, 119, 144),
-                              ),
-                            ),
-                          ],
+                      Icon(
+                        Icons.search,
+                        color: currentTab == 1
+                            ? Color.fromARGB(255, 23, 142, 56)
+                            : Color.fromARGB(255, 115, 119, 144),
+                      ),
+                      Text(
+                        'Search',
+                        style: TextStyle(
+                          color: currentTab == 1
+                              ? Color.fromARGB(255, 23, 142, 56)
+                              : Color.fromARGB(255, 115, 119, 144),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                MaterialButton(
+                  minWidth: 40,
+                  onPressed: () {
+                    setState(() {
+                      currentScreen = FavPage();
+                      currentTab = 2;
+                    });
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.favorite,
+                        color: currentTab == 2
+                            ? Color.fromARGB(255, 23, 142, 56)
+                            : Color.fromARGB(255, 115, 119, 144),
+                      ),
+                      Text(
+                        'Favorite',
+                        style: TextStyle(
+                          color: currentTab == 2
+                              ? Color.fromARGB(255, 23, 142, 56)
+                              : Color.fromARGB(255, 115, 119, 144),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                MaterialButton(
+                  minWidth: 40,
+                  onPressed: () {
+                    setState(() {
+                      currentScreen = ProfilePage();
+                      currentTab = 3;
+                    });
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.person,
+                        color: currentTab == 3
+                            ? Color.fromARGB(255, 23, 142, 56)
+                            : Color.fromARGB(255, 115, 119, 144),
+                      ),
+                      Text(
+                        'Profile',
+                        style: TextStyle(
+                          color: currentTab == 3
+                              ? Color.fromARGB(255, 23, 142, 56)
+                              : Color.fromARGB(255, 115, 119, 144),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
+      ),
     );
   }
 }
