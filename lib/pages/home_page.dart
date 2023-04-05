@@ -11,9 +11,6 @@ import 'package:percent_indicator/percent_indicator.dart';
 
 //import 'package:provider/provider.dart';
 
-//import 'home_page_model.dart';
-//export 'home_page_model.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
