@@ -26,6 +26,36 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "camera",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/camera-0.9.8+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "camera_android",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/camera_android-0.9.8+3",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "camera_avfoundation",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/camera_avfoundation-0.9.13+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "camera_platform_interface",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/camera_platform_interface-2.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "camera_web",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/camera_web-0.2.1+6",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "characters",
       "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/characters-1.2.1",
       "packageUri": "lib/",
@@ -42,6 +72,12 @@
       "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/collection-1.17.1",
       "packageUri": "lib/",
       "languageVersion": "2.18"
+    },
+    {
+      "name": "cross_file",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/cross_file-0.3.3+4",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
     },
     {
       "name": "crypto",
@@ -80,14 +116,32 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "flutter_barcode_scanner",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_lints",
       "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-2.0.1",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
+      "name": "flutter_plugin_android_lifecycle",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.9",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///C:/Flutter/flutter_windows_3.7.3-stable/flutter/packages/flutter_test",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "flutter_web_plugins",
+      "rootUri": "file:///C:/Flutter/flutter_windows_3.7.3-stable/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
@@ -224,6 +278,12 @@
       "languageVersion": "2.16"
     },
     {
+      "name": "quiver",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/quiver-3.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///C:/Flutter/flutter_windows_3.7.3-stable/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -244,6 +304,12 @@
     {
       "name": "stream_channel",
       "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/stream_channel-2.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "stream_transform",
+      "rootUri": "file:///C:/Users/34697/AppData/Local/Pub/Cache/hosted/pub.dev/stream_transform-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "2.14"
     },
@@ -296,7 +362,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-04-05T12:12:38.091133Z",
+  "generated": "2023-04-06T19:12:47.775142Z",
   "generator": "pub",
   "generatorVersion": "3.0.0-259.0.dev"
 }

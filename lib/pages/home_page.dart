@@ -3,6 +3,8 @@
 //import '/flutter_flow/flutter_flow_theme.dart';
 //import '/flutter_flow/flutter_flow_util.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+
 //import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 //import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,6 +12,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 //import 'package:provider/provider.dart';
+
+import '../functions/scanBarcode.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -393,7 +397,7 @@ class _HomePageState extends State<HomePage> {
                                             padding:
                                                 EdgeInsetsDirectional.fromSTEB(
                                                     4, 0, 0, 0),
-                                            child: TextFormField(),
+                                            child: TextField(),
                                           ),
                                         ),
                                       ],
@@ -402,19 +406,25 @@ class _HomePageState extends State<HomePage> {
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         25, 10, 25, 0),
-                                    child: BarcodeWidget(
-                                      data: 'Código de barras',
-                                      barcode: Barcode.code128(),
-                                      width: 100,
-                                      height: 50,
-                                      color: Colors.black,
-                                      backgroundColor: Colors.transparent,
-                                      errorBuilder: (_context, _error) =>
-                                          SizedBox(
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        String barcode = await scanBarcode();
+                                        print(barcode);
+                                      },
+                                      child: BarcodeWidget(
+                                        data: 'Barcode',
+                                        barcode: Barcode.code128(),
                                         width: 100,
                                         height: 50,
+                                        color: Colors.black,
+                                        backgroundColor: Colors.transparent,
+                                        errorBuilder: (_context, _error) =>
+                                            SizedBox(
+                                          width: 100,
+                                          height: 50,
+                                        ),
+                                        drawText: true,
                                       ),
-                                      drawText: true,
                                     ),
                                   ),
                                 ],

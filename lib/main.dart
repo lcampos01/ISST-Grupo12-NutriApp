@@ -22,40 +22,40 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  //var prueba = true;
+  var prueba = true;
   var respuestaAPI;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    //fetchData();
   }
 
   //Petición a la API
-  void fetchData() async {
-    var client = http.Client();
-    final response = await client.get(Uri.parse('www.google.com'));
+  // void fetchData() async {
+  //   var client = http.Client();
+  //   final response = await client.get(Uri.parse('www.google.com'));
 
-    if (response.statusCode == 200) {
-      setState(() {
-        respuestaAPI = jsonDecode(response.body);
-      });
-    } else {
-      print('Error de conexión con la API: ${response.statusCode}');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       respuestaAPI = jsonDecode(response.body);
+  //     });
+  //   } else {
+  //     print('Error de conexión con la API: ${response.statusCode}');
+  //   }
+  // }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     //No ha cargado todavía la petición a la API
-    if (respuestaAPI == null) {
+    if (prueba == null) {
       return const Center(
         //Pondría un spinner o algo así de loading..
         child: CircularProgressIndicator(),
       );
     } //El usuario tiene la sesión iniciada
-    else if (respuestaAPI) {
+    else if (prueba) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: "NutriApp",
