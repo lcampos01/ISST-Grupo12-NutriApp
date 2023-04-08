@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:nutri_app/pages/add_public_page.dart';
@@ -22,8 +23,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var prueba = true;
+  //final tokenUsuario;
+  var prueba = false;
   var respuestaAPI;
+  var usuarioLogeado;
 
   @override
   void initState() {
@@ -34,14 +37,21 @@ class _MyAppState extends State<MyApp> {
   //Petición a la API
   // void fetchData() async {
   //   var client = http.Client();
-  //   final response = await client.get(Uri.parse('www.google.com'));
+  //   final response = await client.get(
+  //     Uri.parse('/currentUser'),
+  //     headers: {
+  //       //HttpHeaders.authorizationHeader: tokenUsuario,
+  //     },
+  //   );
 
   //   if (response.statusCode == 200) {
   //     setState(() {
   //       respuestaAPI = jsonDecode(response.body);
+  //       usuarioLogeado = true;
   //     });
   //   } else {
   //     print('Error de conexión con la API: ${response.statusCode}');
+  //     usuarioLogeado = false;
   //   }
   // }
 

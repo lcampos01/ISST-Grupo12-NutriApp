@@ -14,9 +14,8 @@ class SignPage extends StatefulWidget {
 }
 
 class _SignPageState extends State<SignPage> {
-
   int indexBarra = 0;
-  final Map<int, Widget> barra = <int, Widget> {
+  final Map<int, Widget> barra = <int, Widget>{
     0: DefaultTextStyle(
       style: GoogleFonts.openSans(
         fontSize: 22,
@@ -51,22 +50,22 @@ class _SignPageState extends State<SignPage> {
           padding: EdgeInsets.all(8.0),
           child: Column(
             children: [
-              SizedBox(height: 150),
-      
+              SizedBox(height: 125),
+
               //logo
               Center(
                 child: Image(
                   image: AssetImage('assets/logo.png'),
                 ),
               ),
-              
+
               SizedBox(height: 50),
-      
+
               //Pantallas SIGN IN / SIGN UP
               Center(
                 child: CupertinoSlidingSegmentedControl(
                   groupValue: indexBarra,
-                  onValueChanged: (changeFromGroupValue){
+                  onValueChanged: (changeFromGroupValue) {
                     setState(() {
                       indexBarra = changeFromGroupValue!;
                     });
