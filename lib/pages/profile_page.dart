@@ -17,6 +17,8 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isObscurePassword = true;
   TextEditingController _date = TextEditingController();
   String? _selectedActivity = "moderado";
+  String? _selectedSex = "hombre";  
+
   List<MultiSelectItem<String>> _allergens = [
     'Lactosa',
     'Gluten',
@@ -81,6 +83,32 @@ class _ProfilePageState extends State<ProfilePage> {
               buildTextField("Nombre Completo", "BENY JR", false),
               buildTextField("Correo Electrónico", "beny@jr.com", false),
               buildTextField("Contraseña", "********", true),
+                                Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: 'Sexo',
+                        border: OutlineInputBorder(),
+                      ),
+                      value: _selectedActivity,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedActivity = newValue;
+                        });
+                      },
+                      items: [
+                        DropdownMenuItem<String>(
+                          value: 'hombre',
+                          child: Text('Hombre'), 
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'mujer',
+                          child: Text('Mujer'),
+                        ),
+                        
+                      ],
+                    ),
+                  ),
 
               //Fecha nacimiento
               Padding(
