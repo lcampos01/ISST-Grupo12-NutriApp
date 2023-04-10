@@ -140,6 +140,7 @@ class _SignInPageState extends State<SignInPage> {
     return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: TextField(
+        maxLength: isPasswordTextField ? 20 : null,
         obscureText: isPasswordTextField ? isObscurePassword : false,
         decoration: InputDecoration(
           suffixIcon: isPasswordTextField

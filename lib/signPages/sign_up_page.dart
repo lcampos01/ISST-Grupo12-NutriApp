@@ -50,36 +50,36 @@ class _SignUpPageState extends State<SignUpPage> {
             final emailBool = validateEmail(email);
             final passBool = validatePassword(password);
 
-            if (true) {
-              final response = await http.post(
-                Uri.parse('http://34.175.85.15:8080/signup'),
-                body: jsonEncode(<String, String>{
-                  'email': email,
-                  'password': password,
-                }),
-                headers: <String, String>{
-                  'Content-Type': 'application/json; charset=UTF-8',
-                },
-              );
+            if (emailBool && passBool) {
+              // final response = await http.post(
+              //   Uri.parse('http://34.175.85.15:8080/signup'),
+              //   body: jsonEncode(<String, String>{
+              //     'email': email,
+              //     'password': password,
+              //   }),
+              //   headers: <String, String>{
+              //     'Content-Type': 'application/json; charset=UTF-8',
+              //   },
+              // );
 
 
 
 
-              if (response.statusCode == 200) {
+              // if (response.statusCode == 200) {
                 // final tokenUser =
                 //     response.headers['Authentication'];
                 print("Se ha registrado correctamente");
-              } else {
-                print("No se ha registrado correctamente");
+              // } else {
+              //   print("No se ha registrado correctamente");
               
-              }
+              //}
             } else if (!emailBool) {
               showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
                         title: Text('Email no válido'),
                         content: Text(
-                            'Debe ser una dirección de correo existente'),
+                            'Debe haber una dirección de correo'),
                         actions: [
                           TextButton(
                               onPressed: () =>
@@ -152,6 +152,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: TextField(
+        maxLength: isPasswordTextField ? 20 : null,
         obscureText: isPasswordTextField ? isObscurePassword : false,
         decoration: InputDecoration(
             suffixIcon: isPasswordTextField
