@@ -222,17 +222,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
               SizedBox(height: 30),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   OutlinedButton(
                     onPressed: () {},
                     child: Text("Cerrar Sesión",
                         style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 12,
                             letterSpacing: 2,
                             color: Colors.black)),
                     style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
                     ),
@@ -241,13 +241,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: () {},
                     child: Text("Guardar Cambios",
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 12,
                           letterSpacing: 2,
                           color: Colors.white,
                         )),
                     style: ElevatedButton.styleFrom(
                       primary: Colors.green,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
                     ),
