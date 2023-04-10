@@ -1,4 +1,5 @@
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nutri_app/signPages/data_sign.dart';
 import 'package:nutri_app/widges/myTextField.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../functions/validaciones.dart';
 import 'dart:convert';
+import 'package:nutri_app/variables/global.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key? key}) : super(key: key);
@@ -70,12 +72,22 @@ class _SignUpPageState extends State<SignUpPage> {
                 builder: (context) => AlertDialog(
                   title: Text('¡¡BIENVENIDO/A A NUTRIAPP!!'),
                   content: Text(
-                      'Ya se ha registrado. Vaya a SIGN IN para iniciar sesión.'),
+                      'Ya se ha registrado. Solo falta completar unos cuantos datos.'),
                   actions: [
                     TextButton(
-                        onPressed: () =>
-                            Navigator.pop(context),
-                        child: Text('OK'))
+                      onPressed: () => {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (BuildContext context) => DataSignPage(),
+                            fullscreenDialog: true,
+                            maintainState: true,
+                          ),
+                          (route) => false,
+                        )
+                      },   
+                      child: Text('OK'),
+                    ),
                   ],
                 ));
               } else {
