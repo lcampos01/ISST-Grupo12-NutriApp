@@ -59,37 +59,47 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "NutriApp",
+      theme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light,
+      ),
+      home: SignPage(),
+      //home: SafeArea(child: NavigationScreen())
+    );
     //No ha cargado todavía la petición a la API
-    if (prueba == null) {
-      return const Center(
-        //Pondría un spinner o algo así de loading..
-        child: CircularProgressIndicator(),
-      );
-    } //El usuario tiene la sesión iniciada
-    else if (prueba) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "NutriApp",
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.light,
-        ),
-        home: SafeArea(child: NavigationScreen()),
-        //home: SignPage(),
-      );
-    } //El usuario no tiene sesión iniciada
-    else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "NutriApp",
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.light,
-        ),
-        home: SignPage(),
-        //home: SafeArea(child: NavigationScreen())
-      );
-    }
+    // if (prueba == null) {
+    //   return const Center(
+    //     //Pondría un spinner o algo así de loading..
+    //     child: CircularProgressIndicator(),
+    //   );
+    // } //El usuario tiene la sesión iniciada
+    // else if (prueba) {
+    //   return MaterialApp(
+    //     debugShowCheckedModeBanner: false,
+    //     title: "NutriApp",
+    //     theme: ThemeData(
+    //       useMaterial3: true,
+    //       brightness: Brightness.light,
+    //     ),
+    //     home: SafeArea(child: NavigationScreen()),
+    //     //home: SignPage(),
+    //   );
+    // } //El usuario no tiene sesión iniciada
+    // else {
+    //   return MaterialApp(
+    //     debugShowCheckedModeBanner: false,
+    //     title: "NutriApp",
+    //     theme: ThemeData(
+    //       useMaterial3: true,
+    //       brightness: Brightness.light,
+    //     ),
+    //     home: SignPage(),
+    //     //home: SafeArea(child: NavigationScreen())
+    //   );
+    // }
   }
 }
 

@@ -53,7 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
             if (emailBool && passBool) {
               final response = await http.post(
-                Uri.parse('http://34.175.85.15:8080/signup'),
+                Uri.parse('http://34.175.225.29:8080/signup'),
                 body: jsonEncode(<String, String>{
                   'email': email,
                   'password': password,

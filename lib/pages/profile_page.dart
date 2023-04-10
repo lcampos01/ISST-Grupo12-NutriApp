@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:nutri_app/signPages/sign.dart';
 
 //import 'package:provider/provider.dart';
 
@@ -225,7 +227,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (BuildContext context) => SignPage(),
+                          fullscreenDialog: true,
+                          maintainState: true,
+                        ),
+                        (route) => false,
+                      );
+                      //aqui tambien hacer que el token de la variable global se borre a null o ""..
+                    },
                     child: Text("Cerrar Sesión",
                         style: TextStyle(
                             fontSize: 12,
@@ -286,27 +299,28 @@ class _ProfilePageState extends State<ProfilePage> {
     return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: TextField(
-          obscureText: isPasswordTextField ? isObscurePassword : false,
-          decoration: InputDecoration(
-              suffixIcon: isPasswordTextField
-                  ? IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isObscurePassword = !isObscurePassword;
-                        });
-                      },
-                      icon: Icon(Icons.remove_red_eye, color: Colors.grey),
-                    )
-                  : null,
-              contentPadding: EdgeInsets.only(bottom: 5),
-              labelText: labelText,
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: placeholder,
-              hintStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey))),
-    );
+        maxLength: isPasswordTextField ? 20 : null,
+        obscureText: isPasswordTextField ? isObscurePassword : false,
+        decoration: InputDecoration(
+            suffixIcon: isPasswordTextField
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isObscurePassword = !isObscurePassword;
+                      });
+                    },
+                    icon: Icon(Icons.remove_red_eye, color: Colors.grey),
+                  )
+                : null,
+      contentPadding: EdgeInsets.only(bottom: 5),
+      labelText: labelText,
+      floatingLabelBehavior: FloatingLabelBehavior.always,
+      hintText: placeholder,
+      hintStyle: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey))),
+);
   }
 
   Widget buildNumericField(String labelText, String placeholder) {

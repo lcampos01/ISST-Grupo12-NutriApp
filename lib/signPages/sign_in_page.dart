@@ -1,6 +1,7 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_app/widges/myTextField.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:nutri_app/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  
   bool isObscurePassword = true;
   TextEditingController date = TextEditingController();
 
@@ -67,7 +69,7 @@ class _SignInPageState extends State<SignInPage> {
             String password = passwordController.text.trim();
             
             final response = await http.post(
-              Uri.parse('http://34.175.85.15:8080/signin'),
+              Uri.parse('http://34.175.225.29:8080/login'),
               body: jsonEncode(<String, String>{
                 'email': email,
                 'password': password,
@@ -77,22 +79,35 @@ class _SignInPageState extends State<SignInPage> {
               },
             );
             if (response.statusCode == 200) {
-              final tokenUser =
-                  response.headers['Authentication'];
+              Navigator.pushAndRemoveUntil(
+                context,
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => SafeArea(child: NavigationScreen()),
+                  fullscreenDialog: true,
+                  maintainState: true,
+                ),
+                (route) => false,
+              );
+              final tokenUser = response.headers['authorization'];
+              print(response.headers);
+              print("Se iniciaria $tokenUser");
+
+
             } else {
               showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text('Error'),
-                        content: Text(
-                            'Usuario o contraseña incorrectos'),
-                        actions: [
-                          TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context),
-                              child: Text('OK'))
-                        ],
-                      ));
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Error'),
+                  content: Text(
+                      'Usuario o contraseña incorrectos'),
+                  actions: [
+                    TextButton(
+                        onPressed: () =>
+                            Navigator.pop(context),
+                        child: Text('OK'))
+                  ],
+                )
+              );
             }
           },
           child: Container(
