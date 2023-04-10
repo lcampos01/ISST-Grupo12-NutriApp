@@ -9,7 +9,6 @@ import 'package:nutri_app/pages/search_page.dart';
 import 'package:nutri_app/signPages/sign.dart';
 import 'package:nutri_app/pages/home_page.dart';
 
-
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -60,15 +59,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "NutriApp",
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-      ),
-      home: SignPage(),
-      //home: SafeArea(child: NavigationScreen())
-    );
+        debugShowCheckedModeBanner: false,
+        title: "NutriApp",
+        theme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.light,
+        ),
+        //home: SignPage(),
+        home: SafeArea(child: NavigationScreen()));
     //No ha cargado todavía la petición a la API
     // if (prueba == null) {
     //   return const Center(

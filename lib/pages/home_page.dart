@@ -4,6 +4,10 @@ import 'package:nutri_app/widges/lector.dart';
 import 'package:nutri_app/widges/searcher.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
+import 'package:barcode_widget/barcode_widget.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import '../functions/scanBarcode.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -195,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.all(12.0),
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.40,
-                            height: MediaQuery.of(context).size.height * 0.30,
+                            height: MediaQuery.of(context).size.height * 0.21,
                             decoration: BoxDecoration(
                               color: Colors.grey[100],
                               boxShadow: [
@@ -216,208 +220,22 @@ class _HomePageState extends State<HomePage> {
                                 children: [
                                   Row(
                                     mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
-                                            0, 12, 0, 0),
+                                            0, 8, 0, 8),
                                         child: Text(
-                                          'Comidas favoritas',
+                                          'Sigue tu \nprogreso',
                                         ),
+                                      ),
+                                      Icon(
+                                        Icons.insert_chart,
+                                        color: Color(0xFF272626),
+                                        size: 38,
                                       ),
                                     ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 4, 0, 0),
-                                    child: Text(
-                                      'Comidas que has guardado',
-                                    ),
-                                  ),
-                                  SingleChildScrollView(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 5, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Huevos',
-                                              ),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/eggs.jpeg'),
-                                                width: 30,
-                                                height: 30,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 5, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Kiwi',
-                                              ),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/kiwi.jpg'),
-                                                width: 30,
-                                                height: 30,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 5, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Leche',
-                                              ),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/leche.jpg'),
-                                                width: 30,
-                                                height: 30,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 5, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Tomate',
-                                              ),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/tomatos.jpg'),
-                                                width: 30,
-                                                height: 30,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.40,
-                            height: MediaQuery.of(context).size.height * 0.20,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 4,
-                                  color: Color(0x34090F13),
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(12, 8, 12, 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 8, 0, 8),
-                                    child: Text(
-                                      'Busca un nuevo producto',
-                                    ),
-                                  ),
-                                  Container(
-                                    width: double.infinity,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: Color(0x790E151B),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  4, 0, 4, 0),
-                                          child: Icon(
-                                            Icons.search_rounded,
-                                            color: Color(0xFF030404),
-                                            size: 24,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    4, 0, 0, 0),
-                                            child: TextField(),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        25, 10, 25, 0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        String barcode = await scanBarcode();
-                                        print(barcode);
-                                      },
-                                      child: BarcodeWidget(
-                                        data: 'Barcode',
-                                        barcode: Barcode.code128(),
-                                        width: 100,
-                                        height: 50,
-                                        color: Colors.black,
-                                        backgroundColor: Colors.transparent,
-                                        errorBuilder: (_context, _error) =>
-                                            SizedBox(
-                                          width: 100,
-                                          height: 50,
-                                        ),
-                                        drawText: true,
-                                      ),
-                                    ),
                                   ),
                                 ],
                               ),
@@ -432,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.all(12.0),
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.40,
-                            height: MediaQuery.of(context).size.height * 0.57,
+                            height: MediaQuery.of(context).size.height * 0.75,
                             decoration: BoxDecoration(
                               color: Colors.grey[100],
                               boxShadow: [
@@ -1172,53 +990,6 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.40,
-                            height: MediaQuery.of(context).size.height * 0.21,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 4,
-                                  color: Color(0x34090F13),
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(12, 8, 12, 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0, 8, 0, 8),
-                                        child: Text(
-                                          'Sigue tu \nprogreso',
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.insert_chart,
-                                        color: Color(0xFF272626),
-                                        size: 38,
-                                      ),
-                                    ],
                                   ),
                                 ],
                               ),
