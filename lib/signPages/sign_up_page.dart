@@ -51,28 +51,23 @@ class _SignUpPageState extends State<SignUpPage> {
             final passBool = validatePassword(password);
 
             if (emailBool && passBool) {
-              // final response = await http.post(
-              //   Uri.parse('http://34.175.85.15:8080/signup'),
-              //   body: jsonEncode(<String, String>{
-              //     'email': email,
-              //     'password': password,
-              //   }),
-              //   headers: <String, String>{
-              //     'Content-Type': 'application/json; charset=UTF-8',
-              //   },
-              // );
-
-
-
-
-              // if (response.statusCode == 200) {
-                // final tokenUser =
-                //     response.headers['Authentication'];
+              final response = await http.post(
+                Uri.parse('http://34.175.85.15:8080/signup'),
+                body: jsonEncode(<String, String>{
+                  'email': email,
+                  'password': password,
+                }),
+                headers: <String, String>{
+                  'Content-Type': 'application/json; charset=UTF-8',
+                },
+              );
+              if (response.statusCode == 200) {
+                final tokenUser = response.headers['Authentication'];
                 print("Se ha registrado correctamente");
-              // } else {
-              //   print("No se ha registrado correctamente");
+              } else {
+                print("No se ha registrado correctamente");
               
-              //}
+              }
             } else if (!emailBool) {
               showDialog(
                   context: context,
@@ -89,18 +84,21 @@ class _SignUpPageState extends State<SignUpPage> {
                       ));
             } else if (!passBool) {
               showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text('Contraseña no válida'),
-                        content: Text(
-                            'La contraseña debe tener al menos 8 carácteres, incluyendo una mayúscula y un número'),
-                        actions: [
-                          TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context),
-                              child: Text('OK'))
-                        ],
-                      ));
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Contraseña no válida'),
+                  content: Text(
+                    'La contraseña debe tener al menos 8 carácteres, incluyendo una mayúscula y un número'
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.pop(context),
+                      child: Text('OK')
+                    ),
+                  ],
+                )
+              );
             }
           },
           child: Container(
