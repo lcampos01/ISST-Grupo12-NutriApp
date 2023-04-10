@@ -4,10 +4,6 @@ import 'package:nutri_app/widges/lector.dart';
 import 'package:nutri_app/widges/searcher.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-import 'package:barcode_widget/barcode_widget.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import '../functions/scanBarcode.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
