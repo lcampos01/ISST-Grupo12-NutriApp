@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:nutri_app/variables/global.dart';
 
 class SignInPage extends StatefulWidget {
   SignInPage({Key? key}) : super(key: key);
@@ -88,10 +89,9 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 (route) => false,
               );
-              final tokenUser = response.headers['authorization'];
+              globalVariables.tokenUser = (response.headers['authorization']).toString();
               print(response.headers);
-              print("Se iniciaria $tokenUser");
-
+              print("Se iniciaria ${globalVariables.tokenUser}");
 
             } else {
               showDialog(

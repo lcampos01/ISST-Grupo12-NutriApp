@@ -6,20 +6,31 @@ import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:nutri_app/signPages/sign.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 //import 'package:provider/provider.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class DataSignPage extends StatefulWidget {
+  DataSignPage({Key? key}) : super(key: key);
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<DataSignPage> createState() => _DataSignPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _DataSignPageState extends State<DataSignPage> {
   bool isObscurePassword = true;
+
+  TextEditingController date = TextEditingController();
+
   TextEditingController _date = TextEditingController();
+
+  TextEditingController peso = TextEditingController();
+
+  TextEditingController altura = TextEditingController();
+  
   String? _selectedActivity = "moderado";
+  
   String? _selectedSex = "hombre";  
 
   List<MultiSelectItem<String>> _allergens = [
@@ -31,7 +42,20 @@ class _ProfilePageState extends State<ProfilePage> {
     'Frutos Secos',
     'Soja',
   ].map((allergen) => MultiSelectItem<String>(allergen, allergen)).toList();
+
   List<String> _selectedAllergens = [];
+
+  int actividad(String act) {
+    if (act == 'sedentario') {
+      return 0;
+    } else if (act == 'moderado') {
+      return 1;
+    } else if (act == 'activo') {
+      return 2;
+    } else {
+      return 3;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,47 +69,16 @@ class _ProfilePageState extends State<ProfilePage> {
           child: ListView(
             children: [
               Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 4, color: Colors.white),
-                        boxShadow: [
-                          BoxShadow(
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              color: Colors.black.withOpacity(0.1)),
-                        ],
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                                'https://images.genius.com/a9306e944a04741a70c74429fb6b2b5e.1000x1000x1.jpg'))),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border:
-                                Border.all(width: 4, color: Colors.green),
-                            color: Colors.white),
-                        child: Icon(
-                          Icons.edit,
-                          color: Colors.green,
-                        )))
-                  ],
+                child: DefaultTextStyle(
+                  style: GoogleFonts.acme(
+                    fontSize: 25,
+                    color: Colors.black,
+                  ),
+                  child: Text('Rellene sus datos personales'),
                 ),
               ),
               SizedBox(height: 30),
-              buildTextField("Nombre Completo", "BENY JR", false),
-              buildTextField("Correo Electrónico", "beny@jr.com", false),
-              buildTextField("Contraseña", "********", true),
+              buildTextField("Nombre Completo", "Nombre", date, false),
               Padding(
                     padding: const EdgeInsets.only(bottom: 30),
                     child: DropdownButtonFormField<String>(
@@ -112,7 +105,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                   ),
-
               //Fecha nacimiento
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
@@ -141,13 +133,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
-
               //Cuadros Peso y Altura
-              buildNumericField("Peso en Kg", "80.7"),
-              buildNumericField("Altura en metros", "1.92"),
-
+              buildNumericField("Peso aproximado en Kg", "81", peso),
+              buildNumericField("Altura en cm", "192", altura),
               //Actividad Física
-
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: DropdownButtonFormField<String>(
@@ -177,9 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-
               //Alergenos
-
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: InputDecorator(
@@ -202,7 +189,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
-
               MultiSelectChipDisplay(
                 items: _selectedAllergens
                     .map((e) => MultiSelectItem(e, e))
@@ -220,61 +206,128 @@ class _ProfilePageState extends State<ProfilePage> {
                   //  side: BorderSide(color: Colors.green, width: 4)
                 ),
               ),
-
-              //Botones
-
-              SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (BuildContext context) => SignPage(),
-                          fullscreenDialog: true,
-                          maintainState: true,
-                        ),
-                        (route) => false,
-                      );
-                      //aqui tambien hacer que el token de la variable global se borre a null o ""..
-                      globalVariables.tokenUser = '';
-                      print("Se ha cerrado sesión ${globalVariables.tokenUser}");
+              SizedBox(height: 20,),
+              ElevatedButton(
+                onPressed: () async {
+                  //validacion: estan vacios nombre, fecha_nacimiento, peso y altura
+                  var nombre = date.text;
+                  var sexo = _selectedSex.toString();
+                  var fecha_nacimiento = _date.text;
+                  // var pesoint = int.parse(peso.text);
+                  // var alturaint = int.parse(altura.text);
+                  var pesostr = peso.text;
+                  var alturastr = altura.text;
+                  var actividad_diariaint = actividad(_selectedActivity.toString());
+                  var actividad_diariastr = actividad((_selectedActivity.toString())).toString();
+                  var alergenos = _selectedAllergens;
+                  print(date.text);
+                  print(_selectedSex.toString());
+                  print(_date.text);
+                  print(peso.text);
+                  print(altura.text);
+                  print(actividad((_selectedActivity.toString())).toString());
+                  print(_selectedAllergens);
+                  
+                  final response = await http.post(
+                    Uri.parse('http://34.175.225.29:8080/signup'),
+                    body: jsonEncode(<String, String>{
+                      'nombre': nombre,
+                      'altura': alturastr,
+                      'peso': pesostr,
+                      'sexo': sexo,
+                      'fecha_nacimiento': fecha_nacimiento,
+                      'actividad_diaria': actividad_diariastr,
+                    }),
+                    headers: <String, String>{
+                      'Content-Type': 'application/json; charset=UTF-8',
                     },
-                    child: Text("Cerrar Sesión",
-                        style: TextStyle(
-                            fontSize: 12,
-                            letterSpacing: 2,
-                            color: Colors.black)),
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text("Guardar Cambios",
-                        style: TextStyle(
-                          fontSize: 12,
-                          letterSpacing: 2,
-                          color: Colors.white,
-                        )),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.green,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                  ),
-                ],
+                  );
+                  if (response.statusCode == 200) {
+                    print("datos guardados correctamente en el servidor");
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Registro completado'),
+                        content: Text(
+                            'Inicie sesión en "Sign in"'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                //aqui es cuando se manda al signpage
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (BuildContext context) => SignPage(),
+                                    fullscreenDialog: true,
+                                    maintainState: true,
+                                  ),
+                                  (route) => false,
+                                );
+                              },
+                              child: Text('OK'))
+                        ],
+                      ));
+                  } else {
+                    print("no se han guardado los datos");
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Oh, oh... Ha habido un error con el servidor'),
+                        content: Text(
+                            'No se han guardado los datos correctamente.'),
+                        actions: [
+                          TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(context),
+                              child: Text('OK'))
+                        ],
+                      ));
+                  }
+                },
+                child: Text("Aceptar y registrarse",
+                    style: TextStyle(
+                      fontSize: 16,
+                      letterSpacing: 2,
+                      color: Colors.white,
+                    )),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                ),
               ),
-
-              SizedBox(height: 50),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildTextField(String labelText, String placeholder, TextEditingController date, bool isPasswordTextField) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 30),
+      child: TextField(
+        maxLength: isPasswordTextField ? 20 : null,
+        obscureText: isPasswordTextField ? isObscurePassword : false,
+        decoration: InputDecoration(
+            suffixIcon: isPasswordTextField
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isObscurePassword = !isObscurePassword;
+                      });
+                    },
+                    icon: Icon(Icons.remove_red_eye, color: Colors.grey),
+                  )
+                : null,
+            contentPadding: EdgeInsets.only(bottom: 5),
+            labelText: labelText,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: placeholder,
+            hintStyle: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)),
+        controller: date,
       ),
     );
   }
@@ -297,40 +350,11 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildTextField(
-      String labelText, String placeholder, bool isPasswordTextField) {
+  Widget buildNumericField(String labelText, String placeholder, TextEditingController controller) {
     return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: TextField(
-        maxLength: isPasswordTextField ? 20 : null,
-        obscureText: isPasswordTextField ? isObscurePassword : false,
-        decoration: InputDecoration(
-            suffixIcon: isPasswordTextField
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        isObscurePassword = !isObscurePassword;
-                      });
-                    },
-                    icon: Icon(Icons.remove_red_eye, color: Colors.grey),
-                  )
-                : null,
-      contentPadding: EdgeInsets.only(bottom: 5),
-      labelText: labelText,
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      hintText: placeholder,
-      hintStyle: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.grey))),
-);
-  }
-
-  Widget buildNumericField(String labelText, String placeholder) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 30),
-      child: TextField(
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
+          keyboardType: TextInputType.numberWithOptions(decimal: false),
           decoration: InputDecoration(
               contentPadding: EdgeInsets.only(bottom: 5),
               labelText: labelText,
@@ -339,7 +363,12 @@ class _ProfilePageState extends State<ProfilePage> {
               hintStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey))),
+                  color: Colors.grey
+              )
+          ),
+          controller: controller,
+      ),
     );
   }
 }
+              
