@@ -59,36 +59,47 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "NutriApp",
+      theme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light,
+      ),
+      home: SignPage(),
+      //home: SafeArea(child: NavigationScreen())
+    );
     //No ha cargado todavía la petición a la API
-    if (prueba == null) {
-      return const Center(
-        //Pondría un spinner o algo así de loading..
-        child: CircularProgressIndicator(),
-      );
-    } //El usuario tiene la sesión iniciada
-    else if (prueba) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "NutriApp",
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.light,
-        ),
-        home: SafeArea(child: NavigationScreen()),
-      );
-    } //El usuario no tiene sesión iniciada
-    else {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "NutriApp",
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.light,
-        ),
-        //home: SignPage(),
-        home: SafeArea(child: NavigationScreen())
-      );
-    }
+    // if (prueba == null) {
+    //   return const Center(
+    //     //Pondría un spinner o algo así de loading..
+    //     child: CircularProgressIndicator(),
+    //   );
+    // } //El usuario tiene la sesión iniciada
+    // else if (prueba) {
+    //   return MaterialApp(
+    //     debugShowCheckedModeBanner: false,
+    //     title: "NutriApp",
+    //     theme: ThemeData(
+    //       useMaterial3: true,
+    //       brightness: Brightness.light,
+    //     ),
+    //     home: SafeArea(child: NavigationScreen()),
+    //     //home: SignPage(),
+    //   );
+    // } //El usuario no tiene sesión iniciada
+    // else {
+    //   return MaterialApp(
+    //     debugShowCheckedModeBanner: false,
+    //     title: "NutriApp",
+    //     theme: ThemeData(
+    //       useMaterial3: true,
+    //       brightness: Brightness.light,
+    //     ),
+    //     home: SignPage(),
+    //     //home: SafeArea(child: NavigationScreen())
+    //   );
+    // }
   }
 }
 
@@ -115,20 +126,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
         child: currentScreen,
         bucket: bucket,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Color.fromARGB(255, 23, 142, 56),
-        foregroundColor: Colors.white,
-        onPressed: () {
-          Navigator.of(context).push(PageRouteBuilder(
-            pageBuilder: (context, animation, _) {
-              return AddPublicPage();
-            },
-            opaque: false,
-          ));
-        },
-      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.add),
+      //   backgroundColor: Color.fromARGB(255, 23, 142, 56),
+      //   foregroundColor: Colors.white,
+      //   onPressed: () {
+      //     Navigator.of(context).push(PageRouteBuilder(
+      //       pageBuilder: (context, animation, _) {
+      //         return AddPublicPage();
+      //       },
+      //       opaque: false,
+      //     ));
+      //   },
+      // ),
       bottomNavigationBar: BottomAppBar(
         notchMargin: 10.0,
         shape: CircularNotchedRectangle(),
@@ -136,128 +147,117 @@ class _NavigationScreenState extends State<NavigationScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {
-                    setState(() {
-                      currentScreen = HomePage();
-                      currentTab = 0;
-                    });
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.home,
-                        color: currentTab == 0
-                            ? Color.fromARGB(255, 23, 142, 56)
-                            : Color.fromARGB(255, 115, 119, 144),
-                      ),
-                      Text(
-                        'Home',
-                        style: TextStyle(
-                          color: currentTab == 0
-                              ? Color.fromARGB(255, 23, 142, 56)
-                              : Color.fromARGB(255, 115, 119, 144),
-                        ),
-                      ),
-                    ],
+            MaterialButton(
+              minWidth: 40,
+              onPressed: () {
+                setState(() {
+                  currentScreen = HomePage();
+                  currentTab = 0;
+                });
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.home,
+                    color: currentTab == 0
+                        ? Color.fromARGB(255, 23, 142, 56)
+                        : Color.fromARGB(255, 115, 119, 144),
                   ),
-                ),
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {
-                    setState(() {
-                      currentScreen = SearchPage();
-                      currentTab = 1;
-                    });
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.search,
-                        color: currentTab == 1
-                            ? Color.fromARGB(255, 23, 142, 56)
-                            : Color.fromARGB(255, 115, 119, 144),
-                      ),
-                      Text(
-                        'Search',
-                        style: TextStyle(
-                          color: currentTab == 1
-                              ? Color.fromARGB(255, 23, 142, 56)
-                              : Color.fromARGB(255, 115, 119, 144),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'Home',
+                    style: TextStyle(
+                      color: currentTab == 0
+                          ? Color.fromARGB(255, 23, 142, 56)
+                          : Color.fromARGB(255, 115, 119, 144),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            Row(
-              children: [
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {
-                    setState(() {
-                      currentScreen = FavPage();
-                      currentTab = 2;
-                    });
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.favorite,
-                        color: currentTab == 2
-                            ? Color.fromARGB(255, 23, 142, 56)
-                            : Color.fromARGB(255, 115, 119, 144),
-                      ),
-                      Text(
-                        'Favorite',
-                        style: TextStyle(
-                          color: currentTab == 2
-                              ? Color.fromARGB(255, 23, 142, 56)
-                              : Color.fromARGB(255, 115, 119, 144),
-                        ),
-                      ),
-                    ],
+            MaterialButton(
+              minWidth: 40,
+              onPressed: () {
+                setState(() {
+                  currentScreen = SearchPage();
+                  currentTab = 1;
+                });
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.search,
+                    color: currentTab == 1
+                        ? Color.fromARGB(255, 23, 142, 56)
+                        : Color.fromARGB(255, 115, 119, 144),
                   ),
-                ),
-                MaterialButton(
-                  minWidth: 40,
-                  onPressed: () {
-                    setState(() {
-                      currentScreen = ProfilePage();
-                      currentTab = 3;
-                    });
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.person,
-                        color: currentTab == 3
-                            ? Color.fromARGB(255, 23, 142, 56)
-                            : Color.fromARGB(255, 115, 119, 144),
-                      ),
-                      Text(
-                        'Profile',
-                        style: TextStyle(
-                          color: currentTab == 3
-                              ? Color.fromARGB(255, 23, 142, 56)
-                              : Color.fromARGB(255, 115, 119, 144),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'Search',
+                    style: TextStyle(
+                      color: currentTab == 1
+                          ? Color.fromARGB(255, 23, 142, 56)
+                          : Color.fromARGB(255, 115, 119, 144),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+            MaterialButton(
+              minWidth: 40,
+              onPressed: () {
+                setState(() {
+                  currentScreen = FavPage();
+                  currentTab = 2;
+                });
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.favorite,
+                    color: currentTab == 2
+                        ? Color.fromARGB(255, 23, 142, 56)
+                        : Color.fromARGB(255, 115, 119, 144),
+                  ),
+                  Text(
+                    'Favorite',
+                    style: TextStyle(
+                      color: currentTab == 2
+                          ? Color.fromARGB(255, 23, 142, 56)
+                          : Color.fromARGB(255, 115, 119, 144),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            MaterialButton(
+              minWidth: 40,
+              onPressed: () {
+                setState(() {
+                  currentScreen = ProfilePage();
+                  currentTab = 3;
+                });
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.person,
+                    color: currentTab == 3
+                        ? Color.fromARGB(255, 23, 142, 56)
+                        : Color.fromARGB(255, 115, 119, 144),
+                  ),
+                  Text(
+                    'Profile',
+                    style: TextStyle(
+                      color: currentTab == 3
+                          ? Color.fromARGB(255, 23, 142, 56)
+                          : Color.fromARGB(255, 115, 119, 144),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
