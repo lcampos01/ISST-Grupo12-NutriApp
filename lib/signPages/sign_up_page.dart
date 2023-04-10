@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../functions/validaciones.dart';
 import 'dart:convert';
+
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key? key}) : super(key: key);
 
@@ -64,24 +65,49 @@ class _SignUpPageState extends State<SignUpPage> {
               if (response.statusCode == 200) {
                 final tokenUser = response.headers['Authentication'];
                 print("Se ha registrado correctamente");
+                showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('¡¡BIENVENIDO/A A NUTRIAPP!!'),
+                  content: Text(
+                      'Ya se ha registrado. Vaya a SIGN IN para iniciar sesión.'),
+                  actions: [
+                    TextButton(
+                        onPressed: () =>
+                            Navigator.pop(context),
+                        child: Text('OK'))
+                  ],
+                ));
               } else {
                 print("No se ha registrado correctamente");
-              
+                showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Oh, oh... Ha habido un error con el servidor'),
+                  content: Text(
+                      'El registro no se ha producido correctamente.'),
+                  actions: [
+                    TextButton(
+                        onPressed: () =>
+                            Navigator.pop(context),
+                        child: Text('OK'))
+                  ],
+                ));
               }
             } else if (!emailBool) {
               showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text('Email no válido'),
-                        content: Text(
-                            'Debe haber una dirección de correo'),
-                        actions: [
-                          TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context),
-                              child: Text('OK'))
-                        ],
-                      ));
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Email no válido'),
+                  content: Text(
+                      'Debe haber una dirección de correo'),
+                  actions: [
+                    TextButton(
+                        onPressed: () =>
+                            Navigator.pop(context),
+                        child: Text('OK'))
+                  ],
+                ));
             } else if (!passBool) {
               showDialog(
                 context: context,

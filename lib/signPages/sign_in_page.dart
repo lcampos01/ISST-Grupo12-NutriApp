@@ -4,6 +4,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SignInPage extends StatefulWidget {
   SignInPage({Key? key}) : super(key: key);
@@ -64,12 +65,15 @@ class _SignInPageState extends State<SignInPage> {
           onTap: () async {
             String email = emailController.text.trim();
             String password = passwordController.text.trim();
-
+            
             final response = await http.post(
-              Uri.parse('http://www.google.com'),
-              body: {
+              Uri.parse('http://34.175.85.15:8080/signin'),
+              body: jsonEncode(<String, String>{
                 'email': email,
                 'password': password,
+              }),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
               },
             );
             if (response.statusCode == 200) {
