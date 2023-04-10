@@ -83,17 +83,17 @@ class _ProfilePageState extends State<ProfilePage> {
               buildTextField("Nombre Completo", "BENY JR", false),
               buildTextField("Correo Electrónico", "beny@jr.com", false),
               buildTextField("Contraseña", "********", true),
-                                Padding(
+              Padding(
                     padding: const EdgeInsets.only(bottom: 30),
                     child: DropdownButtonFormField<String>(
                       decoration: InputDecoration(
                         labelText: 'Sexo',
                         border: OutlineInputBorder(),
                       ),
-                      value: _selectedActivity,
+                      value: _selectedSex,
                       onChanged: (String? newValue) {
                         setState(() {
-                          _selectedActivity = newValue;
+                          _selectedSex = newValue;
                         });
                       },
                       items: [

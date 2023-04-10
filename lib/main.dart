@@ -84,7 +84,8 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
           brightness: Brightness.light,
         ),
-        home: SignPage(),
+        //home: SignPage(),
+        home: SafeArea(child: NavigationScreen())
       );
     }
   }
