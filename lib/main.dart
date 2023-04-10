@@ -4,10 +4,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:nutri_app/pages/add_public_page.dart';
 import 'package:nutri_app/pages/fav_page.dart';
-import 'package:nutri_app/pages/home_page.dart';
 import 'package:nutri_app/pages/profile_page.dart';
 import 'package:nutri_app/pages/search_page.dart';
 import 'package:nutri_app/signPages/sign.dart';
+import 'package:nutri_app/pages/home_page.dart';
+
 
 import 'package:http/http.dart' as http;
 
@@ -84,7 +85,8 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
           brightness: Brightness.light,
         ),
-        home: SignPage(),
+        //home: SignPage(),
+        home: SafeArea(child: NavigationScreen())
       );
     }
   }
