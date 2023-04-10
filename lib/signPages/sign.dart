@@ -16,28 +16,6 @@ class SignPage extends StatefulWidget {
 
 class _SignPageState extends State<SignPage> {
   bool signInActive = true;
-  
-    // DefaultTextStyle(
-    //   style: GoogleFonts.openSans(
-    //     fontSize: 22,
-    //     fontWeight: FontWeight.w600,
-    //     color: Color.fromARGB(255, 101, 8, 189),
-    //   ),
-    //   child: Text(
-    //     "     SIGN IN     ",
-    //   ),
-    // ),
-    // DefaultTextStyle(
-    //   style: GoogleFonts.openSans(
-    //     fontSize: 22,
-    //     fontWeight: FontWeight.w600,
-    //     color: Color.fromARGB(255, 101, 8, 189),
-    //   ),
-    //   child: Text(
-    //     "     SIGN UP     ",
-    //   ),
-    // ),
-    
     @override
     Widget build(BuildContext context) {
       return Scaffold(
