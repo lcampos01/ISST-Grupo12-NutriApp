@@ -16,20 +16,54 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-       body: Center(
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                showSearch(context: context, delegate: FoodSearcher(queryHint: ''));
-              },
-              child: Text('Buscar'),
+      body: Container(
+        padding: EdgeInsets.only(left: 15, top: 20, right: 15),
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: ListView(
+            children: [
+              
+              Center(
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        showSearch(context: context, delegate: FoodSearcher(queryHint: ''));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Buscar',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 20.0,
+                            ),
+                          ),
+                          Material(child: FoodLector(), color: Colors.transparent)
+                        ],
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                    
+                  ],
+                ),
             ),
-            Material(child: FoodLector()),
-          ],
+
+
+
+            ],
+          ),
         ),
       ),
+
 
 
     );

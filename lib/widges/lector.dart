@@ -81,10 +81,11 @@ class _FoodLectorState extends State<FoodLector> {
 
 @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-                onPressed: () => scanBarcodeNormal(),
-                child: Text('Start barcode scan'),
-              );
+    return IconButton(
+                    icon: Icon(Icons.camera_alt_rounded),
+                    color: Colors.green,
+                    onPressed: () => scanBarcodeNormal(),
+                  );
               
           
   }
