@@ -23,6 +23,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  //Filtro del buscador de alimentos
+  void filtroAlimentos(String value) {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -372,36 +375,20 @@ class _HomePageState extends State<HomePage> {
                                       'Busca un nuevo producto',
                                     ),
                                   ),
-                                  Container(
-                                    width: double.infinity,
+                                  SizedBox(
                                     height: 30,
-                                    decoration: BoxDecoration(
-                                      color: Color(0x790E151B),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  4, 0, 4, 0),
-                                          child: Icon(
-                                            Icons.search_rounded,
-                                            color: Color(0xFF030404),
-                                            size: 24,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    4, 0, 0, 0),
-                                            child: TextField(),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    child: TextField(
+                                        decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.grey[300],
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      prefixIcon: Icon(Icons.search),
+                                      prefixIconColor: Colors.black,
+                                    )),
                                   ),
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
