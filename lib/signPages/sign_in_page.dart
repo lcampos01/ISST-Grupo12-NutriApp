@@ -21,135 +21,117 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.only(left: 15, right: 15),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: ListView(
+    return Column(
+      children: [
+        DefaultTextStyle(
+          style: GoogleFonts.openSans(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+          child: Text(
+            "Bienvenido/a de nuevo. ¡NUTRI rindas!",
+          ),
+        ),
+        SizedBox(height: 30),
+        buildTextField(
+            'Correo Electrónico', '', emailController, false),
+        SizedBox(height: 5),
+        buildTextField(
+            'Contraseña', '', passwordController, true),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Center(
-                child: Stack(
-                  children: [
-                    Column(children: [
-                      DefaultTextStyle(
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                        child: Text(
-                          "Bienvenido/a de nuevo. ¡NUTRI rindas!",
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      buildTextField(
-                          'Correo Electrónico', '', emailController, false),
-                      SizedBox(height: 5),
-                      buildTextField(
-                          'Contraseña', '', passwordController, true),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                //logica de has olvidado la contraseña
-                              },
-                              child: Text(
-                                '¿Has olvidado la contraseña?',
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      GestureDetector(
-                        onTap: () async {
-                          String email = emailController.text.trim();
-                          String password = passwordController.text.trim();
-
-                          final response = await http.post(
-                            Uri.parse('http://www.google.com'),
-                            body: {
-                              'email': email,
-                              'password': password,
-                            },
-                          );
-                          if (response.statusCode == 200) {
-                            final tokenUser =
-                                response.headers['Authentication'];
-                          } else {
-                            showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                      title: Text('Error'),
-                                      content: Text(
-                                          'Usuario o contraseña incorrectos'),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: Text('OK'))
-                                      ],
-                                    ));
-                          }
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(14),
-                          margin: EdgeInsets.symmetric(horizontal: 100),
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 23, 142, 56),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: Text("Sign in",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                )),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Text(
-                        'Or continue with',
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 15,
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Container(
-                        padding: EdgeInsets.all(20.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.grey.shade200,
-                        ),
-                        child: Image.asset(
-                          'assets/google.png',
-                          height: 40,
-                        ),
-                      ),
-                    ]),
-                  ],
+              GestureDetector(
+                onTap: () {
+                  //logica de has olvidado la contraseña
+                },
+                child: Text(
+                  '¿Has olvidado la contraseña?',
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 15,
+                  ),
                 ),
               ),
             ],
           ),
         ),
-      ),
+        SizedBox(height: 30),
+        GestureDetector(
+          onTap: () async {
+            String email = emailController.text.trim();
+            String password = passwordController.text.trim();
+
+            final response = await http.post(
+              Uri.parse('http://www.google.com'),
+              body: {
+                'email': email,
+                'password': password,
+              },
+            );
+            if (response.statusCode == 200) {
+              final tokenUser =
+                  response.headers['Authentication'];
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text('Error'),
+                        content: Text(
+                            'Usuario o contraseña incorrectos'),
+                        actions: [
+                          TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(context),
+                              child: Text('OK'))
+                        ],
+                      ));
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.all(14),
+            margin: EdgeInsets.symmetric(horizontal: 100),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 23, 142, 56),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text("Sign in",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  )),
+            ),
+          ),
+        ),
+        SizedBox(height: 15),
+        Text(
+          'Or continue with',
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 15,
+          ),
+        ),
+        SizedBox(height: 15),
+        Container(
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.grey.shade200,
+          ),
+          child: Image.asset(
+            'assets/google.png',
+            height: 40,
+          ),
+        ),
+      ]
     );
   }
 

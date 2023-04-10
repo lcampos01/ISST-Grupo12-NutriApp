@@ -24,144 +24,126 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.only(left: 15, right: 15),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: ListView(children: [
-            Center(
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      DefaultTextStyle(
-                        style: GoogleFonts.openSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                        child: Text(
-                          "Bienvenido/a a NutriApp",
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      buildTextField(
-                          'Correo Electrónico', '', emailController, false),
-                      SizedBox(height: 5),
-                      buildTextField(
-                          'Contraseña', '', passwordController, true),
-                      GestureDetector(
-                        onTap: () async {
-                          String email = emailController.text.trim();
-                          String password = passwordController.text.trim();
-
-                          final emailBool = validateEmail(email);
-                          final passBool = validatePassword(password);
-
-                          if (true) {
-                            final response = await http.post(
-                              Uri.parse('http://34.175.85.15:8080/signup'),
-                              body: jsonEncode(<String, String>{
-                                'email': email,
-                                'password': password,
-                              }),
-                              headers: <String, String>{
-                                'Content-Type': 'application/json; charset=UTF-8',
-                              },
-                            );
-
-
-
-
-                            if (response.statusCode == 200) {
-                              // final tokenUser =
-                              //     response.headers['Authentication'];
-                              print("Se ha registrado correctamente");
-                            } else {
-                              print("No se ha registrado correctamente");
-                            
-                            }
-                          } else if (!emailBool) {
-                            showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                      title: Text('Email no válido'),
-                                      content: Text(
-                                          'Debe ser una dirección de correo existente'),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: Text('OK'))
-                                      ],
-                                    ));
-                          } else if (!passBool) {
-                            showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                      title: Text('Contraseña no válida'),
-                                      content: Text(
-                                          'La contraseña debe tener al menos 8 carácteres, incluyendo una mayúscula y un número'),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: Text('OK'))
-                                      ],
-                                    ));
-                          }
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(14),
-                          margin: EdgeInsets.symmetric(horizontal: 100),
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 23, 142, 56),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: Text("Sign up",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                )),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Text(
-                        'Or continue with',
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 15,
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Container(
-                        padding: EdgeInsets.all(20.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.grey.shade200,
-                        ),
-                        child: Image.asset(
-                          'assets/google.png',
-                          height: 40,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ]),
+    return Column(
+      children: [
+        DefaultTextStyle(
+          style: GoogleFonts.openSans(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+          child: Text(
+            "Bienvenido/a a NutriApp",
+          ),
         ),
-      ),
+        SizedBox(height: 30),
+        buildTextField(
+            'Correo Electrónico', '', emailController, false),
+        SizedBox(height: 5),
+        buildTextField(
+            'Contraseña', '', passwordController, true),
+        GestureDetector(
+          onTap: () async {
+            String email = emailController.text.trim();
+            String password = passwordController.text.trim();
+
+            final emailBool = validateEmail(email);
+            final passBool = validatePassword(password);
+
+            if (true) {
+              final response = await http.post(
+                Uri.parse('http://34.175.85.15:8080/signup'),
+                body: jsonEncode(<String, String>{
+                  'email': email,
+                  'password': password,
+                }),
+                headers: <String, String>{
+                  'Content-Type': 'application/json; charset=UTF-8',
+                },
+              );
+
+
+
+
+              if (response.statusCode == 200) {
+                // final tokenUser =
+                //     response.headers['Authentication'];
+                print("Se ha registrado correctamente");
+              } else {
+                print("No se ha registrado correctamente");
+              
+              }
+            } else if (!emailBool) {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text('Email no válido'),
+                        content: Text(
+                            'Debe ser una dirección de correo existente'),
+                        actions: [
+                          TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(context),
+                              child: Text('OK'))
+                        ],
+                      ));
+            } else if (!passBool) {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text('Contraseña no válida'),
+                        content: Text(
+                            'La contraseña debe tener al menos 8 carácteres, incluyendo una mayúscula y un número'),
+                        actions: [
+                          TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(context),
+                              child: Text('OK'))
+                        ],
+                      ));
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.all(14),
+            margin: EdgeInsets.symmetric(horizontal: 100),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 23, 142, 56),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text("Sign up",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  )),
+            ),
+          ),
+        ),
+        SizedBox(height: 15),
+        Text(
+          'Or continue with',
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 15,
+          ),
+        ),
+        SizedBox(height: 15),
+        Container(
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.grey.shade200,
+          ),
+          child: Image.asset(
+            'assets/google.png',
+            height: 40,
+          ),
+        ),
+      ],
     );
   }
 
