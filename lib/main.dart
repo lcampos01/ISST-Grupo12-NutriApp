@@ -8,7 +8,7 @@ import 'package:nutri_app/pages/profile_page.dart';
 import 'package:nutri_app/pages/search_page.dart';
 import 'package:nutri_app/signPages/sign.dart';
 import 'package:nutri_app/pages/home_page.dart';
-
+import 'package:nutri_app/variables/global.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -232,11 +232,41 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
             MaterialButton(
               minWidth: 40,
-              onPressed: () {
-                setState(() {
-                  currentScreen = ProfilePage();
-                  currentTab = 3;
-                });
+              onPressed: () async {
+                final response = await http.get(
+                  Uri.parse('${globalVariables.ipVM}/currentuser'),
+                  headers: <String, String>{
+                    'authorization': globalVariables.tokenUser,
+                  },
+                );
+                if (response.statusCode == 200) {
+                  final jsonData = jsonDecode(response.body);
+                  final nombre= jsonData['nombre'];
+                  final email = jsonData['email'];
+                  final password = jsonData['password'];
+                  final sexo = jsonData['sexo'];
+                  final fecha_nacimiento = jsonData['fecha_nacimiento'];
+                  final peso = jsonData['peso'];
+                  final altura = jsonData['altura'];
+                  final actividad_diaria = jsonData['actividad_diaria'];
+                  
+                  print('cambia a profile');
+                  setState(() {
+                    currentScreen = ProfilePage(
+                      nombre: nombre, 
+                      email: email, 
+                      password: password, 
+                      sexo: sexo, 
+                      fecha_nacimiento: fecha_nacimiento,
+                      peso: peso,
+                      altura: altura,
+                      actividad_diaria: actividad_diaria
+                    );
+                    currentTab = 3;
+                  });
+                } else {
+                  print('ha habido un error');
+                }
               },
               child: Column(
                 mainAxisSize: MainAxisSize.min,

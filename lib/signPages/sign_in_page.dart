@@ -70,7 +70,7 @@ class _SignInPageState extends State<SignInPage> {
             String password = passwordController.text.trim();
             
             final response = await http.post(
-              Uri.parse('http://34.175.85.15:8080/login'),
+              Uri.parse('${globalVariables.ipVM}/login'),
               body: jsonEncode(<String, String>{
                 'email': email,
                 'password': password,
@@ -92,7 +92,6 @@ class _SignInPageState extends State<SignInPage> {
               globalVariables.tokenUser = (response.headers['authorization']).toString();
               print(response.headers);
               print("Se iniciaria ${globalVariables.tokenUser}");
-
             } else {
               showDialog(
                 context: context,

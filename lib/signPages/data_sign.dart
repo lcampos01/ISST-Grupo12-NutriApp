@@ -251,7 +251,7 @@ class _DataSignPageState extends State<DataSignPage> {
                     );
                   } else {
                     final response = await http.post(
-                      Uri.parse('http://34.175.85.15:8080/signup'),
+                      Uri.parse('${globalVariables.ipVM}/signup'),
                       body: jsonEncode ({
                         'email': widget.email,
                         'password': widget.password,
@@ -268,8 +268,6 @@ class _DataSignPageState extends State<DataSignPage> {
                     );
                     if (response.statusCode == 200) {
                       print("datos guardados correctamente en el servidor");
-                      final tokenUser = response.headers['Authentication'];
-                      globalVariables.tokenUser = tokenUser.toString();
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(

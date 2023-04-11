@@ -88,7 +88,7 @@ class FoodSearcher extends SearchDelegate<String> {
     //     'https://world.openfoodfacts.org/cgi/search.pl?search_terms=$query&search_simple=1&action=process&json=1'));
 
     final response = await http.get(
-      Uri.parse('http://34.175.85.15:8080/search-product/search/$query'),
+      Uri.parse('${globalVariables.ipVM}/search-product/search/$query'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': globalVariables.tokenUser,

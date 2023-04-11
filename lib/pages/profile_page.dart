@@ -6,18 +6,33 @@ import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:nutri_app/signPages/sign.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 //import 'package:provider/provider.dart';
 
+
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({Key? key, this.nombre, this.email, this.password, this.sexo, this.fecha_nacimiento, this.peso, this.altura, this.actividad_diaria});
+
+  final nombre;
+  final email;
+  final password;
+  final sexo;
+  final fecha_nacimiento;
+  final peso;
+  final altura;
+  final actividad_diaria;
+  //final alergenos;
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  
+
+
+
   bool isObscurePassword = true;
 
   TextEditingController nombreController = TextEditingController();
@@ -32,11 +47,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   TextEditingController alturaController = TextEditingController();
   
-  String? _selectedActivity = globalVariables.actividadFisica == 0 ? 'sedentario' 
-                                  : (globalVariables.actividadFisica == 1 ? 'moderado'
-                                  : 'activo');
+  String? _selectedActivity = 'moderado';
   
-  String? _selectedSex = globalVariables.sexo;  
+  String? _selectedSex = 'hombre';  
 
   List<MultiSelectItem<String>> _allergens = [
     'Lactosa',
@@ -110,8 +123,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               SizedBox(height: 30),
-              buildTextField("Nombre Completo", globalVariables.username, nombreController, false),
-              buildTextField("Correo Electrónico", globalVariables.email, emailController, false),
+              buildTextField("Nombre Completo", widget.nombre!, nombreController, false),
+              buildTextField("Correo Electrónico", widget.email!, emailController, false),
               buildTextField("Contraseña", '********', passwordController, true),
               Padding(
                     padding: const EdgeInsets.only(bottom: 30),
@@ -120,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         labelText: 'Sexo',
                         border: OutlineInputBorder(),
                       ),
-                      value: _selectedSex,
+                      value: widget.sexo,
                       onChanged: (String? newValue) {
                         setState(() {
                           _selectedSex = newValue;
@@ -173,8 +186,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               //Cuadros Peso y Altura
-              buildNumericField("Peso aproximado en Kg", globalVariables.peso.toString(), pesoController),
-              buildNumericField("Altura en cm", globalVariables.altura.toString(), alturaController),
+              buildNumericField("Peso aproximado en Kg", widget.peso!.toString(), pesoController),
+              buildNumericField("Altura en cm", widget.altura!.toString(), alturaController),
 
               //Actividad Física
 
@@ -185,7 +198,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     labelText: 'Actividad física',
                     border: OutlineInputBorder(),
                   ),
-                  value: _selectedActivity,
+                  value: widget.actividad_diaria! == 0 ? 'sedentario' 
+                                  : (widget.actividad_diaria! == 1 ? 'moderado'
+                                  : 'activo'),
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedActivity = newValue;

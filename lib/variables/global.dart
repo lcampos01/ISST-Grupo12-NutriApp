@@ -5,6 +5,7 @@ class GlobalVariables {
 
   GlobalVariables._internal();
 
+  String ipVM = 'http://34.175.170.11:8080';
   String tokenUser = '';
   int isAdmin = 0; //no es admin
   String email = 'nombre@example.com';
