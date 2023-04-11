@@ -36,3 +36,10 @@ bool validateEmail(String email) {
   final RegExp emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
   return emailRegExp.hasMatch(email);
 }
+
+bool validateData(String username, String fechaNacimiento, String peso, String altura) {
+  if(username.isEmpty || fechaNacimiento.isEmpty || peso.isEmpty || altura.isEmpty) {
+    return false;
+  } 
+  return true;
+}

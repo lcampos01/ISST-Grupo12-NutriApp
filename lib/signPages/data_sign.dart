@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_app/variables/global.dart';
+import 'package:nutri_app/functions/validaciones.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
@@ -12,7 +13,10 @@ import 'dart:convert';
 //import 'package:provider/provider.dart';
 
 class DataSignPage extends StatefulWidget {
-  DataSignPage({Key? key}) : super(key: key);
+  DataSignPage({Key? key, this.email, this.password});
+
+  final email;
+  final password;
 
   @override
   State<DataSignPage> createState() => _DataSignPageState();
@@ -209,17 +213,6 @@ class _DataSignPageState extends State<DataSignPage> {
               SizedBox(height: 20,),
               ElevatedButton(
                 onPressed: () async {
-                  //validacion: estan vacios nombre, fecha_nacimiento, peso y altura
-                  var nombre = date.text;
-                  var sexo = _selectedSex.toString();
-                  var fecha_nacimiento = _date.text;
-                  // var pesoint = int.parse(peso.text);
-                  // var alturaint = int.parse(altura.text);
-                  var pesostr = peso.text;
-                  var alturastr = altura.text;
-                  var actividad_diariaint = actividad(_selectedActivity.toString());
-                  var actividad_diariastr = actividad((_selectedActivity.toString())).toString();
-                  var alergenos = _selectedAllergens;
                   print(date.text);
                   print(_selectedSex.toString());
                   print(_date.text);
@@ -227,61 +220,93 @@ class _DataSignPageState extends State<DataSignPage> {
                   print(altura.text);
                   print(actividad((_selectedActivity.toString())).toString());
                   print(_selectedAllergens);
-                  
-                  final response = await http.post(
-                    Uri.parse('http://34.175.225.29:8080/signup'),
-                    body: jsonEncode(<String, String>{
-                      'nombre': nombre,
-                      'altura': alturastr,
-                      'peso': pesostr,
-                      'sexo': sexo,
-                      'fecha_nacimiento': fecha_nacimiento,
-                      'actividad_diaria': actividad_diariastr,
-                    }),
-                    headers: <String, String>{
-                      'Content-Type': 'application/json; charset=UTF-8',
-                    },
-                  );
-                  if (response.statusCode == 200) {
-                    print("datos guardados correctamente en el servidor");
+                  var nombre = date.text;
+                  var sexo = _selectedSex.toString();
+                  var fecha_nacimiento = _date.text;
+                  var pesoint = int.parse(peso.text);
+                  var alturaint = int.parse(altura.text);
+                  var pesostr = peso.text;
+                  var alturastr = altura.text;
+                  var actividad_diariaint = actividad(_selectedActivity.toString());
+                  var actividad_diariastr = actividad((_selectedActivity.toString())).toString();
+                  var alergenos = _selectedAllergens;
+                  //validacion: estan vacios nombre, fecha_nacimiento, peso y altura
+                  if (!validateData(nombre, fecha_nacimiento, pesostr, alturastr)) {
+                    print("Hay datos vacios");
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text('Registro completado'),
+                        title: Text('Datos vacíos'),
                         content: Text(
-                            'Inicie sesión en "Sign in"'),
+                            'Por favor complete el nombre,la fecha de nacimiento, el peso y la altura'),
                         actions: [
                           TextButton(
-                              onPressed: () {
-                                //aqui es cuando se manda al signpage
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (BuildContext context) => SignPage(),
-                                    fullscreenDialog: true,
-                                    maintainState: true,
-                                  ),
-                                  (route) => false,
-                                );
-                              },
-                              child: Text('OK'))
+                            onPressed: () =>
+                                Navigator.pop(context),
+                            child: Text('OK'))
                         ],
-                      ));
+                      ),
+                    );
                   } else {
-                    print("no se han guardado los datos");
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Oh, oh... Ha habido un error con el servidor'),
-                        content: Text(
-                            'No se han guardado los datos correctamente.'),
-                        actions: [
-                          TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context),
-                              child: Text('OK'))
-                        ],
-                      ));
+                    final response = await http.post(
+                      Uri.parse('http://34.175.85.15:8080/signup'),
+                      body: jsonEncode ({
+                        'email': widget.email,
+                        'password': widget.password,
+                        'nombre': nombre,
+                        'altura': alturaint,
+                        'peso': pesoint,
+                        'sexo': sexo,
+                        'fecha_nacimiento': fecha_nacimiento,
+                        'actividad_diaria': actividad_diariaint,
+                      }),
+                      headers: <String, String>{
+                        'Content-Type': 'application/json; charset=UTF-8',
+                      },
+                    );
+                    if (response.statusCode == 200) {
+                      print("datos guardados correctamente en el servidor");
+                      final tokenUser = response.headers['Authentication'];
+                      globalVariables.tokenUser = tokenUser!;
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Registro completado'),
+                          content: Text(
+                              'Inicie sesión en "Sign in"'),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  //aqui es cuando se manda al signpage
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (BuildContext context) => SignPage(),
+                                      fullscreenDialog: true,
+                                      maintainState: true,
+                                    ),
+                                    (route) => false,
+                                  );
+                                },
+                                child: Text('OK'))
+                          ],
+                        ));
+                    } else {
+                      print("no se han guardado los datos");
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Oh, oh... Ha habido un error con el servidor'),
+                          content: Text(
+                              'No se han guardado los datos correctamente.'),
+                          actions: [
+                            TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context),
+                                child: Text('OK'))
+                          ],
+                        ));
+                    }
                   }
                 },
                 child: Text("Aceptar y registrarse",

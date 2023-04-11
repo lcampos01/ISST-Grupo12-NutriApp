@@ -54,32 +54,32 @@ class _SignUpPageState extends State<SignUpPage> {
             final passBool = validatePassword(password);
 
             if (emailBool && passBool) {
-              final response = await http.post(
-                Uri.parse('http://34.175.225.29:8080/signup'),
-                body: jsonEncode(<String, String>{
-                  'email': email,
-                  'password': password,
-                }),
-                headers: <String, String>{
-                  'Content-Type': 'application/json; charset=UTF-8',
-                },
-              );
-              if (response.statusCode == 200) {
-                final tokenUser = response.headers['Authentication'];
+              // final response = await http.post(
+              //   Uri.parse('http://34.175.85.15:8080/signup'),
+              //   body: jsonEncode(<String, String>{
+              //     'email': email,
+              //     'password': password,
+              //   }),
+              //   headers: <String, String>{
+              //     'Content-Type': 'application/json; charset=UTF-8',
+              //   },
+              // );
+              // if (response.statusCode == 200) {
+              //   final tokenUser = response.headers['Authentication'];
                 print("Se ha registrado correctamente");
                 showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
                   title: Text('¡¡BIENVENIDO/A A NUTRIAPP!!'),
                   content: Text(
-                      'Ya se ha registrado. Solo falta completar unos cuantos datos.'),
+                    'Solo falta completar unos cuantos datos.'),
                   actions: [
                     TextButton(
                       onPressed: () => {
                         Navigator.pushAndRemoveUntil(
                           context,
                           CupertinoPageRoute(
-                            builder: (BuildContext context) => DataSignPage(),
+                            builder: (BuildContext context) => DataSignPage(email: email, password: password),
                             fullscreenDialog: true,
                             maintainState: true,
                           ),
@@ -90,22 +90,22 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ],
                 ));
-              } else {
-                print("No se ha registrado correctamente");
-                showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Oh, oh... Ha habido un error con el servidor'),
-                  content: Text(
-                      'El registro no se ha producido correctamente.'),
-                  actions: [
-                    TextButton(
-                        onPressed: () =>
-                            Navigator.pop(context),
-                        child: Text('OK'))
-                  ],
-                ));
-              }
+              // } else {
+              //   print("No se ha registrado correctamente");
+              //   showDialog(
+              //   context: context,
+              //   builder: (context) => AlertDialog(
+              //     title: Text('Oh, oh... Ha habido un error con el servidor'),
+              //     content: Text(
+              //         'El registro no se ha producido correctamente.'),
+              //     actions: [
+              //       TextButton(
+              //           onPressed: () =>
+              //               Navigator.pop(context),
+              //           child: Text('OK'))
+              //     ],
+              //   ));
+              // }
             } else if (!emailBool) {
               showDialog(
                 context: context,
