@@ -7,6 +7,8 @@ class GlobalVariables {
 
   String tokenUser = '';
   int isAdmin = 0; //no es admin
+  String email = 'nombre@example.com';
+  String password = 'contraseña';
   String username = 'Nombre';
   String sexo = 'hombre';
   String fechaNacimiento = DateTime.now().toString().split(" ")[0];

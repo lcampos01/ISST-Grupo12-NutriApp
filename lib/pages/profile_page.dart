@@ -17,10 +17,26 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  
   bool isObscurePassword = true;
+
+  TextEditingController nombreController = TextEditingController();
+
+  TextEditingController emailController = TextEditingController();
+
+  TextEditingController passwordController = TextEditingController();
+
   TextEditingController _date = TextEditingController();
-  String? _selectedActivity = "moderado";
-  String? _selectedSex = "hombre";  
+
+  TextEditingController pesoController = TextEditingController();
+
+  TextEditingController alturaController = TextEditingController();
+  
+  String? _selectedActivity = globalVariables.actividadFisica == 0 ? 'sedentario' 
+                                  : (globalVariables.actividadFisica == 1 ? 'moderado'
+                                  : 'activo');
+  
+  String? _selectedSex = globalVariables.sexo;  
 
   List<MultiSelectItem<String>> _allergens = [
     'Lactosa',
@@ -31,8 +47,9 @@ class _ProfilePageState extends State<ProfilePage> {
     'Frutos Secos',
     'Soja',
   ].map((allergen) => MultiSelectItem<String>(allergen, allergen)).toList();
-  List<String> _selectedAllergens = [];
 
+  List<String> _selectedAllergens = globalVariables.alergenos;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,48 +61,58 @@ class _ProfilePageState extends State<ProfilePage> {
           },
           child: ListView(
             children: [
+              // Center(
+              //   child: Stack(
+              //     children: [
+              //       Container(
+              //         width: 130,
+              //         height: 130,
+              //         decoration: BoxDecoration(
+              //           border: Border.all(width: 4, color: Colors.white),
+              //           boxShadow: [
+              //             BoxShadow(
+              //                 spreadRadius: 2,
+              //                 blurRadius: 10,
+              //                 color: Colors.black.withOpacity(0.1)),
+              //           ],
+              //           shape: BoxShape.circle,
+              //           image: DecorationImage(
+              //               fit: BoxFit.cover,
+              //               image: NetworkImage(
+              //                   'https://images.genius.com/a9306e944a04741a70c74429fb6b2b5e.1000x1000x1.jpg'))),
+              //       ),
+              //       Positioned(
+              //         bottom: 0,
+              //         right: 0,
+              //         child: Container(
+              //           height: 40,
+              //           width: 40,
+              //           decoration: BoxDecoration(
+              //               shape: BoxShape.circle,
+              //               border:
+              //                   Border.all(width: 4, color: Colors.green),
+              //               color: Colors.white),
+              //           child: Icon(
+              //             Icons.edit,
+              //             color: Colors.green,
+              //           )))
+              //     ],
+              //   ),
+              // ),
               Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 4, color: Colors.white),
-                        boxShadow: [
-                          BoxShadow(
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              color: Colors.black.withOpacity(0.1)),
-                        ],
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                                'https://images.genius.com/a9306e944a04741a70c74429fb6b2b5e.1000x1000x1.jpg'))),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border:
-                                Border.all(width: 4, color: Colors.green),
-                            color: Colors.white),
-                        child: Icon(
-                          Icons.edit,
-                          color: Colors.green,
-                        )))
-                  ],
+                child: DefaultTextStyle(
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                  ), 
+                  child: Text('Editar datos'),
                 ),
               ),
               SizedBox(height: 30),
-              buildTextField("Nombre Completo", "BENY JR", false),
-              buildTextField("Correo Electrónico", "beny@jr.com", false),
-              buildTextField("Contraseña", "********", true),
+              buildTextField("Nombre Completo", globalVariables.username, nombreController, false),
+              buildTextField("Correo Electrónico", globalVariables.email, emailController, false),
+              buildTextField("Contraseña", '********', passwordController, true),
               Padding(
                     padding: const EdgeInsets.only(bottom: 30),
                     child: DropdownButtonFormField<String>(
@@ -119,6 +146,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: TextField(
                   controller: _date,
                   decoration: InputDecoration(
+                    hintText: globalVariables.fechaNacimiento,
+                    contentPadding: EdgeInsets.only(bottom: 5),
+                    labelText: "Fecha de Nacimiento",
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
                     suffixIcon: IconButton(
                       onPressed: () async {
                         DateTime? pickeddate = await showDatePicker(
@@ -137,14 +168,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icon(Icons.calendar_today_rounded),
                       color: Colors.grey,
                     ),
-                    labelText: "Fecha de Nacimiento",
                   ),
                 ),
               ),
 
               //Cuadros Peso y Altura
-              buildNumericField("Peso en Kg", "80.7"),
-              buildNumericField("Altura en metros", "1.92"),
+              buildNumericField("Peso aproximado en Kg", globalVariables.peso.toString(), pesoController),
+              buildNumericField("Altura en cm", globalVariables.altura.toString(), alturaController),
 
               //Actividad Física
 
@@ -279,6 +309,34 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Widget buildTextField(String labelText, String placeholder, TextEditingController date, bool isPasswordTextField) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 30),
+      child: TextField(
+        maxLength: isPasswordTextField ? 20 : null,
+        obscureText: isPasswordTextField ? isObscurePassword : false,
+        decoration: InputDecoration(
+            suffixIcon: isPasswordTextField
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isObscurePassword = !isObscurePassword;
+                      });
+                    },
+                    icon: Icon(Icons.remove_red_eye, color: Colors.grey),
+                  )
+                : null,
+            contentPadding: EdgeInsets.only(bottom: 5),
+            labelText: labelText,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: placeholder,
+            hintStyle: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)),
+        controller: date,
+      ),
+    );
+  }
+
   void _showMultiSelect(BuildContext context) async {
     await showDialog(
       context: context,
@@ -297,40 +355,11 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildTextField(
-      String labelText, String placeholder, bool isPasswordTextField) {
+  Widget buildNumericField(String labelText, String placeholder, TextEditingController controller) {
     return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: TextField(
-        maxLength: isPasswordTextField ? 20 : null,
-        obscureText: isPasswordTextField ? isObscurePassword : false,
-        decoration: InputDecoration(
-            suffixIcon: isPasswordTextField
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        isObscurePassword = !isObscurePassword;
-                      });
-                    },
-                    icon: Icon(Icons.remove_red_eye, color: Colors.grey),
-                  )
-                : null,
-      contentPadding: EdgeInsets.only(bottom: 5),
-      labelText: labelText,
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      hintText: placeholder,
-      hintStyle: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.grey))),
-);
-  }
-
-  Widget buildNumericField(String labelText, String placeholder) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 30),
-      child: TextField(
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
+          keyboardType: TextInputType.numberWithOptions(decimal: false),
           decoration: InputDecoration(
               contentPadding: EdgeInsets.only(bottom: 5),
               labelText: labelText,
@@ -339,7 +368,11 @@ class _ProfilePageState extends State<ProfilePage> {
               hintStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey))),
+                  color: Colors.grey
+              )
+          ),
+          controller: controller,
+      ),
     );
   }
 }

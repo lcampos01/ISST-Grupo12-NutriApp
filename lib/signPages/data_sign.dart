@@ -213,25 +213,27 @@ class _DataSignPageState extends State<DataSignPage> {
               SizedBox(height: 20,),
               ElevatedButton(
                 onPressed: () async {
-                  print(date.text);
+                  globalVariables.email = widget.email;
+                  globalVariables.password = widget.password;
+                  globalVariables.username = date.text;
+                  globalVariables.sexo = _selectedSex.toString();
+                  globalVariables.fechaNacimiento = _date.text;
+                  globalVariables.peso = int.parse(peso.text);
+                  globalVariables.altura = int.parse(altura.text);
+                  var pesoStr = peso.text;
+                  var alturaStr = altura.text;
+                  globalVariables.actividadFisica = actividad(_selectedActivity.toString());
+                  var actividad_diariaStr = actividad((_selectedActivity.toString())).toString();
+                  globalVariables.alergenos = _selectedAllergens;
+                  print(globalVariables);
                   print(_selectedSex.toString());
                   print(_date.text);
                   print(peso.text);
                   print(altura.text);
                   print(actividad((_selectedActivity.toString())).toString());
                   print(_selectedAllergens);
-                  var nombre = date.text;
-                  var sexo = _selectedSex.toString();
-                  var fecha_nacimiento = _date.text;
-                  var pesoint = int.parse(peso.text);
-                  var alturaint = int.parse(altura.text);
-                  var pesostr = peso.text;
-                  var alturastr = altura.text;
-                  var actividad_diariaint = actividad(_selectedActivity.toString());
-                  var actividad_diariastr = actividad((_selectedActivity.toString())).toString();
-                  var alergenos = _selectedAllergens;
                   //validacion: estan vacios nombre, fecha_nacimiento, peso y altura
-                  if (!validateData(nombre, fecha_nacimiento, pesostr, alturastr)) {
+                  if (!validateData(globalVariables.username, globalVariables.fechaNacimiento, pesoStr, alturaStr)) {
                     print("Hay datos vacios");
                     showDialog(
                       context: context,
@@ -253,12 +255,12 @@ class _DataSignPageState extends State<DataSignPage> {
                       body: jsonEncode ({
                         'email': widget.email,
                         'password': widget.password,
-                        'nombre': nombre,
-                        'altura': alturaint,
-                        'peso': pesoint,
-                        'sexo': sexo,
-                        'fecha_nacimiento': fecha_nacimiento,
-                        'actividad_diaria': actividad_diariaint,
+                        'nombre': globalVariables.username,
+                        'altura': globalVariables.altura,
+                        'peso': globalVariables.peso,
+                        'sexo': globalVariables.sexo,
+                        'fecha_nacimiento': globalVariables.fechaNacimiento,
+                        'actividad_diaria': globalVariables.actividadFisica,
                       }),
                       headers: <String, String>{
                         'Content-Type': 'application/json; charset=UTF-8',
@@ -267,7 +269,7 @@ class _DataSignPageState extends State<DataSignPage> {
                     if (response.statusCode == 200) {
                       print("datos guardados correctamente en el servidor");
                       final tokenUser = response.headers['Authentication'];
-                      globalVariables.tokenUser = tokenUser!;
+                      globalVariables.tokenUser = tokenUser.toString();
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
