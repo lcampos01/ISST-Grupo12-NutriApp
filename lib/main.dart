@@ -65,8 +65,8 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
           brightness: Brightness.light,
         ),
-        //home: SignPage(),
-        home: SafeArea(child: NavigationScreen()));
+        home: SignPage());
+    //home: SafeArea(child: NavigationScreen()));
     //No ha cargado todavía la petición a la API
     // if (prueba == null) {
     //   return const Center(

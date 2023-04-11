@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../variables/global.dart';
 
 class FoodSearcher extends SearchDelegate<String> {
   final String? queryHint;
@@ -83,8 +84,16 @@ class FoodSearcher extends SearchDelegate<String> {
   }
 
   Future<List<String>> fetchFoodList(String query) async {
-    final response = await http.get(Uri.parse(
-        'https://world.openfoodfacts.org/cgi/search.pl?search_terms=$query&search_simple=1&action=process&json=1'));
+    // final response = await http.get(Uri.parse(
+    //     'https://world.openfoodfacts.org/cgi/search.pl?search_terms=$query&search_simple=1&action=process&json=1'));
+
+    final response = await http.get(
+      Uri.parse('http://34.175.85.15:8080/search-product/search/$query'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': globalVariables.tokenUser,
+      },
+    );
 
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);

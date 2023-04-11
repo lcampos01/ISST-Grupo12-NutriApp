@@ -64,9 +64,6 @@ class _SearchPageState extends State<SearchPage> {
                                   fontSize: 20.0,
                                 ),
                               ),
-                              Material(
-                                  child: FoodLector(),
-                                  color: Colors.transparent)
                             ],
                           ),
                           style: ElevatedButton.styleFrom(
@@ -91,25 +88,8 @@ class _SearchPageState extends State<SearchPage> {
                         Padding(
                           padding: EdgeInsets.only(
                               top: MediaQuery.of(context).size.height * 0.05),
-                          child: GestureDetector(
-                            onTap: () async {
-                              String barcode = await scanBarcode();
-                              print(barcode);
-                            },
-                            child: BarcodeWidget(
-                              data: 'Barcode',
-                              barcode: Barcode.code128(),
-                              width: 125,
-                              height: 75,
-                              color: Colors.black,
-                              backgroundColor: Colors.transparent,
-                              errorBuilder: (_context, _error) => SizedBox(
-                                width: 100,
-                                height: 50,
-                              ),
-                              drawText: true,
-                            ),
-                          ),
+                          child: Material(
+                              child: FoodLector(), color: Colors.transparent),
                         )
                       ],
                     ),

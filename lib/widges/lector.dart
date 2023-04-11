@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:barcode_widget/barcode_widget.dart';
 
 class Product {
   final String name;
@@ -79,14 +80,28 @@ class _FoodLectorState extends State<FoodLector> {
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
-    return IconButton(
-                    icon: Icon(Icons.camera_alt_rounded),
-                    color: Colors.green,
-                    onPressed: () => scanBarcodeNormal(),
-                  );
-              
-          
+    // return IconButton(
+    //   icon: Icon(Icons.camera_alt_rounded),
+    //   color: Colors.green,
+    //   onPressed: () => scanBarcodeNormal(),
+    // );
+    return GestureDetector(
+      onTap: () => scanBarcodeNormal(),
+      child: BarcodeWidget(
+        data: 'Barcode',
+        barcode: Barcode.code128(),
+        width: 125,
+        height: 75,
+        color: Colors.black,
+        backgroundColor: Colors.transparent,
+        errorBuilder: (_context, _error) => SizedBox(
+          width: 100,
+          height: 50,
+        ),
+        drawText: true,
+      ),
+    );
   }
 }
