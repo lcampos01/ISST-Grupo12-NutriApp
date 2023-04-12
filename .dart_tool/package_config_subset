@@ -226,10 +226,6 @@ xdg_directories
 2.17
 file:///Users/sandracascante/.pub-cache/hosted/pub.dev/xdg_directories-1.0.0/
 file:///Users/sandracascante/.pub-cache/hosted/pub.dev/xdg_directories-1.0.0/lib/
-nutri_app
-2.19
-file:///Users/sandracascante/Desktop/ISST-Grupo12-NutriApp/
-file:///Users/sandracascante/Desktop/ISST-Grupo12-NutriApp/lib/
 sky_engine
 2.12
 file:///Users/sandracascante/Desktop/flutter/bin/cache/pkg/sky_engine/
@@ -246,4 +242,8 @@ flutter_web_plugins
 2.17
 file:///Users/sandracascante/Desktop/flutter/packages/flutter_web_plugins/
 file:///Users/sandracascante/Desktop/flutter/packages/flutter_web_plugins/lib/
+nutri_app
+2.19
+file:///Users/sandracascante/Desktop/prueba/
+file:///Users/sandracascante/Desktop/prueba/lib/
 2
