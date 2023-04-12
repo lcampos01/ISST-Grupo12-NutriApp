@@ -74,54 +74,54 @@ class _ProfilePageState extends State<ProfilePage> {
           },
           child: ListView(
             children: [
-              // Center(
-              //   child: Stack(
-              //     children: [
-              //       Container(
-              //         width: 130,
-              //         height: 130,
-              //         decoration: BoxDecoration(
-              //           border: Border.all(width: 4, color: Colors.white),
-              //           boxShadow: [
-              //             BoxShadow(
-              //                 spreadRadius: 2,
-              //                 blurRadius: 10,
-              //                 color: Colors.black.withOpacity(0.1)),
-              //           ],
-              //           shape: BoxShape.circle,
-              //           image: DecorationImage(
-              //               fit: BoxFit.cover,
-              //               image: NetworkImage(
-              //                   'https://images.genius.com/a9306e944a04741a70c74429fb6b2b5e.1000x1000x1.jpg'))),
-              //       ),
-              //       Positioned(
-              //         bottom: 0,
-              //         right: 0,
-              //         child: Container(
-              //           height: 40,
-              //           width: 40,
-              //           decoration: BoxDecoration(
-              //               shape: BoxShape.circle,
-              //               border:
-              //                   Border.all(width: 4, color: Colors.green),
-              //               color: Colors.white),
-              //           child: Icon(
-              //             Icons.edit,
-              //             color: Colors.green,
-              //           )))
-              //     ],
-              //   ),
-              // ),
               Center(
-                child: DefaultTextStyle(
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                  ), 
-                  child: Text('Editar datos'),
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 130,
+                      height: 130,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 4, color: Colors.white),
+                        boxShadow: [
+                          BoxShadow(
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              color: Colors.black.withOpacity(0.1)),
+                        ],
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage(
+                                'assets/usuario_foto.png'))),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border:
+                                Border.all(width: 4, color: Colors.green),
+                            color: Colors.white),
+                        child: Icon(
+                          Icons.edit,
+                          color: Colors.green,
+                        )))
+                  ],
                 ),
               ),
+              // Center(
+              //   child: DefaultTextStyle(
+              //     style: TextStyle(
+              //       color: Colors.green,
+              //       fontSize: 24,
+              //       fontWeight: FontWeight.w800,
+              //     ), 
+              //     child: Text('Editar datos'),
+              //   ),
+              // ),
               SizedBox(height: 30),
               buildTextField("Nombre Completo", widget.nombre!, nombreController, false),
               buildTextField("Correo Electrónico", widget.email!, emailController, false),

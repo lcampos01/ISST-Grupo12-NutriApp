@@ -5,6 +5,7 @@ import 'package:nutri_app/signPages/sign_in_page.dart';
 import 'package:nutri_app/signPages/sign_up_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nutri_app/signPages/signprueba.dart';
 import 'package:provider/provider.dart';
 
 class SignPage extends StatefulWidget {
@@ -103,6 +104,7 @@ class _SignPageState extends State<SignPage> {
                     SignInPage()
                     :
                     SignUpPage(),
+                    //SignUpPruebaPage(),
                   ],
                 ),
               ),

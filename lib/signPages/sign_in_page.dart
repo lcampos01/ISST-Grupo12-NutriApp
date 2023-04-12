@@ -43,26 +43,26 @@ class _SignInPageState extends State<SignInPage> {
         SizedBox(height: 5),
         buildTextField(
             'Contraseña', '', passwordController, true),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  //logica de has olvidado la contraseña
-                },
-                child: Text(
-                  '¿Has olvidado la contraseña?',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.end,
+        //     children: [
+        //       GestureDetector(
+        //         onTap: () {
+        //           //logica de has olvidado la contraseña
+        //         },
+        //         child: Text(
+        //           '¿Has olvidado la contraseña?',
+        //           style: TextStyle(
+        //             color: Colors.grey.shade600,
+        //             fontSize: 15,
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
         SizedBox(height: 30),
         GestureDetector(
           onTap: () async {
@@ -83,7 +83,7 @@ class _SignInPageState extends State<SignInPage> {
               Navigator.pushAndRemoveUntil(
                 context,
                 CupertinoPageRoute(
-                  builder: (BuildContext context) => SafeArea(child: NavigationScreen()),
+                  builder: (BuildContext context) => SafeArea(child: NavigationScreen(page: screens[0])),
                   fullscreenDialog: true,
                   maintainState: true,
                 ),
@@ -127,28 +127,28 @@ class _SignInPageState extends State<SignInPage> {
           ),
         ),
         SizedBox(height: 15),
-        Text(
-          'Or continue with',
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: 15,
-          ),
-        ),
-        SizedBox(height: 15),
-        Container(
-          padding: EdgeInsets.all(20.0),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
-            ),
-            borderRadius: BorderRadius.circular(16),
-            color: Colors.grey.shade200,
-          ),
-          child: Image.asset(
-            'assets/google.png',
-            height: 40,
-          ),
-        ),
+        // Text(
+        //   'Or continue with',
+        //   style: TextStyle(
+        //     color: Colors.grey.shade600,
+        //     fontSize: 15,
+        //   ),
+        // ),
+        // SizedBox(height: 15),
+        // Container(
+        //   padding: EdgeInsets.all(20.0),
+        //   decoration: BoxDecoration(
+        //     border: Border.all(
+        //       color: Colors.black,
+        //     ),
+        //     borderRadius: BorderRadius.circular(16),
+        //     color: Colors.grey.shade200,
+        //   ),
+        //   child: Image.asset(
+        //     'assets/google.png',
+        //     height: 40,
+        //   ),
+        // ),
       ]
     );
   }

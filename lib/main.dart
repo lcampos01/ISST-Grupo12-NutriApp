@@ -66,7 +66,7 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.light,
         ),
         //home: ProfilePage());
-        //home: SafeArea(child: NavigationScreen()));
+        //home: SafeArea(child: NavigationScreen(page: screens[0])));
         home: SignPage(),);
     //No ha cargado todavía la petición a la API
     // if (prueba == null) {
@@ -96,33 +96,37 @@ class _MyAppState extends State<MyApp> {
     //       brightness: Brightness.light,
     //     ),
     //     home: SignPage(),
-    //     //home: SafeArea(child: NavigationScreen())
+    //     //home: SafeArea(child: NavigationScreen(page: screens[0]))
     //   );
     // }
   }
 }
+final List<Widget> screens = [
+  HomePage(),
+  SearchPage(),
+  FavPage(),
+  ProfilePage(),
+];
 
 class NavigationScreen extends StatefulWidget {
+  NavigationScreen({Key? key, required this.page});
+  Widget page;
   @override
   State<NavigationScreen> createState() => _NavigationScreenState();
+  
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
   int currentTab = 0;
-  final List<Widget> screens = [
-    HomePage(),
-    SearchPage(),
-    FavPage(),
-    ProfilePage(),
-  ];
+  
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = HomePage();
+  //Widget currentScreen = HomePage();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageStorage(
-        child: currentScreen,
+        child: widget.page,
         bucket: bucket,
       ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -150,7 +154,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               minWidth: 40,
               onPressed: () {
                 setState(() {
-                  currentScreen = HomePage();
+                  widget.page = HomePage();
                   currentTab = 0;
                 });
               },
@@ -178,7 +182,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               minWidth: 40,
               onPressed: () {
                 setState(() {
-                  currentScreen = SearchPage();
+                  widget.page = SearchPage();
                   currentTab = 1;
                 });
               },
@@ -206,7 +210,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               minWidth: 40,
               onPressed: () {
                 setState(() {
-                  currentScreen = FavPage();
+                  widget.page = FavPage();
                   currentTab = 2;
                 });
               },
@@ -252,7 +256,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   
                   print('cambia a profile');
                   setState(() {
-                    currentScreen = ProfilePage(
+                    widget.page = ProfilePage(
                       nombre: nombre, 
                       email: email, 
                       password: password, 
