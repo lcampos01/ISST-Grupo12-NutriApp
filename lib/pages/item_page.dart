@@ -7,13 +7,14 @@ import 'package:flutter/cupertino.dart';
 //import 'package:provider/provider.dart';
 
 class ItemPage extends StatefulWidget {
-  const ItemPage({Key? key, this.name, this.imageUrl, this.macros, this.calidad, this.imageNutriScore}) : super(key: key);
+  const ItemPage({Key? key, this.name, this.imageUrl, this.macros, this.imageNutriScore, this.details, this.imageIngredientes}) : super(key: key);
   
   final name; //pasar a ItemPage(name: //pasar nombre del alimento de la API buscado)
   final imageUrl; //pasar a ItemPage(imageUrl: //url de la imagen de la API del alimento buscado)
   final macros; //sera un array de double de calorias, proteinas, carbohidratos y grasas
-  final calidad;  //string con buena, mala... (para calidad nutricional..)
   final imageNutriScore;
+  final details;
+  final imageIngredientes;
   
   @override
   _ItemPageState createState() => _ItemPageState();
@@ -22,11 +23,7 @@ class ItemPage extends StatefulWidget {
 class _ItemPageState extends State<ItemPage> {
 
   //macros si puede ser será un array de double [calorias, proteinas, carbohidratos, grasas]
-  //calorias = widget.macros[0];
-  //proteinas = widget.macros[1];
-  //carbohidratos = widget.macros[2];
-  //grasas = widget.macros[3];
-  //calidad = widget.calidad;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +31,20 @@ class _ItemPageState extends State<ItemPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(200),
         child: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
           centerTitle: true,
           flexibleSpace: ClipRRect(
             child: Container(
+              margin: EdgeInsets.only(top: 60),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/eggs.jpeg'),  //sustituir por imageUrl
-                  fit: BoxFit.fill
+                  image: widget.imageUrl,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
           ),
-          elevation: 5,
           automaticallyImplyLeading: true,
           // leading: Container(),
         ),
@@ -77,10 +76,17 @@ class _ItemPageState extends State<ItemPage> {
                     Text('Calorías'),
                     SizedBox(height: 10),
                     //Text('$calorias [Kcal]'), para cuando se cree el array de macros
-                    Text(
-                      '___ [Kcal]',
+                    widget.macros[0] == null ? Text(
+                      'NS/NC',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ) 
+                    : Text(
+                      '${double.parse(double.parse((widget.macros[0]).toString()).toStringAsFixed(3))} [Kcal]', 
+                      style: TextStyle(
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -91,10 +97,17 @@ class _ItemPageState extends State<ItemPage> {
                     Text('Proteínas'),
                     SizedBox(height: 10),
                     //Text('$proteinas [g]'), para cuando se cree el array de macros
-                    Text(
-                      '___ [g]',
+                    widget.macros[1] == null ? Text(
+                      'NS/NC',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ) 
+                    : Text(
+                      '${double.parse(double.parse((widget.macros[1]).toString()).toStringAsFixed(3))} [g]',
+                      style: TextStyle(
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -105,10 +118,17 @@ class _ItemPageState extends State<ItemPage> {
                     Text('Carbohidratos'),
                     SizedBox(height: 10),
                     //Text('$carbohidratos [g]'), para cuando se cree el array de macros
-                    Text(
-                      '___ [g]',
+                    widget.macros[2] == null ? Text(
+                      'NS/NC',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ) 
+                    : Text(
+                      '${double.parse(double.parse((widget.macros[2]).toString()).toStringAsFixed(3))} [g]',
+                      style: TextStyle(
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -119,10 +139,17 @@ class _ItemPageState extends State<ItemPage> {
                     Text('Grasas'),
                     SizedBox(height: 10),
                     //Text('$grasas [g]'), para cuando se cree el array de macros
-                    Text(
-                      '___ [g]',
+                    widget.macros[3] == null ? Text(
+                      'NS/NC',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ) 
+                    : Text(
+                      '${double.parse(double.parse((widget.macros[3]).toString()).toStringAsFixed(3))} [g]',
+                      style: TextStyle(
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -137,18 +164,53 @@ class _ItemPageState extends State<ItemPage> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
-                    title: Text('Detalles'), 
+                    title: Center(
+                      child: Text(
+                        'Detalles',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ), 
                     content: Container(
-                      height: 300,
-                      child: Column(
-                        children: [
-                          Text('1 Detalle'),   //cambiar
-                          Text('2 Detalle'),   //cambiar
-                          Text('3 Detalle'),   //cambiar
-                          Text('4 Detalle'),   //cambiar
-                          Text('5 Detalle'),   //cambiar
-                          Text('6 Detalle'),   //cambiar
-                        ],
+                      height: 600,
+                      child: Center(
+                        child: Column(
+                          children: [
+                            widget.details == '' ? Text(
+                                'Cantidad de producto: NS/NC',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                ),
+                              ) 
+                              : Text(
+                                  'Cantidad de producto: ${widget.details}',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                  ),
+                                ),   //cambiar
+                            SizedBox(height: 55),
+                            Text(
+                              'Ingredientes:',
+                              style: TextStyle(
+                                fontSize: 24,
+                              ),
+                            ),
+                            ClipRRect(
+                              child: Container(
+                                width: 300,
+                                height: 300,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: widget.imageIngredientes,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     actions: [
@@ -182,8 +244,12 @@ class _ItemPageState extends State<ItemPage> {
             SizedBox(height: 40),
             Center(
               child: Text(
-                //'Calidad nutricional $calidad',
-                'Calidad nutricional buena',
+                widget.imageNutriScore.toString() == 'a' ? 'Calidad nutricional muy buena'
+                                : (widget.imageNutriScore.toString() == 'b' ? 'Calidad nutricional buena'
+                                : (widget.imageNutriScore.toString() == 'c' ? 'Calidad nutricional media'
+                                : (widget.imageNutriScore.toString() == 'd' ? 'Calidad nutricional baja'
+                                : (widget.imageNutriScore.toString() == 'e' ? 'Calidad nutricional mala'
+                                : 'Calidad nutricional (?)')))),
                 style: TextStyle(
                   color: Color.fromARGB(255, 23, 142, 56),
                   fontWeight: FontWeight.bold,
@@ -196,10 +262,15 @@ class _ItemPageState extends State<ItemPage> {
               child: ClipRRect(
                 child: Container(
                   width: 200,
-                  height: 50,
+                  height: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/logo.png'),  //sustituir por imageNutriScore
+                      image: widget.imageNutriScore.toString() == 'a' ? AssetImage('assets/nutriscore-a.png') 
+                                        : (widget.imageNutriScore.toString() == 'b' ? AssetImage('assets/nutriscore-b.png')
+                                        : (widget.imageNutriScore.toString() == 'c' ? AssetImage('assets/nutriscore-c.png')
+                                        : (widget.imageNutriScore.toString() == 'd' ? AssetImage('assets/nutriscore-d.png')
+                                        : (widget.imageNutriScore.toString() == 'e' ? AssetImage('assets/nutriscore-e.png')
+                                        : AssetImage('assets/No_Image_Available.jpg'))))),
                       fit: BoxFit.fill
                     ),
                   ),
