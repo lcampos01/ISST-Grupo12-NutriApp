@@ -6,6 +6,7 @@ import '../variables/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:nutri_app/pages/item_page.dart';
 import 'package:nutri_app/pages/search_page.dart';
+import 'package:nutri_app/main.dart';
 
 class FoodSearcher extends SearchDelegate<String> {
   final String? queryHint;
@@ -80,7 +81,7 @@ class FoodSearcher extends SearchDelegate<String> {
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => SearchPage(),
+            builder: (context) => SafeArea(child: NavigationScreen(page: screens[1])),
           ),
         );
       },

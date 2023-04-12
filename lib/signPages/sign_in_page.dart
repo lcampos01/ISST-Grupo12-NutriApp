@@ -83,7 +83,7 @@ class _SignInPageState extends State<SignInPage> {
               Navigator.pushAndRemoveUntil(
                 context,
                 CupertinoPageRoute(
-                  builder: (BuildContext context) => SafeArea(child: NavigationScreen()),
+                  builder: (BuildContext context) => SafeArea(child: NavigationScreen(page: screens[0])),
                   fullscreenDialog: true,
                   maintainState: true,
                 ),
