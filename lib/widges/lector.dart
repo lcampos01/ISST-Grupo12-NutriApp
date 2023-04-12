@@ -131,15 +131,26 @@ class _FoodLectorState extends State<FoodLector> {
     setState(() {
       _scanBarcode = barcodeScanRes;
     });
-
-    final nombre = await fetchNombre(barcodeScanRes);
-
+    var t1 = DateTime.now().millisecondsSinceEpoch;
+    final Data = await fetchData(barcodeScanRes);
+    // print(Data);
+    final jsonData = jsonDecode(Data)['product'];
+    // print('--------------------------------------------');
+    // print(jsonData.toString());
+    final nombre = jsonData['product_name'];
+    var t2 = DateTime.now().millisecondsSinceEpoch;
     if (nombre != null) {
-      final imageUrls = await fetchItemImage(barcodeScanRes);
-      final macros = await fetchItemMacros(barcodeScanRes);
-      final grades = await fetchGrade(barcodeScanRes);
-      final imageIngredientsUrls = await fetchItemImageIngredients(barcodeScanRes);
-      final cantidades = await fetchCantidad(barcodeScanRes);
+      final imageUrls = await fetchItemImage(jsonData);
+      final macros = await fetchItemMacros(jsonData);
+      final grades = await fetchGrade(jsonData);
+      final imageIngredientsUrls = await fetchItemImageIngredients(jsonData);
+      final cantidades = await fetchCantidad(jsonData);
+      var t3 = DateTime.now().millisecondsSinceEpoch;
+      print('--------------------------------------------');
+      print(t2 - t1);
+      print(t3 - t2);
+      print('--------------------------------------------');
+
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => ItemPage(
@@ -148,7 +159,7 @@ class _FoodLectorState extends State<FoodLector> {
             macros: [macros[0], macros[1], macros[2], macros[3]],
             imageNutriScore: grades,
             details: cantidades,
-            imageIngredientes:imageIngredientsUrls,
+            imageIngredientes: imageIngredientsUrls,
           ),
         ),
       );
@@ -179,7 +190,9 @@ class _FoodLectorState extends State<FoodLector> {
       ),
     );
   }
-  Future<String> fetchNombre(String barcode) async {
+
+  Future<String> fetchData(String barcode) async {
+    print('${globalVariables.ipVM}/search-product/scan/$barcode');
     final response = await http.get(
       Uri.parse('${globalVariables.ipVM}/search-product/scan/$barcode'),
       headers: <String, String>{
@@ -188,130 +201,60 @@ class _FoodLectorState extends State<FoodLector> {
     );
 
     if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final product = jsonData['product'] as dynamic;
-      final name = product['product_name'] as String;
-      if (name != null) {
-        return name;
-      } else {
-        return name;
-      }
+      return response.body;
     } else {
       print(response.statusCode);
       throw Exception('Failed to fetch food list');
     }
   }
 
-  Future<NetworkImage> fetchItemImage(String barcode) async {
-    final response = await http.get(
-      Uri.parse('${globalVariables.ipVM}/search-product/scan/$barcode'),
-      headers: <String, String>{
-        'authorization': globalVariables.tokenUser,
-      },
-    );
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final product = jsonData['product'] as dynamic;
-      final imagestr = product['image_front_url'] as String?;
-      if (imagestr != null) {
-        return NetworkImage(imagestr);
-      } else {
-        return NetworkImage('https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg');
-      }
+  Future<NetworkImage> fetchItemImage(Map<String, dynamic> jsonData) async {
+    final imagestr = jsonData['image_front_url'] as String?;
+    if (imagestr != null) {
+      return NetworkImage(imagestr);
     } else {
-      throw Exception('Failed to fetch food image');
+      return NetworkImage(
+          'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg');
     }
   }
 
-    Future<NetworkImage> fetchItemImageIngredients(String barcode) async {
-    final response = await http.get(
-      Uri.parse('${globalVariables.ipVM}/search-product/scan/$barcode'),
-      headers: <String, String>{
-        'authorization': globalVariables.tokenUser,
-      },
-    );
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final product = jsonData['product'] as dynamic;
-      final imageIngredientsstr = product['image_ingredients_url'] as String?;
-      if (imageIngredientsstr != null) {
-        return NetworkImage(imageIngredientsstr);
-      } else {
-        return NetworkImage('https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg');
-      }
+  Future<NetworkImage> fetchItemImageIngredients(
+      Map<String, dynamic> jsonData) async {
+    final imageIngredientsstr = jsonData['image_ingredients_url'] as String?;
+    if (imageIngredientsstr != null) {
+      return NetworkImage(imageIngredientsstr);
     } else {
-      throw Exception('Failed to fetch food image');
+      return NetworkImage(
+          'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg');
     }
   }
 
-  Future<List<dynamic>> fetchItemMacros(String barcode) async {
-    final response = await http.get(
-      Uri.parse('${globalVariables.ipVM}/search-product/scan/$barcode'),
-      headers: <String, String>{
-        'authorization': globalVariables.tokenUser,
-      },
-    );
+  Future<List<dynamic>> fetchItemMacros(Map<String, dynamic> jsonData) async {
+    final nutriments = jsonData['nutriments'] as Map<String, dynamic>;
+    final calorias = nutriments['energy-kcal_100g'] as dynamic;
+    final proteinas = nutriments['proteins_100g'] as dynamic;
+    final carbohidratos = nutriments['carbohydrates_100g'] as dynamic;
+    final grasas = nutriments['fat_100g'] as dynamic;
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final product = jsonData['product'] as dynamic;
-      final nutriments = product['nutriments'] as Map<String, dynamic>;
-      final calorias = nutriments['energy-kcal_100g'] as dynamic;
-      final proteinas = nutriments['proteins_100g'] as dynamic;
-      final carbohidratos = nutriments['carbohydrates_100g'] as dynamic;
-      final grasas = nutriments['fat_100g'] as dynamic;
-
-      final macros = [calorias, proteinas, carbohidratos, grasas];
-      return macros;
-    } else {
-      print(response.statusCode);
-      throw Exception('Failed to fetch food list');
-    }
+    final macros = [calorias, proteinas, carbohidratos, grasas];
+    return macros;
   }
-  Future<String> fetchGrade(String barcode) async {
-    final response = await http.get(
-      Uri.parse('${globalVariables.ipVM}/search-product/scan/$barcode'),
-      headers: <String, String>{
-        'authorization': globalVariables.tokenUser,
-      },
-    );
 
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final product = jsonData['product'] as dynamic;
-      final ecoscore = product['nutriscore_grade'] as String?;
-      if (ecoscore != null) {
-        return ecoscore;
-      } else {
-        return 'z';
-      }
+  Future<String> fetchGrade(Map<String, dynamic> jsonData) async {
+    final ecoscore = jsonData['nutriscore_grade'] as String?;
+    if (ecoscore != null) {
+      return ecoscore;
     } else {
-      print(response.statusCode);
-      throw Exception('Failed to fetch food list');
+      return 'z';
     }
   }
 
-  Future<String> fetchCantidad(String barcode) async {
-    final response = await http.get(
-      Uri.parse('${globalVariables.ipVM}/search-product/scan/$barcode'),
-      headers: <String, String>{
-        'authorization': globalVariables.tokenUser,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final product = jsonData['product'] as dynamic;
-      final cantidad = product["quantity"] as String?;
-      if (cantidad != null) {
-        return cantidad;
-      } else {
-        return 'NS/NC';
-      }
+  Future<String> fetchCantidad(Map<String, dynamic> jsonData) async {
+    final cantidad = jsonData["quantity"] as String?;
+    if (cantidad != null) {
+      return cantidad;
     } else {
-      print(response.statusCode);
-      throw Exception('Failed to fetch food list');
+      return 'NS/NC';
     }
   }
 }
-
