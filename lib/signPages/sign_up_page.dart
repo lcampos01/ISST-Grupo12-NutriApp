@@ -157,28 +157,28 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         SizedBox(height: 15),
-        Text(
-          'Or continue with',
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: 15,
-          ),
-        ),
-        SizedBox(height: 15),
-        Container(
-          padding: EdgeInsets.all(20.0),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
-            ),
-            borderRadius: BorderRadius.circular(16),
-            color: Colors.grey.shade200,
-          ),
-          child: Image.asset(
-            'assets/google.png',
-            height: 40,
-          ),
-        ),
+        // Text(
+        //   'Or continue with',
+        //   style: TextStyle(
+        //     color: Colors.grey.shade600,
+        //     fontSize: 15,
+        //   ),
+        // ),
+        // SizedBox(height: 15),
+        // Container(
+        //   padding: EdgeInsets.all(20.0),
+        //   decoration: BoxDecoration(
+        //     border: Border.all(
+        //       color: Colors.black,
+        //     ),
+        //     borderRadius: BorderRadius.circular(16),
+        //     color: Colors.grey.shade200,
+        //   ),
+        //   child: Image.asset(
+        //     'assets/google.png',
+        //     height: 40,
+        //   ),
+        // ),
       ],
     );
   }
