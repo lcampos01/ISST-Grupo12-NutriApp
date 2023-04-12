@@ -3,3 +3,5 @@
 Proyecto de Flutter para la aplicación NutriApp del Grupo 12 de la asignatura ISST de la Universidad Politécnica de Madrid.
 
 El código de la aplicación se encontrará en la carpeta lib.
+
+Ahora mismo, la versión que funciona está en la branch: usuarioBien.
