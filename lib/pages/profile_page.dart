@@ -91,8 +91,8 @@ class _ProfilePageState extends State<ProfilePage> {
               //           shape: BoxShape.circle,
               //           image: DecorationImage(
               //               fit: BoxFit.cover,
-              //               image: NetworkImage(
-              //                   'https://images.genius.com/a9306e944a04741a70c74429fb6b2b5e.1000x1000x1.jpg'))),
+              //               image: AssetImage(
+              //                   'assets/usuario_foto.png'))),
               //       ),
               //       Positioned(
               //         bottom: 0,
@@ -112,16 +112,16 @@ class _ProfilePageState extends State<ProfilePage> {
               //     ],
               //   ),
               // ),
-              Center(
-                child: DefaultTextStyle(
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                  ), 
-                  child: Text('Editar datos'),
-                ),
-              ),
+              // Center(
+              //   child: DefaultTextStyle(
+              //     style: TextStyle(
+              //       color: Colors.green,
+              //       fontSize: 24,
+              //       fontWeight: FontWeight.w800,
+              //     ), 
+              //     child: Text('Editar datos'),
+              //   ),
+              // ),
               SizedBox(height: 30),
               buildTextField("Nombre Completo", widget.nombre!, nombreController, false),
               buildTextField("Correo Electrónico", widget.email!, emailController, false),
