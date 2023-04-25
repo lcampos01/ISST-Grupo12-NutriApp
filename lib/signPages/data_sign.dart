@@ -32,10 +32,10 @@ class _DataSignPageState extends State<DataSignPage> {
   TextEditingController peso = TextEditingController();
 
   TextEditingController altura = TextEditingController();
-  
+
   String? _selectedActivity = "moderado";
-  
-  String? _selectedSex = "hombre";  
+
+  String? _selectedSex = "hombre";
 
   List<MultiSelectItem<String>> _allergens = [
     'Lactosa',
@@ -84,31 +84,30 @@ class _DataSignPageState extends State<DataSignPage> {
               SizedBox(height: 30),
               buildTextField("Nombre Completo", "Nombre", date, false),
               Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        labelText: 'Sexo',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: _selectedSex,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedSex = newValue;
-                        });
-                      },
-                      items: [
-                        DropdownMenuItem<String>(
-                          value: 'hombre',
-                          child: Text('Hombre'), 
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'mujer',
-                          child: Text('Mujer'),
-                        ),
-                        
-                      ],
-                    ),
+                padding: const EdgeInsets.only(bottom: 30),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Sexo',
+                    border: OutlineInputBorder(),
                   ),
+                  value: _selectedSex,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedSex = newValue;
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: 'hombre',
+                      child: Text('Hombre'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'mujer',
+                      child: Text('Mujer'),
+                    ),
+                  ],
+                ),
+              ),
               //Fecha nacimiento
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
@@ -210,7 +209,9 @@ class _DataSignPageState extends State<DataSignPage> {
                   //  side: BorderSide(color: Colors.green, width: 4)
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
               ElevatedButton(
                 onPressed: () async {
                   globalVariables.email = widget.email;
@@ -222,8 +223,10 @@ class _DataSignPageState extends State<DataSignPage> {
                   globalVariables.altura = int.parse(altura.text);
                   var pesoStr = peso.text;
                   var alturaStr = altura.text;
-                  globalVariables.actividadFisica = actividad(_selectedActivity.toString());
-                  var actividad_diariaStr = actividad((_selectedActivity.toString())).toString();
+                  globalVariables.actividadFisica =
+                      actividad(_selectedActivity.toString());
+                  var actividad_diariaStr =
+                      actividad((_selectedActivity.toString())).toString();
                   globalVariables.alergenos = _selectedAllergens;
                   print(globalVariables);
                   print(_selectedSex.toString());
@@ -233,7 +236,8 @@ class _DataSignPageState extends State<DataSignPage> {
                   print(actividad((_selectedActivity.toString())).toString());
                   print(_selectedAllergens);
                   //validacion: estan vacios nombre, fecha_nacimiento, peso y altura
-                  if (!validateData(globalVariables.username, globalVariables.fechaNacimiento, pesoStr, alturaStr)) {
+                  if (!validateData(globalVariables.username,
+                      globalVariables.fechaNacimiento, pesoStr, alturaStr)) {
                     print("Hay datos vacios");
                     showDialog(
                       context: context,
@@ -243,16 +247,15 @@ class _DataSignPageState extends State<DataSignPage> {
                             'Por favor complete el nombre,la fecha de nacimiento, el peso y la altura'),
                         actions: [
                           TextButton(
-                            onPressed: () =>
-                                Navigator.pop(context),
-                            child: Text('OK'))
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('OK'))
                         ],
                       ),
                     );
                   } else {
                     final response = await http.post(
                       Uri.parse('${globalVariables.ipVM}/signup'),
-                      body: jsonEncode ({
+                      body: jsonEncode({
                         'email': widget.email,
                         'password': widget.password,
                         'nombre': globalVariables.username,
@@ -269,43 +272,43 @@ class _DataSignPageState extends State<DataSignPage> {
                     if (response.statusCode == 200) {
                       print("datos guardados correctamente en el servidor");
                       showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Registro completado'),
-                          content: Text(
-                              'Inicie sesión en "Sign in"'),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  //aqui es cuando se manda al signpage
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (BuildContext context) => SignPage(),
-                                      fullscreenDialog: true,
-                                      maintainState: true,
-                                    ),
-                                    (route) => false,
-                                  );
-                                },
-                                child: Text('OK'))
-                          ],
-                        ));
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text('Registro completado'),
+                                content: Text('Inicie sesión en "Sign in"'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        //aqui es cuando se manda al signpage
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (BuildContext context) =>
+                                                SignPage(),
+                                            fullscreenDialog: true,
+                                            maintainState: true,
+                                          ),
+                                          (route) => false,
+                                        );
+                                      },
+                                      child: Text('OK'))
+                                ],
+                              ));
                     } else {
                       print("no se han guardado los datos");
                       showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Oh, oh... Ha habido un error con el servidor'),
-                          content: Text(
-                              'No se han guardado los datos correctamente.'),
-                          actions: [
-                            TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context),
-                                child: Text('OK'))
-                          ],
-                        ));
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text(
+                                    'Oh, oh... Ha habido un error con el servidor'),
+                                content: Text(
+                                    'No se han guardado los datos correctamente.'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('OK'))
+                                ],
+                              ));
                     }
                   }
                 },
@@ -319,7 +322,7 @@ class _DataSignPageState extends State<DataSignPage> {
                   primary: Colors.green,
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(20)),
                 ),
               ),
             ],
@@ -329,7 +332,8 @@ class _DataSignPageState extends State<DataSignPage> {
     );
   }
 
-  Widget buildTextField(String labelText, String placeholder, TextEditingController date, bool isPasswordTextField) {
+  Widget buildTextField(String labelText, String placeholder,
+      TextEditingController date, bool isPasswordTextField) {
     return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: TextField(
@@ -375,25 +379,21 @@ class _DataSignPageState extends State<DataSignPage> {
     );
   }
 
-  Widget buildNumericField(String labelText, String placeholder, TextEditingController controller) {
+  Widget buildNumericField(
+      String labelText, String placeholder, TextEditingController controller) {
     return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: TextField(
-          keyboardType: TextInputType.numberWithOptions(decimal: false),
-          decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(bottom: 5),
-              labelText: labelText,
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: placeholder,
-              hintStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey
-              )
-          ),
-          controller: controller,
+        keyboardType: TextInputType.numberWithOptions(decimal: false),
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(bottom: 5),
+            labelText: labelText,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: placeholder,
+            hintStyle: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)),
+        controller: controller,
       ),
     );
   }
 }
-              

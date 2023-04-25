@@ -11,9 +11,17 @@ import 'dart:convert';
 
 //import 'package:provider/provider.dart';
 
-
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key, this.nombre, this.email, this.password, this.sexo, this.fecha_nacimiento, this.peso, this.altura, this.actividad_diaria});
+  const ProfilePage(
+      {Key? key,
+      this.nombre,
+      this.email,
+      this.password,
+      this.sexo,
+      this.fecha_nacimiento,
+      this.peso,
+      this.altura,
+      this.actividad_diaria});
 
   final nombre;
   final email;
@@ -30,9 +38,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
-
-
   bool isObscurePassword = true;
 
   TextEditingController nombreController = TextEditingController();
@@ -46,10 +51,10 @@ class _ProfilePageState extends State<ProfilePage> {
   TextEditingController pesoController = TextEditingController();
 
   TextEditingController alturaController = TextEditingController();
-  
+
   String? _selectedActivity = 'moderado';
-  
-  String? _selectedSex = 'hombre';  
+
+  String? _selectedSex = 'hombre';
 
   List<MultiSelectItem<String>> _allergens = [
     'Lactosa',
@@ -62,7 +67,19 @@ class _ProfilePageState extends State<ProfilePage> {
   ].map((allergen) => MultiSelectItem<String>(allergen, allergen)).toList();
 
   List<String> _selectedAllergens = globalVariables.alergenos;
-  
+
+  int actividad(String act) {
+    if (act == 'sedentario') {
+      return 0;
+    } else if (act == 'moderado') {
+      return 1;
+    } else if (act == 'activo') {
+      return 2;
+    } else {
+      return 3;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,34 +98,33 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 130,
                       height: 130,
                       decoration: BoxDecoration(
-                        border: Border.all(width: 4, color: Colors.white),
-                        boxShadow: [
-                          BoxShadow(
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              color: Colors.black.withOpacity(0.1)),
-                        ],
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage(
-                                'assets/usuario_foto.png'))),
+                          border: Border.all(width: 4, color: Colors.white),
+                          boxShadow: [
+                            BoxShadow(
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                color: Colors.black.withOpacity(0.1)),
+                          ],
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: AssetImage('assets/usuario_foto.png'))),
                     ),
                     Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border:
-                                Border.all(width: 4, color: Colors.green),
-                            color: Colors.white),
-                        child: Icon(
-                          Icons.edit,
-                          color: Colors.green,
-                        )))
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(width: 4, color: Colors.green),
+                                color: Colors.white),
+                            child: Icon(
+                              Icons.edit,
+                              color: Colors.green,
+                            )))
                   ],
                 ),
               ),
@@ -118,40 +134,42 @@ class _ProfilePageState extends State<ProfilePage> {
               //       color: Colors.green,
               //       fontSize: 24,
               //       fontWeight: FontWeight.w800,
-              //     ), 
+              //     ),
               //     child: Text('Editar datos'),
               //   ),
               // ),
               SizedBox(height: 30),
-              buildTextField("Nombre Completo", widget.nombre!, nombreController, false),
-              buildTextField("Correo Electrónico", widget.email!, emailController, false),
-              buildTextField("Contraseña", '********', passwordController, true),
+              buildTextField(
+                  "Nombre Completo", widget.nombre!, nombreController, false),
+              buildTextField(
+                  "Correo Electrónico", widget.email!, emailController, false),
+              buildTextField(
+                  "Contraseña", '********', passwordController, true),
               Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        labelText: 'Sexo',
-                        border: OutlineInputBorder(),
-                      ),
-                      value: widget.sexo,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedSex = newValue;
-                        });
-                      },
-                      items: [
-                        DropdownMenuItem<String>(
-                          value: 'hombre',
-                          child: Text('Hombre'), 
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'mujer',
-                          child: Text('Mujer'),
-                        ),
-                        
-                      ],
-                    ),
+                padding: const EdgeInsets.only(bottom: 30),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Sexo',
+                    border: OutlineInputBorder(),
                   ),
+                  value: widget.sexo,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedSex = newValue;
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: 'hombre',
+                      child: Text('Hombre'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'mujer',
+                      child: Text('Mujer'),
+                    ),
+                  ],
+                ),
+              ),
 
               //Fecha nacimiento
               Padding(
@@ -186,8 +204,10 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               //Cuadros Peso y Altura
-              buildNumericField("Peso aproximado en Kg", widget.peso!.toString(), pesoController),
-              buildNumericField("Altura en cm", widget.altura!.toString(), alturaController),
+              buildNumericField("Peso aproximado en Kg",
+                  widget.peso!.toString(), pesoController),
+              buildNumericField(
+                  "Altura en cm", widget.altura!.toString(), alturaController),
 
               //Actividad Física
 
@@ -198,9 +218,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     labelText: 'Actividad física',
                     border: OutlineInputBorder(),
                   ),
-                  value: widget.actividad_diaria! == 0 ? 'sedentario' 
-                                  : (widget.actividad_diaria! == 1 ? 'moderado'
-                                  : 'activo'),
+                  value: widget.actividad_diaria! == 0
+                      ? 'sedentario'
+                      : (widget.actividad_diaria! == 1 ? 'moderado' : 'activo'),
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedActivity = newValue;
@@ -285,7 +305,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                       //aqui tambien hacer que el token de la variable global se borre a null o ""..
                       globalVariables.tokenUser = '';
-                      print("Se ha cerrado sesión ${globalVariables.tokenUser}");
+                      print(
+                          "Se ha cerrado sesión ${globalVariables.tokenUser}");
                     },
                     child: Text("Cerrar Sesión",
                         style: TextStyle(
@@ -299,7 +320,49 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      globalVariables.email = emailController.toString();
+                      globalVariables.password = passwordController.toString();
+                      globalVariables.username = nombreController.toString();
+                      globalVariables.sexo = _selectedSex.toString();
+                      globalVariables.fechaNacimiento = _date.toString();
+                      globalVariables.peso =
+                          int.parse(pesoController.toString());
+                      globalVariables.altura =
+                          int.parse(alturaController.toString());
+                      globalVariables.actividadFisica =
+                          actividad(_selectedActivity.toString());
+                      globalVariables.alergenos = _selectedAllergens;
+                      final response = await http.post(
+                        Uri.parse('${globalVariables.ipVM}/signup'),
+                        body: jsonEncode({
+                          'email': widget.email,
+                          'password': widget.password,
+                          'nombre': globalVariables.username,
+                          'altura': globalVariables.altura,
+                          'peso': globalVariables.peso,
+                          'sexo': globalVariables.sexo,
+                          'fecha_nacimiento': globalVariables.fechaNacimiento,
+                          'actividad_diaria': globalVariables.actividadFisica,
+                        }),
+                        headers: <String, String>{
+                          'Content-Type': 'application/json; charset=UTF-8',
+                        },
+                      );
+                      if (response.statusCode == 200) {
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title:
+                                      Text('Cambios guardados correctamente'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('OK'))
+                                  ],
+                                ));
+                      }
+                    },
                     child: Text("Guardar Cambios",
                         style: TextStyle(
                           fontSize: 12,
@@ -324,7 +387,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildTextField(String labelText, String placeholder, TextEditingController date, bool isPasswordTextField) {
+  Widget buildTextField(String labelText, String placeholder,
+      TextEditingController date, bool isPasswordTextField) {
     return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: TextField(
@@ -370,23 +434,20 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildNumericField(String labelText, String placeholder, TextEditingController controller) {
+  Widget buildNumericField(
+      String labelText, String placeholder, TextEditingController controller) {
     return Padding(
       padding: EdgeInsets.only(bottom: 30),
       child: TextField(
-          keyboardType: TextInputType.numberWithOptions(decimal: false),
-          decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(bottom: 5),
-              labelText: labelText,
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              hintText: placeholder,
-              hintStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey
-              )
-          ),
-          controller: controller,
+        keyboardType: TextInputType.numberWithOptions(decimal: false),
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(bottom: 5),
+            labelText: labelText,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: placeholder,
+            hintStyle: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)),
+        controller: controller,
       ),
     );
   }

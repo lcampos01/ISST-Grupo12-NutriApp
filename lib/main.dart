@@ -66,8 +66,8 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.light,
         ),
         //home: ProfilePage());
-        //home: SafeArea(child: NavigationScreen(page: screens[0])));
-        home: SignPage(),);
+        home: SafeArea(child: NavigationScreen(page: screens[0])));
+    //home: SignPage(),);
     //No ha cargado todavía la petición a la API
     // if (prueba == null) {
     //   return const Center(
@@ -101,6 +101,7 @@ class _MyAppState extends State<MyApp> {
     // }
   }
 }
+
 final List<Widget> screens = [
   HomePage(),
   SearchPage(),
@@ -113,12 +114,11 @@ class NavigationScreen extends StatefulWidget {
   Widget page;
   @override
   State<NavigationScreen> createState() => _NavigationScreenState();
-  
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
   int currentTab = 0;
-  
+
   final PageStorageBucket bucket = PageStorageBucket();
   //Widget currentScreen = HomePage();
 
@@ -245,7 +245,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 );
                 if (response.statusCode == 200) {
                   final jsonData = jsonDecode(response.body);
-                  final nombre= jsonData['nombre'];
+                  final nombre = jsonData['nombre'];
                   final email = jsonData['email'];
                   final password = jsonData['password'];
                   final sexo = jsonData['sexo'];
@@ -253,19 +253,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   final peso = jsonData['peso'];
                   final altura = jsonData['altura'];
                   final actividad_diaria = jsonData['actividad_diaria'];
-                  
+
                   print('cambia a profile');
                   setState(() {
                     widget.page = ProfilePage(
-                      nombre: nombre, 
-                      email: email, 
-                      password: password, 
-                      sexo: sexo, 
-                      fecha_nacimiento: fecha_nacimiento,
-                      peso: peso,
-                      altura: altura,
-                      actividad_diaria: actividad_diaria
-                    );
+                        nombre: nombre,
+                        email: email,
+                        password: password,
+                        sexo: sexo,
+                        fecha_nacimiento: fecha_nacimiento,
+                        peso: peso,
+                        altura: altura,
+                        actividad_diaria: actividad_diaria);
                     currentTab = 3;
                   });
                 } else {
