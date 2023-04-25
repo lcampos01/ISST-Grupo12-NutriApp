@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_app/widges/lector.dart';
 import 'package:nutri_app/widges/searcher.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:nutri_app/pages/progress_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -325,10 +327,20 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               ),
                                             ),
-                                            Icon(
-                                              Icons.insert_chart,
-                                              color: Color(0xFF272626),
-                                              size: 38,
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.insert_chart,
+                                                color: Color(0xFF272626),
+                                                size: 38,
+                                              ),
+                                              onPressed: () => {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProgressPage(),
+                                                  ),
+                                                )
+                                              },
                                             ),
                                           ],
                                         ),

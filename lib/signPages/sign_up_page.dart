@@ -40,11 +40,9 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
         SizedBox(height: 30),
-        buildTextField(
-            'Correo Electrónico', '', emailController, false),
+        buildTextField('Correo Electrónico', '', emailController, false),
         SizedBox(height: 5),
-        buildTextField(
-            'Contraseña', '', passwordController, true),
+        buildTextField('Contraseña', '', passwordController, true),
         GestureDetector(
           onTap: () async {
             String email = emailController.text.trim();
@@ -66,30 +64,32 @@ class _SignUpPageState extends State<SignUpPage> {
               // );
               // if (response.statusCode == 200) {
               //   final tokenUser = response.headers['Authentication'];
-                print("Se ha registrado correctamente");
-                showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('¡¡BIENVENIDO/A A NUTRIAPP!!'),
-                  content: Text(
-                    'Solo falta completar unos cuantos datos.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (BuildContext context) => DataSignPage(email: email, password: password),
-                            fullscreenDialog: true,
-                            maintainState: true,
+              print("Se ha registrado correctamente");
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text('¡¡BIENVENIDO/A A NUTRIAPP!!'),
+                        content:
+                            Text('Solo falta completar unos cuantos datos.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (BuildContext context) =>
+                                      DataSignPage(
+                                          email: email, password: password),
+                                  fullscreenDialog: true,
+                                  maintainState: true,
+                                ),
+                                (route) => false,
+                              )
+                            },
+                            child: Text('OK'),
                           ),
-                          (route) => false,
-                        )
-                      },   
-                      child: Text('OK'),
-                    ),
-                  ],
-                ));
+                        ],
+                      ));
               // } else {
               //   print("No se ha registrado correctamente");
               //   showDialog(
@@ -108,35 +108,29 @@ class _SignUpPageState extends State<SignUpPage> {
               // }
             } else if (!emailBool) {
               showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Email no válido'),
-                  content: Text(
-                      'Debe haber una dirección de correo'),
-                  actions: [
-                    TextButton(
-                        onPressed: () =>
-                            Navigator.pop(context),
-                        child: Text('OK'))
-                  ],
-                ));
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text('Email no válido'),
+                        content: Text('Debe haber una dirección de correo'),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('OK'))
+                        ],
+                      ));
             } else if (!passBool) {
               showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Contraseña no válida'),
-                  content: Text(
-                    'La contraseña debe tener al menos 8 carácteres, incluyendo una mayúscula y un número'
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () =>
-                          Navigator.pop(context),
-                      child: Text('OK')
-                    ),
-                  ],
-                )
-              );
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text('Contraseña no válida'),
+                        content: Text(
+                            'La contraseña debe tener al menos 8 carácteres, incluyendo una mayúscula y un número'),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('OK')),
+                        ],
+                      ));
             }
           },
           child: Container(
