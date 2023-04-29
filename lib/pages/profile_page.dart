@@ -334,7 +334,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           actividad(_selectedActivity.toString());
                       globalVariables.alergenos = _selectedAllergens;
                       final response = await http.post(
-                        Uri.parse('${globalVariables.ipVM}/signup'),
+                        Uri.parse('${globalVariables.ipVM}/modify-user'),
                         body: jsonEncode({
                           'email': widget.email,
                           'password': widget.password,
