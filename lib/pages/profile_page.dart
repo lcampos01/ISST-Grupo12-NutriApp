@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nutri_app/main.dart';
 import 'package:nutri_app/variables/global.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:intl/intl.dart';
@@ -321,29 +322,30 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      globalVariables.email = emailController.toString();
-                      globalVariables.password = passwordController.toString();
-                      globalVariables.username = nombreController.toString();
-                      globalVariables.sexo = _selectedSex.toString();
-                      globalVariables.fechaNacimiento = _date.toString();
-                      globalVariables.peso =
+                      // var emailMod = emailController.toString(); segun el metodo put modify-user no se puede modificar
+                      // var passwordMod = passwordController.toString(); segun el método put modify-user no se puede modificar
+                      var usernameMod = nombreController.toString();
+                      var sexoMod = _selectedSex.toString();
+                      var fechaNacimientoMod = _date.toString();
+                      var pesoMod =
                           int.parse(pesoController.toString());
-                      globalVariables.altura =
+                      var alturaMod =
                           int.parse(alturaController.toString());
-                      globalVariables.actividadFisica =
+                      var actividadFisicaMod =
                           actividad(_selectedActivity.toString());
-                      globalVariables.alergenos = _selectedAllergens;
+                      //var alergenosMod = _selectedAllergens; va a haber que enviarlos tambien
                       final response = await http.post(
                         Uri.parse('${globalVariables.ipVM}/modify-user'),
                         body: jsonEncode({
-                          'email': widget.email,
-                          'password': widget.password,
-                          'nombre': globalVariables.username,
-                          'altura': globalVariables.altura,
-                          'peso': globalVariables.peso,
-                          'sexo': globalVariables.sexo,
-                          'fecha_nacimiento': globalVariables.fechaNacimiento,
-                          'actividad_diaria': globalVariables.actividadFisica,
+                          // 'email': emailMod,  
+                          // 'password': passwordMod, no estan en el metodo put de modify-user
+                          'nombre': usernameMod,
+                          'altura': alturaMod,
+                          'peso': pesoMod,
+                          'sexo': sexoMod,
+                          'fecha_nacimiento': fechaNacimientoMod,
+                          'actividad_diaria': actividadFisicaMod,
+                          //alergenos va a haber que poder modificarlos.
                         }),
                         headers: <String, String>{
                           'Content-Type': 'application/json; charset=UTF-8',
@@ -357,7 +359,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Text('Cambios guardados correctamente'),
                                   actions: [
                                     TextButton(
-                                        onPressed: () => Navigator.pop(context),
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SafeArea(child: NavigationScreen(page: screens[3])),
+                                            ),
+                                          );
+                                        },
                                         child: Text('OK'))
                                   ],
                                 ));

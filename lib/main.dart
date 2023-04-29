@@ -253,6 +253,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   final peso = jsonData['peso'];
                   final altura = jsonData['altura'];
                   final actividad_diaria = jsonData['actividad_diaria'];
+                  //necesito recibir los alérgenosssssss:)
 
                   print('cambia a profile');
                   setState(() {
@@ -264,7 +265,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         fecha_nacimiento: fecha_nacimiento,
                         peso: peso,
                         altura: altura,
-                        actividad_diaria: actividad_diaria);
+                        actividad_diaria: actividad_diaria
+                        //necesito pasarle los alérgenosssssssssss:)
+                    );
                     currentTab = 3;
                   });
                 } else {
