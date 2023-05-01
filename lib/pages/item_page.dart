@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-//import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:nutri_app/variables/global.dart';
 
 class ItemPage extends StatefulWidget {
-  const ItemPage({Key? key, this.name, this.imageUrl, this.macros, this.imageNutriScore, this.details, this.imageIngredientes, this.isFavorite}) : super(key: key);
+  const ItemPage({Key? key, this.name, this.imageUrl, this.macros, this.imageNutriScore, this.details, this.imageIngredientes, this.barcode, this.isFavorite}) : super(key: key);
   
   final name;
   final imageUrl; 
@@ -11,6 +14,7 @@ class ItemPage extends StatefulWidget {
   final imageNutriScore;
   final details;
   final imageIngredientes;
+  final barcode;
   
   final isFavorite;
 
@@ -54,15 +58,44 @@ class _ItemPageState extends State<ItemPage> {
               icon: _isFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
               iconSize: 25,
               color: _isFavorite ? Colors.red : Colors.black,
-              onPressed: () {
-                setState(() {
-                  _isFavorite = !_isFavorite;
-                  if (_isFavorite) {
-                    //la he añadido a favoritos -> post alimentos para meterla en favs
+              onPressed: () async {
+                _isFavorite = !_isFavorite;
+                if (_isFavorite) {
+                  //la he añadido a favoritos -> post alimentos para meterla en favs
+                  final responseadd = await http.post(
+                    Uri.parse('${globalVariables.ipVM}/favoritos'),
+                    body: jsonEncode({
+                      "url": widget.barcode, 
+                    }),
+                    headers: <String, String>{
+                      'Content-Type': 'application/json; charset=UTF-8',
+                      'authorization': globalVariables.tokenUser,
+                    },
+                  );
+                  if(responseadd.statusCode == 200) {
+                    print("Se ha añadido a favoritos");
                   } else {
-                    //la he borrado de favoritos -> delete alimentos para sacarla de favs
+                    print("Ha ocurrido un error");
                   }
-                });
+                } else {
+                  //la he borrado de favoritos -> delete alimentos para sacarla de favs
+                  final responsedelete = await http.delete(
+                    Uri.parse('${globalVariables.ipVM}/favoritos'),
+                    body: jsonEncode({
+                      "url": widget.barcode, 
+                    }),
+                    headers: <String, String>{
+                      'Content-Type': 'application/json; charset=UTF-8',
+                      'authorization': globalVariables.tokenUser,
+                    },
+                  );
+                  if(responsedelete.statusCode == 200) {
+                    print("Se ha borrado de favoritos");
+                  } else {
+                    print("Ha ocurrido un error");
+                  }
+                }
+                setState(() {});
               },
             ),
           ],

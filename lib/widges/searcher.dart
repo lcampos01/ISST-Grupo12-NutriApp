@@ -30,6 +30,11 @@ class FoodSearcher extends SearchDelegate<String> {
                   List<NetworkImage> imageIngredientsUrls =
                       await fetchItemImageIngredients(query);
                   List<String> cantidades = await fetchCantidad(query);
+                  List<String> barcodes = await fetchBarcode(query);
+                  bool isFav = await isfavorite(barcodes[index]);
+                  print("--------------------------------------------");
+                  print(barcodes);
+                  print("--------------------------------------------");
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => ItemPage(
@@ -44,7 +49,8 @@ class FoodSearcher extends SearchDelegate<String> {
                         imageNutriScore: grades[index],
                         details: cantidades[index],
                         imageIngredientes: imageIngredientsUrls[index],
-                        isFavorite: true, //esto se debe obtener al hacer get y buscar si esta en favoritos
+                        barcode: barcodes[index],
+                        isFavorite: isFav, //esto se debe obtener al hacer get y buscar si esta en favoritos
                       ),
                     ),
                   );
@@ -107,6 +113,8 @@ class FoodSearcher extends SearchDelegate<String> {
                   List<NetworkImage> imageIngredientsUrls =
                       await fetchItemImageIngredients(query);
                   List<String> cantidades = await fetchCantidad(query);
+                  List<String> barcodes = await fetchBarcode(query);
+                  bool isFav = await isfavorite(barcodes[index]);
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => ItemPage(
@@ -121,7 +129,8 @@ class FoodSearcher extends SearchDelegate<String> {
                         imageNutriScore: grades[index],
                         details: cantidades[index],
                         imageIngredientes: imageIngredientsUrls[index],
-                        isFavorite: true, //esto se debe obtener al hacer get y ver si esta en favoritos
+                        barcode: barcodes[index],
+                        isFavorite: isFav, //esto se debe obtener al hacer get y ver si esta en favoritos
                       ),
                     ),
                   );
@@ -149,6 +158,7 @@ class FoodSearcher extends SearchDelegate<String> {
 
     if (response.statusCode == 200) {
       jsonData = jsonDecode(response.body);
+      print(jsonData);
       final products = jsonData['products'] as List<dynamic>;
       final names = <String>[];
       for (var product in products) {
@@ -162,6 +172,29 @@ class FoodSearcher extends SearchDelegate<String> {
     } else {
       print(response.statusCode);
       throw Exception('Failed to fetch food list');
+    }
+  }
+
+  Future<bool> isfavorite(String barcode) async {
+    final responseFav = await http.get(
+      Uri.parse('${globalVariables.ipVM}/favoritos'),
+      headers: <String, String>{
+        'authorization': globalVariables.tokenUser,
+      },
+    );
+    if (responseFav.statusCode == 200) {
+      final jsonDataFav = jsonDecode(responseFav.body);
+      print(jsonDataFav);
+      List<String> barcodes = jsonDataFav.map((bar) => bar['url']).toList().cast<String>();
+      if(barcodes.contains(barcode)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      print(responseFav.statusCode);
+      print("Ha habido un error con favoritos");
+      return false;
     }
   }
 
@@ -254,5 +287,19 @@ class FoodSearcher extends SearchDelegate<String> {
       }
     }
     return cantidades;
+  }
+
+  Future<List<String>> fetchBarcode(String query) async {
+    final products = jsonData['products'] as List<dynamic>;
+    final barcodes = <String>[];
+    for (var product in products) {
+      final barcode = product["_id"] as String?;
+      if (barcode != null) {
+        barcodes.add(barcode);
+      } else {
+        barcodes.add('NS/NC');
+      }
+    }
+    return barcodes;
   }
 }

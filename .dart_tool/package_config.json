@@ -147,9 +147,9 @@
     },
     {
       "name": "google_fonts",
-      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/google_fonts-4.0.3",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/google_fonts-4.0.4",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.14"
     },
     {
       "name": "http",
@@ -219,21 +219,21 @@
     },
     {
       "name": "path_provider",
-      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/path_provider-2.0.13",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/path_provider-2.0.14",
       "packageUri": "lib/",
-      "languageVersion": "2.14"
+      "languageVersion": "2.17"
     },
     {
       "name": "path_provider_android",
-      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/path_provider_android-2.0.24",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/path_provider_android-2.0.27",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
     {
       "name": "path_provider_foundation",
-      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/path_provider_foundation-2.1.3",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/path_provider_foundation-2.2.2",
       "packageUri": "lib/",
-      "languageVersion": "2.17"
+      "languageVersion": "2.18"
     },
     {
       "name": "path_provider_linux",
@@ -249,7 +249,7 @@
     },
     {
       "name": "path_provider_windows",
-      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/path_provider_windows-2.1.5",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/path_provider_windows-2.1.6",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -357,7 +357,7 @@
     },
     {
       "name": "win32",
-      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/win32-3.1.3",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/win32-4.1.3",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -374,7 +374,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-04-30T16:02:26.158733Z",
+  "generated": "2023-05-01T17:32:31.734823Z",
   "generator": "pub",
   "generatorVersion": "3.1.0-22.0.dev"
 }

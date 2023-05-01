@@ -38,35 +38,41 @@ class _FoodLectorState extends State<FoodLector> {
     final Data = await fetchData(barcodeScanRes);
     // print(Data);
     final jsonData = jsonDecode(Data)['product'];
-    // print('--------------------------------------------');
-    // print(jsonData.toString());
-    final nombre = jsonData['product_name'];
-    var t2 = DateTime.now().millisecondsSinceEpoch;
-    if (nombre != null) {
-      final imageUrls = await fetchItemImage(jsonData);
-      final macros = await fetchItemMacros(jsonData);
-      final grades = await fetchGrade(jsonData);
-      final imageIngredientsUrls = await fetchItemImageIngredients(jsonData);
-      final cantidades = await fetchCantidad(jsonData);
-      var t3 = DateTime.now().millisecondsSinceEpoch;
-      print('--------------------------------------------');
-      print(t2 - t1);
-      print(t3 - t2);
-      print('--------------------------------------------');
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => ItemPage(
-            name: nombre,
-            imageUrl: imageUrls,
-            macros: [macros[0], macros[1], macros[2], macros[3]],
-            imageNutriScore: grades,
-            details: cantidades,
-            imageIngredientes: imageIngredientsUrls,
-            isFavorite: true, //esto se debe obtener al hacer get para comprobar si esta en favoritos
+    print(jsonData);
+    if(jsonData == null) {
+      print('error servidor');
+      return;
+    } else {
+      // print('--------------------------------------------');
+      final nombre = jsonData['product_name'];
+      var t2 = DateTime.now().millisecondsSinceEpoch;
+      if (nombre != null) {
+        final imageUrls = await fetchItemImage(jsonData);
+        final macros = await fetchItemMacros(jsonData);
+        final grades = await fetchGrade(jsonData);
+        final imageIngredientsUrls = await fetchItemImageIngredients(jsonData);
+        final cantidades = await fetchCantidad(jsonData);
+        final isFav = await isfavorite(barcodeScanRes);
+        var t3 = DateTime.now().millisecondsSinceEpoch;
+        print('--------------------------------------------');
+        print(t2 - t1);
+        print(t3 - t2);
+        print('--------------------------------------------');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ItemPage(
+              name: nombre,
+              imageUrl: imageUrls,
+              macros: [macros[0], macros[1], macros[2], macros[3]],
+              imageNutriScore: grades,
+              details: cantidades,
+              imageIngredientes: imageIngredientsUrls,
+              barcode: barcodeScanRes,
+              isFavorite: isFav, //esto se debe obtener al hacer get para comprobar si esta en favoritos
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -109,6 +115,29 @@ class _FoodLectorState extends State<FoodLector> {
     } else {
       print(response.statusCode);
       throw Exception('Failed to fetch food list');
+    }
+  }
+
+  Future<bool> isfavorite(String barcode) async {
+    final responseFav = await http.get(
+      Uri.parse('${globalVariables.ipVM}/favoritos'),
+      headers: <String, String>{
+        'authorization': globalVariables.tokenUser,
+      },
+    );
+    if (responseFav.statusCode == 200) {
+      final jsonDataFav = jsonDecode(responseFav.body);
+      print(jsonDataFav);
+      List<String> barcodes = jsonDataFav.map((bar) => bar['url']).toList().cast<String>();
+      if(barcodes.contains(barcode)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      print(responseFav.statusCode);
+      print("Ha habido un error con favoritos");
+      return false;
     }
   }
 
