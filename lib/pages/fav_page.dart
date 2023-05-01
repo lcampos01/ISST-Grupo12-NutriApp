@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:provider/provider.dart';
+import 'package:nutri_app/widges/listFav.dart';
 
 class FavPage extends StatefulWidget {
   const FavPage({Key? key}) : super(key: key);
@@ -9,6 +9,22 @@ class FavPage extends StatefulWidget {
 }
 
 class _FavPageState extends State<FavPage> {
+
+  // late ScrollController _scrollController;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _scrollController = ScrollController();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     _scrollController.animateTo(
+  //       _scrollController.position.maxScrollExtent,
+  //       duration: const Duration(milliseconds: 300),
+  //       curve: Curves.easeOut,
+  //     );
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +34,9 @@ class _FavPageState extends State<FavPage> {
           onTap: () {
             FocusScope.of(context).unfocus();
           },
-          child: ListView(children: [
+          child: ListView(
+            // controller: _scrollController,
+            children: [
             Center(
               child: Padding(
                 padding: EdgeInsets.all(24.0),
@@ -79,86 +97,30 @@ class _FavPageState extends State<FavPage> {
                                         "Busca entre tus alimentos favoritos")),
                           ),
                         ),
+                        //aqui debemos llamar a ListFav tantas veces como elementos haya en el get de favoritos del usuario
+                        //se puede hacer con un for y hay que poner en name: nombre del producto y en imageUrl la imagen url del producto
+                        //es como en widges/lector.dart o en widges/searcher.dart
+                        //pero con la peticion get a /favoritos -> devuelve un conjunto de urls de los alimentos
                         SingleChildScrollView(
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Huevos',
-                                    ),
-                                    Image(
-                                      image: AssetImage('assets/eggs.jpeg'),
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  ],
-                                ),
+                              ListFav(
+                                name: 'Huevos', 
+                                imageUrl: AssetImage('assets/eggs.jpeg'),
                               ),
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Kiwi',
-                                    ),
-                                    Image(
-                                      image: AssetImage('assets/kiwi.jpg'),
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  ],
-                                ),
+                              ListFav(
+                                name: 'Kiwi',
+                                imageUrl: AssetImage('assets/kiwi.jpg'),
                               ),
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Leche',
-                                    ),
-                                    Image(
-                                      image: AssetImage('assets/leche.jpg'),
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  ],
-                                ),
+                              ListFav(
+                                name: 'Leche',
+                                imageUrl: AssetImage('assets/leche.jpg'),
                               ),
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Tomate',
-                                    ),
-                                    Image(
-                                      image: AssetImage('assets/tomatos.jpg'),
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  ],
-                                ),
+                              ListFav(
+                                name: 'Tomate',
+                                imageUrl: AssetImage('assets/tomatos.jpg'),
                               ),
                             ],
                           ),

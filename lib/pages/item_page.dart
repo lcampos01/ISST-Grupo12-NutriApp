@@ -3,23 +3,30 @@ import 'package:flutter/cupertino.dart';
 //import 'package:provider/provider.dart';
 
 class ItemPage extends StatefulWidget {
-  const ItemPage({Key? key, this.name, this.imageUrl, this.macros, this.imageNutriScore, this.details, this.imageIngredientes}) : super(key: key);
+  const ItemPage({Key? key, this.name, this.imageUrl, this.macros, this.imageNutriScore, this.details, this.imageIngredientes, this.isFavorite}) : super(key: key);
   
-  final name; //pasar a ItemPage(name: //pasar nombre del alimento de la API buscado)
-  final imageUrl; //pasar a ItemPage(imageUrl: //url de la imagen de la API del alimento buscado)
-  final macros; //sera un array de double de calorias, proteinas, carbohidratos y grasas
+  final name;
+  final imageUrl; 
+  final macros; 
   final imageNutriScore;
   final details;
   final imageIngredientes;
   
+  final isFavorite;
+
   @override
   _ItemPageState createState() => _ItemPageState();
 }
 
 class _ItemPageState extends State<ItemPage> {
 
-  //macros si puede ser será un array de double [calorias, proteinas, carbohidratos, grasas]
+  bool _isFavorite = false;
   
+  @override
+  void initState() {
+    super.initState();
+    _isFavorite = widget.isFavorite;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +49,23 @@ class _ItemPageState extends State<ItemPage> {
             ),
           ),
           automaticallyImplyLeading: true,
-          // leading: Container(),
+          actions: [
+            IconButton(
+              icon: _isFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
+              iconSize: 25,
+              color: _isFavorite ? Colors.red : Colors.black,
+              onPressed: () {
+                setState(() {
+                  _isFavorite = !_isFavorite;
+                  if (_isFavorite) {
+                    //la he añadido a favoritos -> post alimentos para meterla en favs
+                  } else {
+                    //la he borrado de favoritos -> delete alimentos para sacarla de favs
+                  }
+                });
+              },
+            ),
+          ],
         ),
       ),
       body: Padding(
@@ -55,6 +78,7 @@ class _ItemPageState extends State<ItemPage> {
               style: TextStyle(
                 fontSize: 16,
               ),
+              overflow: TextOverflow.visible,
             ),
             SizedBox(height: 5),
             Text(
@@ -153,7 +177,7 @@ class _ItemPageState extends State<ItemPage> {
                 ),
               ],
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 25),
             GestureDetector(
               onTap: () {
                 //logica del boton Ver detalles
@@ -220,7 +244,7 @@ class _ItemPageState extends State<ItemPage> {
               },
               child: Container(
                 padding: EdgeInsets.all(10),
-                margin: EdgeInsets.symmetric(horizontal: 120),
+                margin: EdgeInsets.symmetric(horizontal: 110),
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 23, 142, 56),
                   borderRadius: BorderRadius.circular(8),
@@ -237,7 +261,7 @@ class _ItemPageState extends State<ItemPage> {
                 ),
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 25),
             Center(
               child: Text(
                 widget.imageNutriScore.toString() == 'a' ? 'Calidad nutricional muy buena'
@@ -253,12 +277,12 @@ class _ItemPageState extends State<ItemPage> {
                 ),
               ),
             ),
-            SizedBox(height: 25),
+            SizedBox(height: 10),
             Center(
               child: ClipRRect(
                 child: Container(
-                  width: 200,
-                  height: 100,
+                  width: 170,
+                  height: 90,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: widget.imageNutriScore.toString() == 'a' ? AssetImage('assets/nutriscore-a.png') 

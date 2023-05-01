@@ -44,6 +44,7 @@ class FoodSearcher extends SearchDelegate<String> {
                         imageNutriScore: grades[index],
                         details: cantidades[index],
                         imageIngredientes: imageIngredientsUrls[index],
+                        isFavorite: true, //esto se debe obtener al hacer get y buscar si esta en favoritos
                       ),
                     ),
                   );
@@ -120,6 +121,7 @@ class FoodSearcher extends SearchDelegate<String> {
                         imageNutriScore: grades[index],
                         details: cantidades[index],
                         imageIngredientes: imageIngredientsUrls[index],
+                        isFavorite: true, //esto se debe obtener al hacer get y ver si esta en favoritos
                       ),
                     ),
                   );
