@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import '../variables/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:nutri_app/pages/item_page.dart';
-import 'package:nutri_app/pages/search_page.dart';
 import 'package:nutri_app/main.dart';
 
 class FoodSearcher extends SearchDelegate<String> {

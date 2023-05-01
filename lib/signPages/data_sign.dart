@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_app/variables/global.dart';
 import 'package:nutri_app/functions/validaciones.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:flutter/cupertino.dart';
@@ -214,30 +213,39 @@ class _DataSignPageState extends State<DataSignPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  globalVariables.email = widget.email;
-                  globalVariables.password = widget.password;
-                  globalVariables.username = date.text;
-                  globalVariables.sexo = _selectedSex.toString();
-                  globalVariables.fechaNacimiento = _date.text;
-                  globalVariables.peso = int.parse(peso.text);
-                  globalVariables.altura = int.parse(altura.text);
-                  var pesoStr = peso.text;
-                  var alturaStr = altura.text;
-                  globalVariables.actividadFisica =
+                  var emailSign = widget.email;
+                  var passwordSign = widget.password;
+                  var usernameSign = date.text;
+                  var sexoSign = _selectedSex.toString();
+                  var fechaNacimientoSign = _date.text;
+                  var pesoSign = int.parse(peso.text);
+                  var alturaSign = int.parse(altura.text);
+                  var pesoStrSign = peso.text;
+                  var alturaStrSign = altura.text;
+                  var actividadFisicaSign =
                       actividad(_selectedActivity.toString());
-                  var actividad_diariaStr =
+                  var actividadFisicaStrSign =
                       actividad((_selectedActivity.toString())).toString();
-                  globalVariables.alergenos = _selectedAllergens;
-                  print(globalVariables);
-                  print(_selectedSex.toString());
-                  print(_date.text);
-                  print(peso.text);
-                  print(altura.text);
-                  print(actividad((_selectedActivity.toString())).toString());
-                  print(_selectedAllergens);
+                  var alergenosSign = _selectedAllergens;
+                  List<Map<String, String>> alergenosJson = alergenosSign.map((alergeno) {
+                    return {'nombre': alergeno};
+                  }).toList();
+                  print(emailSign);
+                  print(passwordSign);
+                  print(usernameSign);
+                  print(sexoSign);
+                  print(fechaNacimientoSign);
+                  print(pesoSign);
+                  print(pesoStrSign);
+                  print(alturaSign);
+                  print(alturaStrSign);
+                  print(actividadFisicaSign);
+                  print(actividadFisicaStrSign);
+                  print(alergenosSign);
+                  print(alergenosJson);
                   //validacion: estan vacios nombre, fecha_nacimiento, peso y altura
-                  if (!validateData(globalVariables.username,
-                      globalVariables.fechaNacimiento, pesoStr, alturaStr)) {
+                  if (!validateData(usernameSign,
+                      fechaNacimientoSign, pesoStrSign, alturaStrSign)) {
                     print("Hay datos vacios");
                     showDialog(
                       context: context,
@@ -256,14 +264,15 @@ class _DataSignPageState extends State<DataSignPage> {
                     final response = await http.post(
                       Uri.parse('${globalVariables.ipVM}/signup'),
                       body: jsonEncode({
-                        'email': widget.email,
-                        'password': widget.password,
-                        'nombre': globalVariables.username,
-                        'altura': globalVariables.altura,
-                        'peso': globalVariables.peso,
-                        'sexo': globalVariables.sexo,
-                        'fecha_nacimiento': globalVariables.fechaNacimiento,
-                        'actividad_diaria': globalVariables.actividadFisica,
+                        'email': emailSign,
+                        'password': passwordSign,
+                        'nombre': usernameSign,
+                        'altura': alturaSign,
+                        'peso': pesoSign,
+                        'sexo': sexoSign,
+                        'fecha_nacimiento': fechaNacimientoSign,
+                        'actividad_diaria': actividadFisicaSign,
+                        'alergenos': alergenosJson,
                       }),
                       headers: <String, String>{
                         'Content-Type': 'application/json; charset=UTF-8',

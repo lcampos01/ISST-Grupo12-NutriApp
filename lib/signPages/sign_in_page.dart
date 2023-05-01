@@ -1,6 +1,4 @@
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nutri_app/widges/myTextField.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:nutri_app/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

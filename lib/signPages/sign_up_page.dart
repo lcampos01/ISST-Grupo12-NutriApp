@@ -1,13 +1,8 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_app/signPages/data_sign.dart';
-import 'package:nutri_app/widges/myTextField.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import '../functions/validaciones.dart';
-import 'dart:convert';
-import 'package:nutri_app/variables/global.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({Key? key}) : super(key: key);

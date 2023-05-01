@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:nutri_app/widges/lector.dart';
-import 'package:nutri_app/widges/searcher.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:nutri_app/pages/progress_page.dart';

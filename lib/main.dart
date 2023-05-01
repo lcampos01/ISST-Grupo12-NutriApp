@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:nutri_app/pages/add_public_page.dart';
 import 'package:nutri_app/pages/fav_page.dart';
 import 'package:nutri_app/pages/profile_page.dart';
 import 'package:nutri_app/pages/search_page.dart';
@@ -12,7 +11,16 @@ import 'package:nutri_app/variables/global.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
+}
+
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -65,8 +73,8 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
           brightness: Brightness.light,
         ),
-        //home: ProfilePage());
-        home: SafeArea(child: NavigationScreen(page: screens[0])));
+        home: SignPage());
+        //home: SafeArea(child: NavigationScreen(page: screens[0])));
     //home: SignPage(),);
     //No ha cargado todavía la petición a la API
     // if (prueba == null) {
@@ -109,6 +117,7 @@ final List<Widget> screens = [
   ProfilePage(),
 ];
 
+// ignore: must_be_immutable
 class NavigationScreen extends StatefulWidget {
   NavigationScreen({Key? key, required this.page});
   Widget page;
@@ -243,8 +252,17 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     'authorization': globalVariables.tokenUser,
                   },
                 );
-                if (response.statusCode == 200) {
+                final responseAlergenos = await http.get(
+                  Uri.parse('${globalVariables.ipVM}/alergenos'),
+                  headers: <String, String>{
+                    'authorization': globalVariables.tokenUser,
+                  },
+                );
+                print(response.statusCode);
+                print(responseAlergenos.statusCode);
+                if ((response.statusCode == 200) && (responseAlergenos.statusCode == 200)) {
                   final jsonData = jsonDecode(response.body);
+                  final jsonDataAler = jsonDecode(responseAlergenos.body);
                   final nombre = jsonData['nombre'];
                   final email = jsonData['email'];
                   final password = jsonData['password'];
@@ -254,7 +272,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   final altura = jsonData['altura'];
                   final actividad_diaria = jsonData['actividad_diaria'];
                   //necesito recibir los alérgenosssssss:)
-
+                  print(jsonDataAler);
+                  final alergenosJson = jsonDataAler; //se recibe [{'nombre': _}, {'nombre': _},...]
+                  List<String> alergenos = alergenosJson.map((alergeno) => alergeno['nombre']).toList().cast<String>();
+                  print(alergenos);
                   print('cambia a profile');
                   setState(() {
                     widget.page = ProfilePage(
@@ -265,8 +286,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         fecha_nacimiento: fecha_nacimiento,
                         peso: peso,
                         altura: altura,
-                        actividad_diaria: actividad_diaria
+                        actividad_diaria: actividad_diaria,
                         //necesito pasarle los alérgenosssssssssss:)
+                        alergenos: alergenos
                     );
                     currentTab = 3;
                   });

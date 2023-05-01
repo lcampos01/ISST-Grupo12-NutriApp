@@ -114,6 +114,7 @@ class FoodLector extends StatefulWidget {
 }
 
 class _FoodLectorState extends State<FoodLector> {
+  // ignore: unused_field
   String _scanBarcode = 'Unknown';
 
   Future<void> scanBarcodeNormal() async {

@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_app/widges/lector.dart';
 import 'package:nutri_app/widges/searcher.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-//import 'package:provider/provider.dart';
-
-import 'package:barcode_widget/barcode_widget.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import '../functions/scanBarcode.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);

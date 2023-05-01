@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_app/main.dart';
 import 'package:nutri_app/variables/global.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,7 +11,7 @@ import 'dart:convert';
 //import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage(
+  ProfilePage(
       {Key? key,
       this.nombre,
       this.email,
@@ -22,7 +20,9 @@ class ProfilePage extends StatefulWidget {
       this.fecha_nacimiento,
       this.peso,
       this.altura,
-      this.actividad_diaria});
+      this.actividad_diaria,
+      this.alergenos,
+      });
 
   final nombre;
   final email;
@@ -32,7 +32,7 @@ class ProfilePage extends StatefulWidget {
   final peso;
   final altura;
   final actividad_diaria;
-  //final alergenos;
+  final alergenos;
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -47,7 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   TextEditingController passwordController = TextEditingController();
 
-  TextEditingController _date = TextEditingController();
+  TextEditingController fechaController = TextEditingController();
 
   TextEditingController pesoController = TextEditingController();
 
@@ -67,8 +67,6 @@ class _ProfilePageState extends State<ProfilePage> {
     'Soja',
   ].map((allergen) => MultiSelectItem<String>(allergen, allergen)).toList();
 
-  List<String> _selectedAllergens = globalVariables.alergenos;
-
   int actividad(String act) {
     if (act == 'sedentario') {
       return 0;
@@ -79,6 +77,14 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       return 3;
     }
+  }
+
+  List<String> _selectedAllergens = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedAllergens = widget.alergenos;
   }
 
   @override
@@ -140,12 +146,20 @@ class _ProfilePageState extends State<ProfilePage> {
               //   ),
               // ),
               SizedBox(height: 30),
+              Text(
+                widget.email,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 20),
               buildTextField(
                   "Nombre Completo", widget.nombre!, nombreController, false),
-              buildTextField(
-                  "Correo Electrónico", widget.email!, emailController, false),
-              buildTextField(
-                  "Contraseña", '********', passwordController, true),
+              // buildTextField(
+              //     "Correo Electrónico", widget.email!, emailController, false),
+              // buildTextField(
+              //     "Contraseña", '********', passwordController, true),
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: DropdownButtonFormField<String>(
@@ -176,9 +190,9 @@ class _ProfilePageState extends State<ProfilePage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: TextField(
-                  controller: _date,
+                  controller: fechaController,
                   decoration: InputDecoration(
-                    hintText: globalVariables.fechaNacimiento,
+                    hintText: widget.fecha_nacimiento,
                     contentPadding: EdgeInsets.only(bottom: 5),
                     labelText: "Fecha de Nacimiento",
                     floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -192,7 +206,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                         if (pickeddate != null) {
                           setState(() {
-                            _date.text =
+                            fechaController.text =
                                 DateFormat("dd-MM-yyyy").format(pickeddate);
                           });
                         }
@@ -260,7 +274,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Seleccionar alergenos"),
+                        Text("Seleccionar alérgenos"),
                         Icon(Icons.add_circle_outline_outlined,
                             color: Colors.grey),
                       ],
@@ -324,17 +338,26 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: () async {
                       // var emailMod = emailController.toString(); segun el metodo put modify-user no se puede modificar
                       // var passwordMod = passwordController.toString(); segun el método put modify-user no se puede modificar
-                      var usernameMod = nombreController.toString();
+                      var usernameMod = nombreController.text.isNotEmpty ? nombreController.text : widget.nombre;
                       var sexoMod = _selectedSex.toString();
-                      var fechaNacimientoMod = _date.toString();
-                      var pesoMod =
-                          int.parse(pesoController.toString());
-                      var alturaMod =
-                          int.parse(alturaController.toString());
+                      var fechaNacimientoMod = fechaController.text.isNotEmpty ? fechaController.text : widget.fecha_nacimiento;
+                      var pesoMod = int.tryParse(pesoController.text) ?? widget.peso;
+                      var alturaMod = int.tryParse(alturaController.text) ?? widget.altura;
                       var actividadFisicaMod =
                           actividad(_selectedActivity.toString());
-                      //var alergenosMod = _selectedAllergens; va a haber que enviarlos tambien
-                      final response = await http.post(
+      
+                      List<Map<String, String>> alergenosMod = _selectedAllergens.map((alergeno) {
+                        return {'nombre': alergeno};
+                      }).toList();
+                      
+                      print(usernameMod);
+                      print(sexoMod);
+                      print(fechaNacimientoMod);
+                      print(pesoMod);
+                      print(alturaMod);
+                      print(actividadFisicaMod);
+                      print(alergenosMod);
+                      final response = await http.put(
                         Uri.parse('${globalVariables.ipVM}/modify-user'),
                         body: jsonEncode({
                           // 'email': emailMod,  
@@ -345,13 +368,23 @@ class _ProfilePageState extends State<ProfilePage> {
                           'sexo': sexoMod,
                           'fecha_nacimiento': fechaNacimientoMod,
                           'actividad_diaria': actividadFisicaMod,
-                          //alergenos va a haber que poder modificarlos.
                         }),
                         headers: <String, String>{
                           'Content-Type': 'application/json; charset=UTF-8',
+                          'authorization': globalVariables.tokenUser,
                         },
                       );
-                      if (response.statusCode == 200) {
+                      final responseAlergenos = await http.post(
+                        Uri.parse('${globalVariables.ipVM}/alergenos'),
+                        body: jsonEncode(alergenosMod),
+                        headers: <String, String>{
+                          'Content-Type': 'application/json; charset=UTF-8',
+                          'authorization': globalVariables.tokenUser,
+                        },
+                      );
+                      print(response.statusCode);
+                      print(responseAlergenos.statusCode);
+                      if (response.statusCode == 200 && responseAlergenos.statusCode == 200) {
                         showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
@@ -363,7 +396,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  SafeArea(child: NavigationScreen(page: screens[3])),
+                                                  SafeArea(child: NavigationScreen(page: screens[0])),
                                             ),
                                           );
                                         },

@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:nutri_app/signPages/sign_in_page.dart';
-import 'package:nutri_app/signPages/sign_up_page.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/cupertino.dart';
 //import 'package:provider/provider.dart';
 
