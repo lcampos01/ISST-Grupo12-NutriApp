@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../variables/global.dart';
@@ -69,12 +68,12 @@ class FoodSearcher extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
-      IconButton(
-        onPressed: () {
-          query = '';
-        },
-        icon: const Icon(Icons.clear),
-      ),
+      // IconButton(
+      //   onPressed: () {
+      //     query = '';
+      //   },
+      //   icon: const Icon(Icons.clear),
+      // ),
     ];
   }
 
@@ -155,7 +154,6 @@ class FoodSearcher extends SearchDelegate<String> {
         'authorization': globalVariables.tokenUser,
       },
     );
-
     if (response.statusCode == 200) {
       jsonData = jsonDecode(response.body);
       print(jsonData);
@@ -185,7 +183,7 @@ class FoodSearcher extends SearchDelegate<String> {
     if (responseFav.statusCode == 200) {
       final jsonDataFav = jsonDecode(responseFav.body);
       print(jsonDataFav);
-      List<String> barcodes = jsonDataFav.map((bar) => bar['url']).toList().cast<String>();
+      List<String> barcodes = jsonDataFav.map((bar) => bar['barcode']).toList().cast<String>();
       if(barcodes.contains(barcode)) {
         return true;
       } else {

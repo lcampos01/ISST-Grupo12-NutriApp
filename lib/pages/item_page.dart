@@ -60,12 +60,44 @@ class _ItemPageState extends State<ItemPage> {
               color: _isFavorite ? Colors.red : Colors.black,
               onPressed: () async {
                 _isFavorite = !_isFavorite;
+                final barcode = widget.barcode;
+                final nombre = widget.name;
+                final imageUrlNetwork = widget.imageUrl.toString();
+                final imageUrl = RegExp(r'"([^"]*)"').firstMatch(imageUrlNetwork)!.group(1);
+                final imageNutriScore = widget.imageNutriScore;
+                final cantidades = widget.details;
+                final imageIngredientesNetwork = widget.imageIngredientes.toString();
+                final imageIngredientes = RegExp(r'"([^"]*)"').firstMatch(imageIngredientesNetwork)!.group(1);
+                final calorias = widget.macros[0];
+                final proteinas = widget.macros[1];
+                final carbohidratos = widget.macros[2];
+                final grasas = widget.macros[3];
+                print(barcode);
+                print(nombre);
+                print(imageUrlNetwork);
+                print(imageUrl);
+                print(imageNutriScore);
+                print(cantidades);
+                print(imageIngredientesNetwork);
+                print(calorias);
+                print(proteinas);
+                print(carbohidratos);
+                print(grasas);
                 if (_isFavorite) {
                   //la he añadido a favoritos -> post alimentos para meterla en favs
                   final responseadd = await http.post(
                     Uri.parse('${globalVariables.ipVM}/favoritos'),
                     body: jsonEncode({
-                      "url": widget.barcode, 
+                      "barcode": barcode,
+                      "nombre": nombre,
+                      "imageUrl": imageUrl,
+                      "imageNutriScore": imageNutriScore,
+                      "cantidades": cantidades,
+                      "imageIngredientes": imageIngredientes,
+                      "calorias": calorias,
+                      "proteinas": proteinas,
+                      "carbohidratos": carbohidratos,
+                      "grasas": grasas
                     }),
                     headers: <String, String>{
                       'Content-Type': 'application/json; charset=UTF-8',
@@ -82,7 +114,7 @@ class _ItemPageState extends State<ItemPage> {
                   final responsedelete = await http.delete(
                     Uri.parse('${globalVariables.ipVM}/favoritos'),
                     body: jsonEncode({
-                      "url": widget.barcode, 
+                      "barcode": widget.barcode, 
                     }),
                     headers: <String, String>{
                       'Content-Type': 'application/json; charset=UTF-8',

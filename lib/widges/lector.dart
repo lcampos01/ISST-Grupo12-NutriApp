@@ -128,7 +128,7 @@ class _FoodLectorState extends State<FoodLector> {
     if (responseFav.statusCode == 200) {
       final jsonDataFav = jsonDecode(responseFav.body);
       print(jsonDataFav);
-      List<String> barcodes = jsonDataFav.map((bar) => bar['url']).toList().cast<String>();
+      List<String> barcodes = jsonDataFav.map((bar) => bar['barcode']).toList().cast<String>();
       if(barcodes.contains(barcode)) {
         return true;
       } else {
