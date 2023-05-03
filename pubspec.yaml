@@ -32,12 +32,9 @@ dependencies:
     sdk: flutter
   google_fonts: ^4.0.3
   percent_indicator: ^3.4.0
-<<<<<<< HEAD
-=======
   barcode_widget:
   camera: ^0.9.4+5
   flutter_barcode_scanner:  ^2.0.0
->>>>>>> 553af4f4e4eb1a190c2487c7c3a10856bb5a57bd
   intl: ^0.17.0
   multi_select_flutter: ^4.1.3
 
