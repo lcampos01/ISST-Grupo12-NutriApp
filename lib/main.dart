@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:nutri_app/pages/fav_page.dart';
+import 'package:nutri_app/pages/home_page2.dart';
 import 'package:nutri_app/pages/profile_page.dart';
 import 'package:nutri_app/pages/search_page.dart';
 import 'package:nutri_app/signPages/sign.dart';
@@ -73,7 +74,8 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
           brightness: Brightness.light,
         ),
-        home: SignPage());
+        //home: SignPage());
+        home: HomePage2());
         //home: SafeArea(child: NavigationScreen(page: screens[0])));
     //home: SignPage(),);
     //No ha cargado todavía la petición a la API
