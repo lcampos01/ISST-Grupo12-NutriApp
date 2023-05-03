@@ -21,6 +21,8 @@ class ProfilePage extends StatefulWidget {
       this.peso,
       this.altura,
       this.actividad_diaria,
+      this.objetivo,
+      this.kcalGoal,
       this.alergenos,
       });
 
@@ -32,6 +34,8 @@ class ProfilePage extends StatefulWidget {
   final peso;
   final altura;
   final actividad_diaria;
+  final objetivo;
+  final kcalGoal;
   final alergenos;
 
   @override
@@ -53,9 +57,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
   TextEditingController alturaController = TextEditingController();
 
+  TextEditingController goal = TextEditingController();
+
   String? _selectedActivity = 'moderado';
 
+  String? _selectedGoal = 'déficit calórico';
+
   String? _selectedSex = 'hombre';
+
 
   List<MultiSelectItem<String>> _allergens = [
     'Lactosa',
@@ -81,10 +90,91 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<String> _selectedAllergens = [];
 
+  double tbm = 0;
+  double kcal = 0;
+  double kcalGoal = 0;
+
+  String formatDate(String date) {
+    if(date.contains('-')) {
+      List<String> partes = date.split('-');
+      if(partes[2].length == 4) {
+        return '${partes[2]}-${partes[1]}-${partes[0]}';
+      } else {
+        return date;
+      }
+    } else {
+      return date;
+    }
+  }
+
+  double getTbm(String? sex, String? birth, String? weight, String? height) {
+    double tbm = 0;
+    if(sex == null || birth == '' || weight == '' || height == '') {
+      return tbm = getTbm(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura);
+    } else {
+      print(birth);
+      print(weight);
+      print(height);
+      DateTime fecha = DateTime.parse(formatDate(birth!));
+      DateTime today = DateTime.now();
+      int anoToday = today.year;
+      int anoFecha = fecha.year;
+      int edad = anoToday - anoFecha;
+      double peso = double.parse(weight!);
+      double altura = double.parse(height!);
+      if (sex == 'hombre') {
+        tbm = 10*peso + 6.25*altura - 5*edad + 5;
+        return tbm;
+      } else {
+        tbm = 10*peso + 6.25*altura - 5*edad - 161;
+        return tbm;
+      }
+    }
+  }
+
+  double getKcal(String? sex, String? birth, String? weight, String? height, String? act) {
+    double tbm = getTbm(sex, birth, weight, height);
+    double kcal = 0;
+    if(act == 'activo') {
+      kcal = tbm*1.8;
+    } else if(act == 'moderado') {
+      kcal = tbm*1.55;
+    } else if(act == 'sedentario') {
+      kcal = tbm*1.2;
+    } else {
+      kcal = 0;
+    }
+    return kcal;
+  }
+  double getKcalGoal(String? sex, String? birth, String? weight, String? height, String? act, String? goalStr, String? goal) {
+    double kcal = getKcal(sex, birth, weight, height, act);
+    double kcalGoal = getKcalGoal(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura, widget.actividad_diaria, widget.objetivo, widget.kcalGoal);
+    if(goal != '') {
+      if(goalStr == 'déficit calórico') {
+        return kcalGoal = kcal - double.parse(goal!);
+      } else if(goalStr == 'superávit calórico') {
+        return kcalGoal = kcal + double.parse(goal!);
+      } else if(goalStr == 'alimentación hiperproteica') {
+        if(weight == '') {
+          return kcalGoal = 0;
+        } else {
+          return kcalGoal = double.parse(weight!)*double.parse(goal!);
+        }
+      } else {
+        return kcalGoal = kcal;
+      }
+    } else {
+      return kcalGoal;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _selectedAllergens = widget.alergenos;
+    tbm = getTbm(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura);
+    kcal = getKcal(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura, widget.altura);
+    kcalGoal = getKcalGoal(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura, widget.altura, widget.objetivo, widget.kcalGoal);
   }
 
   @override
@@ -224,8 +314,18 @@ class _ProfilePageState extends State<ProfilePage> {
               buildNumericField(
                   "Altura en cm", widget.altura!.toString(), alturaController),
 
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: Text(
+                  'Tu Tasa de Metabolismo Basal (TMB) (Fórmula Mifflin-St. Jeor) es ${getTbm(_selectedSex, fechaController.text, pesoController.text, alturaController.text).toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
               //Actividad Física
-
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: DropdownButtonFormField<String>(
@@ -257,7 +357,68 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: Text(
+                  'Dependiendo del tipo de actividad física que realices, la cantidad mínima de energía variará: ${getKcal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity).toStringAsFixed(2)}} Kcal',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Objetivo',
+                    border: OutlineInputBorder(),
+                  ),
+                  value: _selectedGoal,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedGoal = newValue;
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: 'déficit calórico',
+                      child: Text('Déficit calórico'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'calorías TBM',
+                      child: Text('Calorías TBM'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'superávit calórico',
+                      child: Text('Superávit calórico'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'alimentación hiperproteica',
+                      child: Text('Alimentación hiperproteica'),
+                    ),
+                  ],
+                ),
+              ),
+              (_selectedGoal == 'déficit calórico' || _selectedGoal == 'superávit calórico')
+                ? buildNumericField("Ajusta las Kcal", "500", goal)
+                : _selectedGoal == 'alimentación hiperproteica'
+                  ? buildNumericField("Ajusta los g/peso", "1.5", goal)
+                  : Container(),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  _selectedGoal == 'alimentación hiperproteica' 
+                  ? 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text).toStringAsFixed(2)} g proteinas'
+                    : 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text).toStringAsFixed(2)} kcal',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
               //Alergenos
 
               Padding(

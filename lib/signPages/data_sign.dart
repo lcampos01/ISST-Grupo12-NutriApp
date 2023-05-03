@@ -32,7 +32,11 @@ class _DataSignPageState extends State<DataSignPage> {
 
   TextEditingController altura = TextEditingController();
 
+  TextEditingController goal = TextEditingController();
+
   String? _selectedActivity = "moderado";
+
+  String? _selectedGoal = "déficit calórico";
 
   String? _selectedSex = "hombre";
 
@@ -58,6 +62,89 @@ class _DataSignPageState extends State<DataSignPage> {
     } else {
       return 3;
     }
+  }
+
+
+  String formatDate(String date) {
+    if(date.contains('-')) {
+      List<String> partes = date.split('-');
+      return '${partes[2]}-${partes[1]}-${partes[0]}';
+    } else {
+      return date;
+    }
+  }
+
+  double tbm = 0;
+  double kcal = 0;
+  double kcalGoal = 0;
+
+  double getTbm(String? sex, String? birth, String? weight, String? height) {
+    double tbm = 0;
+    if(sex == null || birth == '' || weight == '' || height == '') {
+      return tbm = 0;
+    } else {
+      print(birth);
+      print(weight);
+      print(height);
+      DateTime fecha = DateTime.parse(formatDate(birth!));
+      DateTime today = DateTime.now();
+      int anoToday = today.year;
+      int anoFecha = fecha.year;
+      int edad = anoToday - anoFecha;
+      double peso = double.parse(weight!);
+      double altura = double.parse(height!);
+      if (sex == 'hombre') {
+        tbm = 10*peso + 6.25*altura - 5*edad + 5;
+        return tbm;
+      } else {
+        tbm = 10*peso + 6.25*altura - 5*edad - 161;
+        return tbm;
+      }
+    }
+  }
+
+  double getKcal(String? sex, String? birth, String? weight, String? height, String? act) {
+    double tbm = getTbm(sex, birth, weight, height);
+    double kcal = 0;
+    if(act == 'activo') {
+      kcal = tbm*1.8;
+    } else if(act == 'moderado') {
+      kcal = tbm*1.55;
+    } else if(act == 'sedentario') {
+      kcal = tbm*1.2;
+    } else {
+      kcal = 0;
+    }
+    return kcal;
+  }
+  double getKcalGoal(String? sex, String? birth, String? weight, String? height, String? act, String? goalStr, String? goal) {
+    double kcal = getKcal(sex, birth, weight, height, act);
+    double kcalGoal = 0;
+    if(goal != '') {
+      if(goalStr == 'déficit calórico') {
+        return kcalGoal = kcal - double.parse(goal!);
+      } else if(goalStr == 'superávit calórico') {
+        return kcalGoal = kcal + double.parse(goal!);
+      } else if(goalStr == 'alimentación hiperproteica') {
+        if(weight == '') {
+          return kcalGoal = 0;
+        } else {
+          return kcalGoal = double.parse(weight!)*double.parse(goal!);
+        }
+      } else {
+        return kcalGoal = kcal;
+      }
+    } else {
+      return kcalGoal;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    tbm = getTbm(_selectedSex, _date.text, peso.text, altura.text);
+    kcal = getKcal(_selectedSex, _date.text, peso.text, altura.text, _selectedActivity);
+    kcalGoal = getKcalGoal(_selectedSex, _date.text, peso.text, altura.text, _selectedActivity, _selectedGoal, goal.text);
   }
 
   @override
@@ -138,6 +225,17 @@ class _DataSignPageState extends State<DataSignPage> {
               //Cuadros Peso y Altura
               buildNumericField("Peso aproximado en Kg", "81", peso),
               buildNumericField("Altura en cm", "192", altura),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: Text(
+                  'Tu Tasa de Metabolismo Basal (TMB) (Fórmula Mifflin-St. Jeor) es ${getTbm(_selectedSex, _date.text, peso.text, altura.text).toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
               //Actividad Física
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
@@ -166,6 +264,68 @@ class _DataSignPageState extends State<DataSignPage> {
                       child: Text('Sedentario'),
                     ),
                   ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: Text(
+                  'Dependiendo del tipo de actividad física que realices, la cantidad mínima de energía variará: ${getKcal(_selectedSex, _date.text, peso.text, altura.text, _selectedActivity).toStringAsFixed(2)} Kcal',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Objetivo',
+                    border: OutlineInputBorder(),
+                  ),
+                  value: _selectedGoal,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedGoal = newValue;
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: 'déficit calórico',
+                      child: Text('Déficit calórico'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'calorías TBM',
+                      child: Text('Calorías TBM'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'superávit calórico',
+                      child: Text('Superávit calórico'),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'alimentación hiperproteica',
+                      child: Text('Alimentación hiperproteica'),
+                    ),
+                  ],
+                ),
+              ),
+              (_selectedGoal == 'déficit calórico' || _selectedGoal == 'superávit calórico')
+                ? buildNumericField("Ajusta las Kcal", "500", goal)
+                : _selectedGoal == 'alimentación hiperproteica'
+                  ? buildNumericField("Ajusta los g/peso", "1.5", goal)
+                  : Container(),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  _selectedGoal == 'alimentación hiperproteica' 
+                  ? 'El objetivo establecido es: ${getKcalGoal(_selectedSex, _date.text, peso.text, altura.text, _selectedActivity, _selectedGoal, goal.text).toStringAsFixed(2)} g proteinas'
+                    : 'El objetivo establecido es: ${getKcalGoal(_selectedSex, _date.text, peso.text, altura.text, _selectedActivity, _selectedGoal, goal.text).toStringAsFixed(2)} kcal',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.visible,
                 ),
               ),
               //Alergenos
@@ -333,6 +493,9 @@ class _DataSignPageState extends State<DataSignPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                 ),
+              ),
+              SizedBox(
+                height: 50,
               ),
             ],
           ),

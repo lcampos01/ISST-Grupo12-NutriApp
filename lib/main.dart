@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:nutri_app/pages/fav_page.dart';
 import 'package:nutri_app/pages/profile_page.dart';
 import 'package:nutri_app/pages/search_page.dart';
+import 'package:nutri_app/signPages/data_sign.dart';
 import 'package:nutri_app/signPages/sign.dart';
 import 'package:nutri_app/pages/home_page.dart';
 import 'package:nutri_app/variables/global.dart';
