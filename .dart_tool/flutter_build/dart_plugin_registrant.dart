@@ -6,7 +6,9 @@
 // @dart = 2.19
 
 import 'dart:io'; // flutter_ignore: dart_io_import.
+import 'package:camera_android/camera_android.dart';
 import 'package:path_provider_android/path_provider_android.dart';
+import 'package:camera_avfoundation/camera_avfoundation.dart';
 import 'package:path_provider_foundation/path_provider_foundation.dart';
 import 'package:path_provider_linux/path_provider_linux.dart';
 import 'package:path_provider_foundation/path_provider_foundation.dart';
@@ -19,16 +21,33 @@ class _PluginRegistrant {
   static void register() {
     if (Platform.isAndroid) {
       try {
+        AndroidCamera.registerWith();
+      } catch (err) {
+        print(
+          '`camera_android` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
         PathProviderAndroid.registerWith();
       } catch (err) {
         print(
           '`path_provider_android` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
-        rethrow;
       }
 
     } else if (Platform.isIOS) {
+      try {
+        AVFoundationCamera.registerWith();
+      } catch (err) {
+        print(
+          '`camera_avfoundation` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
       try {
         PathProviderFoundation.registerWith();
       } catch (err) {
@@ -36,7 +55,6 @@ class _PluginRegistrant {
           '`path_provider_foundation` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
-        rethrow;
       }
 
     } else if (Platform.isLinux) {
@@ -47,7 +65,6 @@ class _PluginRegistrant {
           '`path_provider_linux` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
-        rethrow;
       }
 
     } else if (Platform.isMacOS) {
@@ -58,7 +75,6 @@ class _PluginRegistrant {
           '`path_provider_foundation` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
-        rethrow;
       }
 
     } else if (Platform.isWindows) {
@@ -69,7 +85,6 @@ class _PluginRegistrant {
           '`path_provider_windows` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
-        rethrow;
       }
 
     }

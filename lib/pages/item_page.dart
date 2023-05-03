@@ -1,32 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:nutri_app/signPages/sign_in_page.dart';
-import 'package:nutri_app/signPages/sign_up_page.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/cupertino.dart';
-//import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:nutri_app/variables/global.dart';
 
 class ItemPage extends StatefulWidget {
-  const ItemPage({Key? key, this.name, this.imageUrl, this.macros, this.calidad, this.imageNutriScore}) : super(key: key);
+  const ItemPage({Key? key, this.name, this.imageUrl, this.macros, this.imageNutriScore, this.details, this.imageIngredientes, this.barcode, this.isFavorite}) : super(key: key);
   
-  final name; //pasar a ItemPage(name: //pasar nombre del alimento de la API buscado)
-  final imageUrl; //pasar a ItemPage(imageUrl: //url de la imagen de la API del alimento buscado)
-  final macros; //sera un array de double de calorias, proteinas, carbohidratos y grasas
-  final calidad;  //string con buena, mala... (para calidad nutricional..)
+  final name;
+  final imageUrl; 
+  final macros; 
   final imageNutriScore;
+  final details;
+  final imageIngredientes;
+  final barcode;
   
+  final isFavorite;
+
   @override
   _ItemPageState createState() => _ItemPageState();
 }
 
 class _ItemPageState extends State<ItemPage> {
 
-  //macros si puede ser será un array de double [calorias, proteinas, carbohidratos, grasas]
-  //calorias = widget.macros[0];
-  //proteinas = widget.macros[1];
-  //carbohidratos = widget.macros[2];
-  //grasas = widget.macros[3];
-  //calidad = widget.calidad;
+  bool _isFavorite = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    _isFavorite = widget.isFavorite;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,20 +38,99 @@ class _ItemPageState extends State<ItemPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(200),
         child: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
           centerTitle: true,
           flexibleSpace: ClipRRect(
             child: Container(
+              margin: EdgeInsets.only(top: 60),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/eggs.jpeg'),  //sustituir por imageUrl
-                  fit: BoxFit.fill
+                  image: widget.imageUrl,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
           ),
-          elevation: 5,
           automaticallyImplyLeading: true,
-          // leading: Container(),
+          actions: [
+            IconButton(
+              icon: _isFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
+              iconSize: 25,
+              color: _isFavorite ? Colors.red : Colors.black,
+              onPressed: () async {
+                _isFavorite = !_isFavorite;
+                final barcode = widget.barcode;
+                final nombre = widget.name;
+                final imageUrlNetwork = widget.imageUrl.toString();
+                final imageUrl = RegExp(r'"([^"]*)"').firstMatch(imageUrlNetwork)!.group(1);
+                final imageNutriScore = widget.imageNutriScore;
+                final cantidades = widget.details;
+                final imageIngredientesNetwork = widget.imageIngredientes.toString();
+                final imageIngredientes = RegExp(r'"([^"]*)"').firstMatch(imageIngredientesNetwork)!.group(1);
+                final calorias = widget.macros[0];
+                final proteinas = widget.macros[1];
+                final carbohidratos = widget.macros[2];
+                final grasas = widget.macros[3];
+                print(barcode);
+                print(nombre);
+                print(imageUrlNetwork);
+                print(imageUrl);
+                print(imageNutriScore);
+                print(cantidades);
+                print(imageIngredientesNetwork);
+                print(calorias);
+                print(proteinas);
+                print(carbohidratos);
+                print(grasas);
+                if (_isFavorite) {
+                  //la he añadido a favoritos -> post alimentos para meterla en favs
+                  final responseadd = await http.post(
+                    Uri.parse('${globalVariables.ipVM}/favoritos'),
+                    body: jsonEncode({
+                      "barcode": barcode,
+                      "nombre": nombre,
+                      "imageUrl": imageUrl,
+                      "imageNutriScore": imageNutriScore,
+                      "cantidades": cantidades,
+                      "imageIngredientes": imageIngredientes,
+                      "calorias": calorias,
+                      "proteinas": proteinas,
+                      "carbohidratos": carbohidratos,
+                      "grasas": grasas
+                    }),
+                    headers: <String, String>{
+                      'Content-Type': 'application/json; charset=UTF-8',
+                      'authorization': globalVariables.tokenUser,
+                    },
+                  );
+                  if(responseadd.statusCode == 200) {
+                    print("Se ha añadido a favoritos");
+                  } else {
+                    print("Ha ocurrido un error");
+                  }
+                } else {
+                  //la he borrado de favoritos -> delete alimentos para sacarla de favs
+                  final responsedelete = await http.delete(
+                    Uri.parse('${globalVariables.ipVM}/favoritos'),
+                    body: jsonEncode({
+                      "barcode": widget.barcode, 
+                    }),
+                    headers: <String, String>{
+                      'Content-Type': 'application/json; charset=UTF-8',
+                      'authorization': globalVariables.tokenUser,
+                    },
+                  );
+                  if(responsedelete.statusCode == 200) {
+                    print("Se ha borrado de favoritos");
+                  } else {
+                    print("Ha ocurrido un error");
+                  }
+                }
+                setState(() {});
+              },
+            ),
+          ],
         ),
       ),
       body: Padding(
@@ -60,6 +143,7 @@ class _ItemPageState extends State<ItemPage> {
               style: TextStyle(
                 fontSize: 16,
               ),
+              overflow: TextOverflow.visible,
             ),
             SizedBox(height: 5),
             Text(
@@ -77,10 +161,17 @@ class _ItemPageState extends State<ItemPage> {
                     Text('Calorías'),
                     SizedBox(height: 10),
                     //Text('$calorias [Kcal]'), para cuando se cree el array de macros
-                    Text(
-                      '___ [Kcal]',
+                    widget.macros[0] == null ? Text(
+                      'NS/NC',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ) 
+                    : Text(
+                      '${double.parse(double.parse((widget.macros[0]).toString()).toStringAsFixed(3))} [Kcal]', 
+                      style: TextStyle(
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -91,10 +182,17 @@ class _ItemPageState extends State<ItemPage> {
                     Text('Proteínas'),
                     SizedBox(height: 10),
                     //Text('$proteinas [g]'), para cuando se cree el array de macros
-                    Text(
-                      '___ [g]',
+                    widget.macros[1] == null ? Text(
+                      'NS/NC',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ) 
+                    : Text(
+                      '${double.parse(double.parse((widget.macros[1]).toString()).toStringAsFixed(3))} [g]',
+                      style: TextStyle(
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -105,10 +203,17 @@ class _ItemPageState extends State<ItemPage> {
                     Text('Carbohidratos'),
                     SizedBox(height: 10),
                     //Text('$carbohidratos [g]'), para cuando se cree el array de macros
-                    Text(
-                      '___ [g]',
+                    widget.macros[2] == null ? Text(
+                      'NS/NC',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ) 
+                    : Text(
+                      '${double.parse(double.parse((widget.macros[2]).toString()).toStringAsFixed(3))} [g]',
+                      style: TextStyle(
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -119,10 +224,17 @@ class _ItemPageState extends State<ItemPage> {
                     Text('Grasas'),
                     SizedBox(height: 10),
                     //Text('$grasas [g]'), para cuando se cree el array de macros
-                    Text(
-                      '___ [g]',
+                    widget.macros[3] == null ? Text(
+                      'NS/NC',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ) 
+                    : Text(
+                      '${double.parse(double.parse((widget.macros[3]).toString()).toStringAsFixed(3))} [g]',
+                      style: TextStyle(
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -130,25 +242,60 @@ class _ItemPageState extends State<ItemPage> {
                 ),
               ],
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 25),
             GestureDetector(
               onTap: () {
                 //logica del boton Ver detalles
                 showDialog(
                   context: context,
                   builder: (BuildContext context) => AlertDialog(
-                    title: Text('Detalles'), 
+                    title: Center(
+                      child: Text(
+                        'Detalles',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ), 
                     content: Container(
-                      height: 300,
-                      child: Column(
-                        children: [
-                          Text('1 Detalle'),   //cambiar
-                          Text('2 Detalle'),   //cambiar
-                          Text('3 Detalle'),   //cambiar
-                          Text('4 Detalle'),   //cambiar
-                          Text('5 Detalle'),   //cambiar
-                          Text('6 Detalle'),   //cambiar
-                        ],
+                      height: 600,
+                      child: Center(
+                        child: Column(
+                          children: [
+                            widget.details == '' ? Text(
+                                'Cantidad de producto: NS/NC',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                ),
+                              ) 
+                              : Text(
+                                  'Cantidad de producto: ${widget.details}',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                  ),
+                                ),   //cambiar
+                            SizedBox(height: 55),
+                            Text(
+                              'Ingredientes:',
+                              style: TextStyle(
+                                fontSize: 24,
+                              ),
+                            ),
+                            ClipRRect(
+                              child: Container(
+                                width: 300,
+                                height: 300,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: widget.imageIngredientes,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     actions: [
@@ -162,7 +309,7 @@ class _ItemPageState extends State<ItemPage> {
               },
               child: Container(
                 padding: EdgeInsets.all(10),
-                margin: EdgeInsets.symmetric(horizontal: 120),
+                margin: EdgeInsets.symmetric(horizontal: 110),
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 23, 142, 56),
                   borderRadius: BorderRadius.circular(8),
@@ -179,11 +326,15 @@ class _ItemPageState extends State<ItemPage> {
                 ),
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 25),
             Center(
               child: Text(
-                //'Calidad nutricional $calidad',
-                'Calidad nutricional buena',
+                widget.imageNutriScore.toString() == 'a' ? 'Calidad nutricional muy buena'
+                                : (widget.imageNutriScore.toString() == 'b' ? 'Calidad nutricional buena'
+                                : (widget.imageNutriScore.toString() == 'c' ? 'Calidad nutricional media'
+                                : (widget.imageNutriScore.toString() == 'd' ? 'Calidad nutricional baja'
+                                : (widget.imageNutriScore.toString() == 'e' ? 'Calidad nutricional mala'
+                                : 'Calidad nutricional (?)')))),
                 style: TextStyle(
                   color: Color.fromARGB(255, 23, 142, 56),
                   fontWeight: FontWeight.bold,
@@ -191,15 +342,20 @@ class _ItemPageState extends State<ItemPage> {
                 ),
               ),
             ),
-            SizedBox(height: 25),
+            SizedBox(height: 10),
             Center(
               child: ClipRRect(
                 child: Container(
-                  width: 200,
-                  height: 50,
+                  width: 170,
+                  height: 90,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/logo.png'),  //sustituir por imageNutriScore
+                      image: widget.imageNutriScore.toString() == 'a' ? AssetImage('assets/nutriscore-a.png') 
+                                        : (widget.imageNutriScore.toString() == 'b' ? AssetImage('assets/nutriscore-b.png')
+                                        : (widget.imageNutriScore.toString() == 'c' ? AssetImage('assets/nutriscore-c.png')
+                                        : (widget.imageNutriScore.toString() == 'd' ? AssetImage('assets/nutriscore-d.png')
+                                        : (widget.imageNutriScore.toString() == 'e' ? AssetImage('assets/nutriscore-e.png')
+                                        : AssetImage('assets/No_Image_Available.jpg'))))),
                       fit: BoxFit.fill
                     ),
                   ),

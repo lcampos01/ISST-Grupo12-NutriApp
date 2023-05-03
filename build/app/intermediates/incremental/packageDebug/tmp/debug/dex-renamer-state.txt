@@ -1,4 +1,0 @@
-#Tue Mar 14 19:10:27 CET 2023
-base.0=C\:\\Users\\34697\\Desktop\\Flautas\\ISST-Grupo12-NutriApp\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
