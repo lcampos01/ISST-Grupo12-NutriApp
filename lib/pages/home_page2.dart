@@ -215,13 +215,17 @@ class _HomePage2State extends State<HomePage2> {
                                     'proteinas': proteinasMod,
                                     'calorias': caloriasMod,
                                     'momento': momentoDiaMod,
-                                    'alimento' nombreMod, //el nombre de la api
-                                    'cantidad' cantidadMod,
+                                    'alimento' nombreMod,
+                                    'cantidad' cantidadMod
 
 
 
                                   }),
-                              );
+                                headers: <String, String>{
+                                    'Content-Type': 'application/json; charset=UTF-8',
+                                    'authorization': globalVariables.tokenUser,
+                                  },
+                                );
 
                             // Aquí puede guardar la cantidad y la selección del usuario en su base de datos
                             Navigator.of(context).pop();
@@ -234,11 +238,7 @@ class _HomePage2State extends State<HomePage2> {
 
 
 
-                //     headers: <String, String>{
-                //       'Content-Type': 'application/json; charset=UTF-8',
-                //       'authorization': globalVariables.tokenUser,
-                //     },
-                //   );
+
 
                 //   print( DateTime.now());
                 //   if(responseadd.statusCode == 200) {
