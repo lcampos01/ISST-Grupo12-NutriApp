@@ -104,6 +104,8 @@ class _ItemPageState extends State<ItemPage> {
                       'authorization': globalVariables.tokenUser,
                     },
                   );
+
+
                   if(responseadd.statusCode == 200) {
                     print("Se ha añadido a favoritos");
                   } else {
