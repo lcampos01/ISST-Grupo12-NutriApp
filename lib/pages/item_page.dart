@@ -7,7 +7,7 @@ import 'package:nutri_app/variables/global.dart';
 
 class ItemPage extends StatefulWidget {
   const ItemPage({Key? key, this.name, this.imageUrl, this.macros, this.imageNutriScore, this.details, this.imageIngredientes, this.barcode, this.isFavorite}) : super(key: key);
-  
+
   final name;
   final imageUrl; 
   final macros; 
@@ -22,15 +22,40 @@ class ItemPage extends StatefulWidget {
   _ItemPageState createState() => _ItemPageState();
 }
 
+
 class _ItemPageState extends State<ItemPage> {
 
   bool _isFavorite = false;
-  
+
+  String momentoDia= 'Comida';
+  int cantidad= 0;
+
+  String? _selectedMomento = 'Comida';
+  TextEditingController cantidadController = TextEditingController();
+//  bool _isRegistered = false;
+
+
   @override
   void initState() {
     super.initState();
     _isFavorite = widget.isFavorite;
   }
+
+  // int momento(String act) {
+  //   if (act == 'Desayuno') {
+  //     return 0;
+  //   } else if (act == 'Almuerzo') {
+  //     return 1;
+  //   } else if (act == 'Comida') {
+  //     return 2;
+
+  //   }else if (act == 'Merienda') {
+  //     return 3;
+  //   } else {
+
+  //     return 4;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +156,219 @@ class _ItemPageState extends State<ItemPage> {
                 }
                 setState(() {});
               },
+            ),
+            IconButton(
+
+              icon: Icon(Icons.add_box_outlined) ,
+              iconSize: 25,
+              color: Colors.black,
+              onPressed: () {
+                // final responseConsumo = await http.get(
+                //   Uri.parse('${globalVariables.ipVM}/consumo'),
+                //   headers: <String, String>{
+                //     'authorization': globalVariables.tokenUser,
+                //   },
+                // );
+                // var jsonDataConsumo;
+                // if (responseConsumo.statusCode == 200) {
+                //   final jsonDataConsumo = jsonDecode(responseConsumo.body);
+                // }
+                // else{
+                //   throw new Exception('Error al cargar productos consumidos');
+                // }
+
+                String hintText = 'Seleccionar Momento del Día';
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Seleccionar Momento del Día'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          buildNumericField("Cantidad aproximada en gramos", cantidad!.toString(), cantidadController),
+                          SizedBox(height: 10),
+
+
+                          DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              labelText: 'Momento del Día',
+                              border: OutlineInputBorder(),
+                            ),
+                            value: momentoDia! == '0'
+                                ? 'Desayuno'
+                                : (momentoDia! == 1 ? 'Almuerzo' :
+                                (momentoDia! == 2 ? 'Comida' :
+                                (momentoDia! == 3 ? 'Merienda' : 'Cena'))),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedMomento = newValue;
+                              });
+                            },
+                            items: [
+                              DropdownMenuItem(
+                                child: Text('Desayuno'),
+                                value: 'Desayuno',
+                              ),
+                              DropdownMenuItem(
+                                child: Text('Almuerzo'),
+                                value: 'Almuerzo',
+                              ),
+                              DropdownMenuItem(
+                                child: Text('Comida'),
+                                value: 'Comida',
+                              ),
+                              DropdownMenuItem(
+                                child: Text('Merienda'),
+                                value: 'Merienda',
+                              ),
+                              DropdownMenuItem(
+                                child: Text('Cena'),
+                                value: 'Cena',
+                              ),
+                            ],
+                             hint: Text(hintText) ,
+                          ),
+                          // DropdownButton<String>(
+
+                          //   onChanged: (value) {
+                          //     // Aquí puede guardar la selección del usuario en una variable
+                          //     momento= value;
+                          //     setState(() {
+                          //       hintText = 'Momento del día: $momento';
+                          //       print(value);
+                          //       print(hintText);
+                          //       print(momento);
+                          //     });
+                          //   },
+
+
+
+
+
+
+                          // ),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          child: Text('Cancelar'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text('Guardar'),
+                          onPressed: () async{
+//                            _isRegistered=true;
+
+                            double cantidadMod = double.tryParse(cantidadController.text) ?? 0;
+                            String momentoDiaMod = _selectedMomento.toString();
+                            String esteDia = DateTime.now().toString().split(" ")[0];
+                            double grasaMod = (cantidadMod * widget.macros[3] /100);
+                            double carbohidratosMod = (cantidadMod * widget.macros[2] /100);
+                            double proteinasMod = (cantidadMod * widget.macros[1] /100);
+                            double caloriasMod = (cantidadMod * widget.macros[0] /100);
+                            String nombreMod = widget.name;
+
+
+                            print(cantidadMod);
+                            print(_selectedMomento);
+                            print(momentoDiaMod);
+
+
+                            final responseconsumo = await http.post(
+                              Uri.parse('${globalVariables.ipVM}/consumo'),
+                              body: jsonEncode({
+                                'dia': esteDia,
+                                'grasas': grasaMod,
+                                'carbohidratos': carbohidratosMod,
+                                'proteinas': proteinasMod,
+                                'calorias': caloriasMod,
+                                'momento': momentoDiaMod,
+                                'alimento': nombreMod,
+                                'cantidad': cantidadMod,
+                            }),
+                              headers: <String, String>{
+                                  'Content-Type': 'application/json; charset=UTF-8',
+                                  'authorization': globalVariables.tokenUser,
+                                },
+                              );
+                              bool correcto = true;
+                              if (responseconsumo.statusCode == 200){
+                                print("Se ha registrado correctamente");
+
+
+                              }else{
+                                print("No se ha registrado correctamente");
+                                correcto = false;
+                              }
+                          
+
+                            // Aquí puede guardar la cantidad y la selección del usuario en su base de datos
+                            Navigator.of(context).pop();
+                            if (correcto){
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Se ha registrado correctamente'),
+                                    );
+                                  }
+
+                                );
+                                }else{
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Hubo un error al registrar el producto'),
+                                      );
+                                    }
+
+                                );
+                                }
+
+
+
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+
+
+
+
+                //   print( DateTime.now());
+                //   if(responseadd.statusCode == 200) {
+                //     print("Se ha añadido a favoritos");
+                //   } else {
+                //     print("Ha ocurrido un error");
+                //   }
+                // } else {
+                //   //la he borrado de favoritos -> delete alimentos para sacarla de favs
+                //   final responsedelete = await http.delete(
+                //     Uri.parse('${globalVariables.ipVM}/favoritos'),
+                //     body: jsonEncode({
+                //       "barcode": widget.barcode,
+                //     }),
+                //     headers: <String, String>{
+                //       'Content-Type': 'application/json; charset=UTF-8',
+                //       'authorization': globalVariables.tokenUser,
+                //     },
+                //   );
+                //   if(responsedelete.statusCode == 200) {
+                //     print("Se ha borrado de favoritos");
+                //   } else {
+                //     print("Ha ocurrido un error");
+                //   }
+                // }
+              setState(() {});
+              },
+
             ),
           ],
         ),
@@ -369,5 +607,23 @@ class _ItemPageState extends State<ItemPage> {
       ),
     );
   }
+  Widget buildNumericField(
+      String labelText, String placeholder, TextEditingController controller) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 30),
+      child: TextField(
+        keyboardType: TextInputType.numberWithOptions(decimal: false),
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(bottom: 5),
+            labelText: labelText,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: placeholder,
+            hintStyle: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)),
+        controller: controller,
+      ),
+    );
+  }
+
 }
   

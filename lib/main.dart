@@ -74,8 +74,8 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
           brightness: Brightness.light,
         ),
-        //home: SignPage());
-        home: HomePage2());
+        home: SignPage());
+        //home: HomePage2());
         //home: SafeArea(child: NavigationScreen(page: screens[0])));
     //home: SignPage(),);
     //No ha cargado todavía la petición a la API
