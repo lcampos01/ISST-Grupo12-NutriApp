@@ -21,7 +21,7 @@ import 'package:nutri_app/signPages/sign.dart';
 class HomePage2 extends StatefulWidget {
   HomePage2(
     {Key? key,
-    this.momentoDia = 0, 
+    this.momentoDia = 0,
     this.cantidad = 0,
     });
 
@@ -40,11 +40,11 @@ final cantidad;
       return 1;
     } else if (act == 'Comida') {
       return 2;
-      
+
     }else if (act == 'Merienda') {
       return 3;
     } else {
-      
+
       return 4;
     }
   }
@@ -85,7 +85,7 @@ class _HomePage2State extends State<HomePage2> {
               },
             ),
             IconButton(
-              
+
               icon: _isRegistered ? Icon(Icons.add_box_rounded) : Icon(Icons.add_box_outlined),
               iconSize: 25,
               color: _isRegistered ? Colors.green : Colors.black,
@@ -125,8 +125,8 @@ class _HomePage2State extends State<HomePage2> {
                             ),
                             value: widget.momentoDia! == '0'
                                 ? 'Desayuno'
-                                : (widget.momentoDia! == 1 ? 'Almuerzo' : 
-                                (widget.momentoDia! == 2 ? 'Comida' : 
+                                : (widget.momentoDia! == 1 ? 'Almuerzo' :
+                                (widget.momentoDia! == 2 ? 'Comida' :
                                 (widget.momentoDia! == 3 ? 'Merienda' : 'Cena'))),
                             onChanged: (String? newValue) {
                               setState(() {
@@ -161,7 +161,7 @@ class _HomePage2State extends State<HomePage2> {
 
                           //   onChanged: (value) {
                           //     // Aquí puede guardar la selección del usuario en una variable
-                          //     momento= value; 
+                          //     momento= value;
                           //     setState(() {
                           //       hintText = 'Momento del día: $momento';
                           //       print(value);
@@ -170,11 +170,11 @@ class _HomePage2State extends State<HomePage2> {
                           //     });
                           //   },
 
-                            
 
-                            
 
-                            
+
+
+
                           // ),
                         ],
                       ),
@@ -188,16 +188,16 @@ class _HomePage2State extends State<HomePage2> {
                         TextButton(
                           child: Text('Guardar'),
                           onPressed: () async{
-                            
 
-                            var cantidadMod = int.tryParse(cantidadController.text) ?? widget.cantidad;
-                            var momentoDiaMod = momento(_selectedMomento.toString());
-                            var esteDia = DateTime.now().toString().split(" ")[0];
-                            var grasaMod = cantidadMod * grasas /100;
-                            var carbohidratosMod = cantidadMod * carbohidratos /100;
-                            var proteinasMod = cantidadMod * proteinas /100;
-                            var caloriasMod = cantidadMod * calorias /100;
-                            var nombreMod = nombre;
+
+                            // var cantidadMod = int.tryParse(cantidadController.text) ?? widget.cantidad;
+                            // var momentoDiaMod = momento(_selectedMomento.toString());
+                            // var esteDia = DateTime.now().toString().split(" ")[0];
+                            // var grasaMod = cantidadMod * grasas /100;
+                            // var carbohidratosMod = cantidadMod * carbohidratos /100;
+                            // var proteinasMod = cantidadMod * proteinas /100;
+                            // var caloriasMod = cantidadMod * calorias /100;
+                            // var nombreMod = nombre;
 
 
                             print(cantidadMod);
@@ -206,26 +206,23 @@ class _HomePage2State extends State<HomePage2> {
 
 
                               //la he añadido a favoritos -> post alimentos para meterla en favs
-                              final responseadd = await http.post(
-                                Uri.parse('${globalVariables.ipVM}/consumo'),
-                                body: jsonEncode({
-                                    'dia': esteDia,
-                                    'grasas': grasaMod,
-                                    'carbohidratos': carbohidratosMod,
-                                    'proteinas': proteinasMod,
-                                    'calorias': caloriasMod,
-                                    'momento': momentoDiaMod,
-                                    'alimento' nombreMod,
-                                    'cantidad' cantidadMod
-
-
-
-                                  }),
-                                headers: <String, String>{
-                                    'Content-Type': 'application/json; charset=UTF-8',
-                                    'authorization': globalVariables.tokenUser,
-                                  },
-                                );
+                              // final responseconsumo = await http.post(
+                              //   Uri.parse('${globalVariables.ipVM}/consumo'),
+                              //   body: jsonEncode({
+                              //       'dia': esteDia,
+                              //       'grasas': grasaMod,
+                              //       'carbohidratos': carbohidratosMod,
+                              //       'proteinas': proteinasMod,
+                              //       'calorias': caloriasMod,
+                              //       'momento': momentoDiaMod,
+                              //       'alimento' nombreMod,
+                              //       'cantidad' cantidadMod
+                              //     }),
+                              //   headers: <String, String>{
+                              //       'Content-Type': 'application/json; charset=UTF-8',
+                              //       'authorization': globalVariables.tokenUser,
+                              //     },
+                              //   );
 
                             // Aquí puede guardar la cantidad y la selección del usuario en su base de datos
                             Navigator.of(context).pop();
@@ -251,7 +248,7 @@ class _HomePage2State extends State<HomePage2> {
                 //   final responsedelete = await http.delete(
                 //     Uri.parse('${globalVariables.ipVM}/favoritos'),
                 //     body: jsonEncode({
-                //       "barcode": widget.barcode, 
+                //       "barcode": widget.barcode,
                 //     }),
                 //     headers: <String, String>{
                 //       'Content-Type': 'application/json; charset=UTF-8',
@@ -266,7 +263,7 @@ class _HomePage2State extends State<HomePage2> {
                 // }
               setState(() {});
               },
-       
+
             ),
 
           ],
