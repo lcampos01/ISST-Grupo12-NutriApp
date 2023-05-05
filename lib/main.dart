@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:nutri_app/pages/fav_page.dart';
 import 'package:nutri_app/pages/profile_page.dart';
 import 'package:nutri_app/pages/search_page.dart';
-import 'package:nutri_app/signPages/data_sign.dart';
 import 'package:nutri_app/signPages/sign.dart';
 import 'package:nutri_app/pages/home_page.dart';
 import 'package:nutri_app/variables/global.dart';
@@ -274,8 +273,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   final actividad_diaria = jsonData['actividad_diaria'];
                   final objetivo = jsonData['objetivo'];
                   final num_objetivo = jsonData['num_objetivo'];
-                  //necesito recibir los alérgenosssssss:)
+                  final fotoPerfilJson = jsonData['imagenPerfil'];
                   print(jsonDataAler);
+                  print(fotoPerfilJson);
+                  print(fotoPerfilJson);
                   final alergenosJson = jsonDataAler; //se recibe [{'nombre': _}, {'nombre': _},...]
                   List<String> alergenos = alergenosJson.map((alergeno) => alergeno['nombre']).toList().cast<String>();
                   print(alergenos);
@@ -292,7 +293,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         actividad_diaria: actividad_diaria,
                         objetivo: objetivo,
                         kcalGoal: num_objetivo,
-                        alergenos: alergenos
+                        alergenos: alergenos,
+                        fotoPerfil: fotoPerfilJson,
                     );
                     currentTab = 3;
                   });

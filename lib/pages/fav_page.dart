@@ -41,7 +41,7 @@ class _FavPageState extends State<FavPage> {
           SliverAppBar(
             toolbarHeight: 100,
             title: Text(
-              'Comidas favoritas',
+              'Alimentos favoritos',
               style: TextStyle(
                 color: Colors.green,
                 fontSize: 30.0,
@@ -52,7 +52,7 @@ class _FavPageState extends State<FavPage> {
           ),
           SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-            sliver: SliverList(
+            sliver: numFavs > 0 ? SliverList(
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
                   return InkWell(
@@ -95,6 +95,18 @@ class _FavPageState extends State<FavPage> {
                   );
                 },
                 childCount: numFavs,
+              ),
+            ) : SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Text(
+                  'Aún no tienes alimentos favoritos',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),

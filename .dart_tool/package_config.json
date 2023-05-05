@@ -122,6 +122,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_image_compress",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/flutter_image_compress-1.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_lints",
       "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/flutter_lints-2.0.1",
       "packageUri": "lib/",
@@ -153,9 +159,9 @@
     },
     {
       "name": "http",
-      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/http-0.13.5",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/http-0.13.6",
       "packageUri": "lib/",
-      "languageVersion": "2.14"
+      "languageVersion": "2.19"
     },
     {
       "name": "http_parser",
@@ -404,7 +410,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-05-05T09:35:42.204305Z",
+  "generated": "2023-05-05T13:25:40.802421Z",
   "generator": "pub",
   "generatorVersion": "3.1.0-22.0.dev"
 }

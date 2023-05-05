@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:nutri_app/main.dart';
 import 'package:nutri_app/variables/global.dart';
@@ -7,9 +9,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:nutri_app/signPages/sign.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-
-//import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+// import 'package:path_provider/path_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage(
@@ -25,6 +26,7 @@ class ProfilePage extends StatefulWidget {
       this.objetivo,
       this.kcalGoal,
       this.alergenos,
+      this.fotoPerfil,
       });
 
   final nombre;
@@ -38,6 +40,7 @@ class ProfilePage extends StatefulWidget {
   final objetivo;
   final kcalGoal;
   final alergenos;
+  final fotoPerfil;
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -65,6 +68,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _selectedGoal = 'deficitcalorico';
 
   String? _selectedSex = 'hombre';
+
+  MemoryImage? _imageFile;
 
 
   List<MultiSelectItem<String>> _allergens = [
@@ -177,6 +182,16 @@ class _ProfilePageState extends State<ProfilePage> {
       return kcalGoal = defecto;
     }
   }
+  
+  Future<MemoryImage?> _initializeImage() async {
+    if (widget.fotoPerfil != null) {
+      final fotoPerfilBytes = base64.decode(widget.fotoPerfil);
+      return MemoryImage(fotoPerfilBytes);
+    } else {
+      return null;
+    }
+  }
+
 
   @override
   void initState() {
@@ -187,9 +202,15 @@ class _ProfilePageState extends State<ProfilePage> {
     _selectedActivity = actBBDD;
     _selectedGoal = widget.objetivo;
     _selectedSex = widget.sexo;
+    _initializeImage().then((file) {
+      setState(() {
+        _imageFile = file;
+      });
+    });
     print(actBBDD);
     print(widget.objetivo);
     print(widget.kcalGoal);
+    // print(_imageFile);
     tbm = getTbm(widget.sexo, widget.fecha_nacimiento, widget.peso.toString(), widget.altura.toString(), 0);
     kcal = getKcal(widget.sexo, widget.fecha_nacimiento, widget.peso.toString(), widget.altura.toString(), actBBDD, 0);
     kcalGoal = getKcalGoal(widget.sexo, widget.fecha_nacimiento, widget.peso.toString(), widget.altura.toString(), actBBDD, widget.objetivo, widget.kcalGoal.toString(), 0);
@@ -213,46 +234,46 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 130,
                       height: 130,
                       decoration: BoxDecoration(
-                          border: Border.all(width: 4, color: Colors.white),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1)),
-                          ],
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage('assets/usuario_foto.png'))),
+                        border: Border.all(width: 4, color: Colors.white),
+                        boxShadow: [
+                          BoxShadow(
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              color: Colors.black.withOpacity(0.1)),
+                        ],
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: _imageFile == null
+                            ? const AssetImage('assets/usuario_foto.png') 
+                            : Image(image:_imageFile!).image,
+                        ),
+                      ),
                     ),
                     Positioned(
-                        bottom: 0,
-                        right: 0,
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          _selectImage(context);
+                        },
                         child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(width: 4, color: Colors.green),
-                                color: Colors.white),
-                            child: Icon(
-                              Icons.edit,
-                              color: Colors.green,
-                            )))
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(width: 4, color: Colors.green),
+                            color: Colors.white),
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.green,
+                          )
+                        )
+                      )
+                    )
                   ],
                 ),
               ),
-              // Center(
-              //   child: defectoTextStyle(
-              //     style: TextStyle(
-              //       color: Colors.green,
-              //       fontSize: 24,
-              //       fontWeight: FontWeight.w800,
-              //     ),
-              //     child: Text('Editar datos'),
-              //   ),
-              // ),
               SizedBox(height: 30),
               Text(
                 widget.email,
@@ -335,7 +356,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: Text(
-                  'Tu Tasa de Metabolismo Basal (TMB) (Fórmula Mifflin-St. Jeor) es ${getTbm(_selectedSex, fechaController.text, pesoController.text, alturaController.text, tbm)}',
+                  'Tu Tasa de Metabolismo Basal (TMB) (Fórmula Mifflin-St. Jeor) es ${getTbm(_selectedSex, fechaController.text, pesoController.text, alturaController.text, tbm).toStringAsFixed(2)}',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -378,7 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: Text(
-                  'Dependiendo del tipo de actividad física que realices, la cantidad mínima de energía variará: ${getKcal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, kcal)} Kcal',
+                  'Dependiendo del tipo de actividad física que realices, la cantidad mínima de energía variará: ${getKcal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, kcal).toStringAsFixed(2)} Kcal',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -428,8 +449,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Text(
                   _selectedGoal == 'alimentacionhiperproteica' 
-                  ? 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text, kcalGoal)} g proteinas'
-                    : 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text, kcalGoal)} kcal',
+                  ? 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text, kcalGoal).toStringAsFixed(2)} g proteinas'
+                    : 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text, kcalGoal).toStringAsFixed(2)} kcal',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -526,7 +547,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           actividad(_selectedActivity.toString());
                       var objetivoMod = _selectedGoal.toString();
                       var objetivonumMod = double.tryParse(goal.text) ?? widget.kcalGoal;
-      
+                      var base64Image;
+                      _imageFile != null
+                        ? base64Image = base64Encode(_imageFile!.bytes)
+                        : base64Image = null;
+                      print(_imageFile);
                       List<Map<String, String>> alergenosMod = _selectedAllergens.map((alergeno) {
                         return {'nombre': alergeno};
                       }).toList();
@@ -552,7 +577,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           'fecha_nacimiento': fechaNacimientoMod,
                           'actividad_diaria': actividadFisicaMod,
                           'objetivo': objetivoMod,
-                          'num_objetivo': objetivonumMod
+                          'num_objetivo': objetivonumMod,
+                          'imagenPerfil': base64Image,
                         }),
                         headers: <String, String>{
                           'Content-Type': 'application/json; charset=UTF-8',
@@ -677,5 +703,64 @@ class _ProfilePageState extends State<ProfilePage> {
         controller: controller,
       ),
     );
+  }
+  Future<void> _selectImage(BuildContext context) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await showModalBottomSheet<XFile?>(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Galería'),
+                onTap: () async {
+                  Navigator.pop(context, await _picker.pickImage(
+                    source: ImageSource.gallery,
+                    imageQuality: 50
+                  ));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_camera),
+                title: Text('Cámara'),
+                onTap: () async {
+                  Navigator.pop(context, await _picker.pickImage(
+                    source: ImageSource.camera,
+                    imageQuality: 50
+                  ));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text('Eliminar foto de perfil'),
+                onTap: () {
+                  setState(() {
+                    _imageFile = null;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    );
+
+    if (image != null) {
+      // Actualiza la imagen de perfil con la imagen seleccionada
+      setState(() {
+        _imageFile = null;
+      });
+
+      final file = File(image.path);
+      final bytes = await file.readAsBytes();
+      final memoryImage = MemoryImage(bytes);
+
+      setState(() {
+        _imageFile = memoryImage;
+      });
+    }
   }
 }
