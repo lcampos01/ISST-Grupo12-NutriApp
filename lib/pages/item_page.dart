@@ -29,9 +29,13 @@ class _ItemPageState extends State<ItemPage> {
 
   String momentoDia= 'Comida';
   int cantidad= 0;
+  double cantidadCalculadora= 100;
 
   String? _selectedMomento = 'Comida';
   TextEditingController cantidadController = TextEditingController();
+  TextEditingController cantidadCalculadoraController = TextEditingController();
+  
+
 //  bool _isRegistered = false;
 
 
@@ -229,25 +233,7 @@ class _ItemPageState extends State<ItemPage> {
                             ],
                              hint: Text(hintText) ,
                           ),
-                          // DropdownButton<String>(
 
-                          //   onChanged: (value) {
-                          //     // Aquí puede guardar la selección del usuario en una variable
-                          //     momento= value;
-                          //     setState(() {
-                          //       hintText = 'Momento del día: $momento';
-                          //       print(value);
-                          //       print(hintText);
-                          //       print(momento);
-                          //     });
-                          //   },
-
-
-
-
-
-
-                          // ),
                         ],
                       ),
                       actions: [
@@ -339,33 +325,6 @@ class _ItemPageState extends State<ItemPage> {
                 );
 
 
-
-
-
-                //   print( DateTime.now());
-                //   if(responseadd.statusCode == 200) {
-                //     print("Se ha añadido a favoritos");
-                //   } else {
-                //     print("Ha ocurrido un error");
-                //   }
-                // } else {
-                //   //la he borrado de favoritos -> delete alimentos para sacarla de favs
-                //   final responsedelete = await http.delete(
-                //     Uri.parse('${globalVariables.ipVM}/favoritos'),
-                //     body: jsonEncode({
-                //       "barcode": widget.barcode,
-                //     }),
-                //     headers: <String, String>{
-                //       'Content-Type': 'application/json; charset=UTF-8',
-                //       'authorization': globalVariables.tokenUser,
-                //     },
-                //   );
-                //   if(responsedelete.statusCode == 200) {
-                //     print("Se ha borrado de favoritos");
-                //   } else {
-                //     print("Ha ocurrido un error");
-                //   }
-                // }
               setState(() {});
               },
 
@@ -379,7 +338,7 @@ class _ItemPageState extends State<ItemPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Product',
+              'Producto',
               style: TextStyle(
                 fontSize: 16,
               ),
@@ -393,13 +352,140 @@ class _ItemPageState extends State<ItemPage> {
               ),
             ),
             SizedBox(height: 25),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Column(
+            //       children: [
+            //         Text('Calorías'),
+            //         SizedBox(height: 10),
+            //         //Text('$calorias [Kcal]'), para cuando se cree el array de macros
+            //         widget.macros[0] == null ? Text(
+            //           'NS/NC',
+            //           style: TextStyle(
+            //             fontSize: 13,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ) 
+            //         : Text(
+            //           '${double.parse(double.parse((widget.macros[0]).toString()).toStringAsFixed(3))} [Kcal]', 
+            //           style: TextStyle(
+            //             fontSize: 13,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //     Column(
+            //       children: [
+            //         Text('Proteínas'),
+            //         SizedBox(height: 10),
+            //         //Text('$proteinas [g]'), para cuando se cree el array de macros
+            //         widget.macros[1] == null ? Text(
+            //           'NS/NC',
+            //           style: TextStyle(
+            //             fontSize: 13,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ) 
+            //         : Text(
+            //           '${double.parse(double.parse((widget.macros[1]).toString()).toStringAsFixed(3))} [g]',
+            //           style: TextStyle(
+            //             fontSize: 13,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //     Column(
+            //       children: [
+            //         Text('Carbohidratos'),
+            //         SizedBox(height: 10),
+            //         //Text('$carbohidratos [g]'), para cuando se cree el array de macros
+            //         widget.macros[2] == null ? Text(
+            //           'NS/NC',
+            //           style: TextStyle(
+            //             fontSize: 13,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ) 
+            //         : Text(
+            //           '${double.parse(double.parse((widget.macros[2]).toString()).toStringAsFixed(3))} [g]',
+            //           style: TextStyle(
+            //             fontSize: 13,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //     Column(
+            //       children: [
+            //         Text('Grasas'),
+            //         SizedBox(height: 10),
+            //         //Text('$grasas [g]'), para cuando se cree el array de macros
+            //         widget.macros[3] == null ? Text(
+            //           'NS/NC',
+            //           style: TextStyle(
+            //             fontSize: 13,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ) 
+            //         : Text(
+            //           '${double.parse(double.parse((widget.macros[3]).toString()).toStringAsFixed(3))} [g]',
+            //           style: TextStyle(
+            //             fontSize: 13,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ],
+            // ),
+
+
+
+
+            // SizedBox(height: 25),
+            Text(
+              'Calculadora de macros',
+              style: TextStyle(
+                fontSize: 20,
+                color: const Color.fromARGB(255, 0, 104, 3),
+              ),
+              overflow: TextOverflow.visible,
+            ),
+            SizedBox(height: 5),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: buildNumericField("Cantidad aproximada en gramos", cantidadCalculadora!.toString(), cantidadCalculadoraController),
+                  ),
+                  SizedBox(width: 10),
+                  TextButton(
+                    child: Text('Calcular'),
+                    onPressed: () async {
+                      setState(() {
+                        cantidadCalculadora = double.tryParse(cantidadCalculadoraController.text) ?? 0;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+
             Row(
+
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   children: [
                     Text('Calorías'),
                     SizedBox(height: 10),
+
                     //Text('$calorias [Kcal]'), para cuando se cree el array de macros
                     widget.macros[0] == null ? Text(
                       'NS/NC',
@@ -409,8 +495,8 @@ class _ItemPageState extends State<ItemPage> {
                       ),
                     ) 
                     : Text(
-                      '${double.parse(double.parse((widget.macros[0]).toString()).toStringAsFixed(3))} [Kcal]', 
-                      style: TextStyle(
+                        '${(widget.macros[0] * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(3)} [Kcal]',
+                        style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
@@ -430,7 +516,7 @@ class _ItemPageState extends State<ItemPage> {
                       ),
                     ) 
                     : Text(
-                      '${double.parse(double.parse((widget.macros[1]).toString()).toStringAsFixed(3))} [g]',
+                      '${(widget.macros[1] * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(3)} [g]',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -451,7 +537,7 @@ class _ItemPageState extends State<ItemPage> {
                       ),
                     ) 
                     : Text(
-                      '${double.parse(double.parse((widget.macros[2]).toString()).toStringAsFixed(3))} [g]',
+                      '${(widget.macros[2] * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(3)} [g]',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -472,7 +558,7 @@ class _ItemPageState extends State<ItemPage> {
                       ),
                     ) 
                     : Text(
-                      '${double.parse(double.parse((widget.macros[3]).toString()).toStringAsFixed(3))} [g]',
+                      '${(widget.macros[3] * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(3)} [g]',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -482,6 +568,8 @@ class _ItemPageState extends State<ItemPage> {
                 ),
               ],
             ),
+
+
             SizedBox(height: 25),
             GestureDetector(
               onTap: () {
