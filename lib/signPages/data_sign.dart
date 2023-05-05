@@ -36,7 +36,7 @@ class _DataSignPageState extends State<DataSignPage> {
 
   String? _selectedActivity = "moderado";
 
-  String? _selectedGoal = "déficit calórico";
+  String? _selectedGoal = "deficitcalorico";
 
   String? _selectedSex = "hombre";
 
@@ -44,7 +44,7 @@ class _DataSignPageState extends State<DataSignPage> {
     'Lactosa',
     'Gluten',
     'Huevos',
-    'Crustáceos',
+    'Crustaceos',
     'Pescado',
     'Frutos Secos',
     'Soja',
@@ -83,16 +83,13 @@ class _DataSignPageState extends State<DataSignPage> {
     if(sex == null || birth == '' || weight == '' || height == '') {
       return tbm = 0;
     } else {
-      print(birth);
-      print(weight);
-      print(height);
       DateTime fecha = DateTime.parse(formatDate(birth!));
       DateTime today = DateTime.now();
       int anoToday = today.year;
       int anoFecha = fecha.year;
       int edad = anoToday - anoFecha;
-      double peso = double.parse(weight!);
-      double altura = double.parse(height!);
+      double peso = double.tryParse(weight!) ?? 0;
+      double altura = double.tryParse(height!) ?? 0;
       if (sex == 'hombre') {
         tbm = 10*peso + 6.25*altura - 5*edad + 5;
         return tbm;
@@ -119,23 +116,32 @@ class _DataSignPageState extends State<DataSignPage> {
   }
   double getKcalGoal(String? sex, String? birth, String? weight, String? height, String? act, String? goalStr, String? goal) {
     double kcal = getKcal(sex, birth, weight, height, act);
-    double kcalGoal = 0;
     if(goal != '') {
-      if(goalStr == 'déficit calórico') {
-        return kcalGoal = kcal - double.parse(goal!);
-      } else if(goalStr == 'superávit calórico') {
-        return kcalGoal = kcal + double.parse(goal!);
-      } else if(goalStr == 'alimentación hiperproteica') {
+      if(goalStr == 'deficitcalorico') {
+        if(kcal == 0) {
+          return kcalGoal = 0;
+        } else {
+          return kcalGoal = kcal - (double.tryParse(goal!) ?? 0);
+        }
+      } else if(goalStr == 'superavitcalorico') {
+        if(kcal == 0) {
+          return kcalGoal = 0;
+        } else {
+          return kcalGoal = kcal + (double.tryParse(goal!) ?? 0);
+        }
+      } else if(goalStr == 'alimentacionhiperproteica') {
         if(weight == '') {
           return kcalGoal = 0;
         } else {
-          return kcalGoal = double.parse(weight!)*double.parse(goal!);
+          return kcalGoal = (double.tryParse(weight!) ?? 0) * (double.tryParse(goal!) ?? 0);
         }
-      } else {
+      } else if(goalStr == 'caloriastbm') {
         return kcalGoal = kcal;
+      } else {
+        return kcalGoal = 0;
       }
     } else {
-      return kcalGoal;
+      return kcalGoal = 0;
     }
   }
 
@@ -292,33 +298,33 @@ class _DataSignPageState extends State<DataSignPage> {
                   },
                   items: [
                     DropdownMenuItem<String>(
-                      value: 'déficit calórico',
-                      child: Text('Déficit calórico'),
+                      value: 'deficitcalorico',
+                      child: Text('Déficit Calórico'),
                     ),
                     DropdownMenuItem<String>(
-                      value: 'calorías TBM',
-                      child: Text('Calorías TBM'),
+                      value: 'caloriastbm',
+                      child: Text('Calorias TBM'),
                     ),
                     DropdownMenuItem<String>(
-                      value: 'superávit calórico',
-                      child: Text('Superávit calórico'),
+                      value: 'superavitcalorico',
+                      child: Text('Superávit Calorico'),
                     ),
                     DropdownMenuItem<String>(
-                      value: 'alimentación hiperproteica',
-                      child: Text('Alimentación hiperproteica'),
+                      value: 'alimentacionhiperproteica',
+                      child: Text('Alimentación Hiperproteica'),
                     ),
                   ],
                 ),
               ),
-              (_selectedGoal == 'déficit calórico' || _selectedGoal == 'superávit calórico')
+              (_selectedGoal == 'deficitcalorico' || _selectedGoal == 'superavitcalorico')
                 ? buildNumericField("Ajusta las Kcal", "500", goal)
-                : _selectedGoal == 'alimentación hiperproteica'
+                : _selectedGoal == 'alimentacionhiperproteica'
                   ? buildNumericField("Ajusta los g/peso", "1.5", goal)
                   : Container(),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Text(
-                  _selectedGoal == 'alimentación hiperproteica' 
+                  _selectedGoal == 'alimentacionhiperproteica' 
                   ? 'El objetivo establecido es: ${getKcalGoal(_selectedSex, _date.text, peso.text, altura.text, _selectedActivity, _selectedGoal, goal.text).toStringAsFixed(2)} g proteinas'
                     : 'El objetivo establecido es: ${getKcalGoal(_selectedSex, _date.text, peso.text, altura.text, _selectedActivity, _selectedGoal, goal.text).toStringAsFixed(2)} kcal',
                   style: TextStyle(
@@ -378,14 +384,17 @@ class _DataSignPageState extends State<DataSignPage> {
                   var usernameSign = date.text;
                   var sexoSign = _selectedSex.toString();
                   var fechaNacimientoSign = _date.text;
-                  var pesoSign = int.parse(peso.text);
-                  var alturaSign = int.parse(altura.text);
+                  var pesoSign = int.tryParse(peso.text);
+                  var alturaSign = int.tryParse(altura.text);
                   var pesoStrSign = peso.text;
                   var alturaStrSign = altura.text;
                   var actividadFisicaSign =
                       actividad(_selectedActivity.toString());
                   var actividadFisicaStrSign =
                       actividad((_selectedActivity.toString())).toString();
+                  var objetivoStringSign = _selectedGoal.toString();
+                  var objetivoNumKcalSign = double.tryParse(goal.text);
+                  var objetivoNumKcalStrSign = _selectedGoal == 'caloriastbm' ? 'TBM' : goal.text;
                   var alergenosSign = _selectedAllergens;
                   List<Map<String, String>> alergenosJson = alergenosSign.map((alergeno) {
                     return {'nombre': alergeno};
@@ -401,18 +410,24 @@ class _DataSignPageState extends State<DataSignPage> {
                   print(alturaStrSign);
                   print(actividadFisicaSign);
                   print(actividadFisicaStrSign);
+                  print(objetivoStringSign);
+                  print(objetivoNumKcalSign);
+                  print(objetivoNumKcalStrSign);
                   print(alergenosSign);
                   print(alergenosJson);
-                  //validacion: estan vacios nombre, fecha_nacimiento, peso y altura
+
+                  //validacion: estan vacios nombre, fecha_nacimiento, peso, altura y objetivo
                   if (!validateData(usernameSign,
-                      fechaNacimientoSign, pesoStrSign, alturaStrSign)) {
+                      fechaNacimientoSign, pesoStrSign, alturaStrSign, objetivoNumKcalStrSign)) {
                     print("Hay datos vacios");
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
                         title: Text('Datos vacíos'),
                         content: Text(
-                            'Por favor complete el nombre,la fecha de nacimiento, el peso y la altura'),
+                          objetivoNumKcalStrSign == 'TBM' ? 'Por favor complete el nombre,la fecha de nacimiento, el peso y la altura'
+                            : 'Por favor complete el nombre,la fecha de nacimiento, el peso, la altura y el objetivo'
+                        ),
                         actions: [
                           TextButton(
                               onPressed: () => Navigator.pop(context),
@@ -433,6 +448,8 @@ class _DataSignPageState extends State<DataSignPage> {
                         'fecha_nacimiento': fechaNacimientoSign,
                         'actividad_diaria': actividadFisicaSign,
                         'alergenos': alergenosJson,
+                        'objetivo': objetivoStringSign,
+                        'num_objetivo': objetivoNumKcalSign
                       }),
                       headers: <String, String>{
                         'Content-Type': 'application/json; charset=UTF-8',

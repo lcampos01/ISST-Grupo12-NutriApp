@@ -164,6 +164,36 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "image_picker",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/image_picker-0.8.7+4",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "image_picker_android",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/image_picker_android-0.8.6+11",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "image_picker_for_web",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/image_picker_for_web-2.1.12",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "image_picker_ios",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/image_picker_ios-0.8.7+3",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "image_picker_platform_interface",
+      "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/image_picker_platform_interface-2.6.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "intl",
       "rootUri": "file:///Users/sandracascante/.pub-cache/hosted/pub.dev/intl-0.17.0",
       "packageUri": "lib/",
@@ -374,7 +404,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-05-01T17:32:31.734823Z",
+  "generated": "2023-05-05T09:35:42.204305Z",
   "generator": "pub",
   "generatorVersion": "3.1.0-22.0.dev"
 }

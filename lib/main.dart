@@ -272,6 +272,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   final peso = jsonData['peso'];
                   final altura = jsonData['altura'];
                   final actividad_diaria = jsonData['actividad_diaria'];
+                  final objetivo = jsonData['objetivo'];
+                  final num_objetivo = jsonData['num_objetivo'];
                   //necesito recibir los alérgenosssssss:)
                   print(jsonDataAler);
                   final alergenosJson = jsonDataAler; //se recibe [{'nombre': _}, {'nombre': _},...]
@@ -288,7 +290,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         peso: peso,
                         altura: altura,
                         actividad_diaria: actividad_diaria,
-                        //necesito pasarle los alérgenosssssssssss:)
+                        objetivo: objetivo,
+                        kcalGoal: num_objetivo,
                         alergenos: alergenos
                     );
                     currentTab = 3;

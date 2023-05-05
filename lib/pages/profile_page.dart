@@ -8,6 +8,7 @@ import 'package:nutri_app/signPages/sign.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+
 //import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -61,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String? _selectedActivity = 'moderado';
 
-  String? _selectedGoal = 'déficit calórico';
+  String? _selectedGoal = 'deficitcalorico';
 
   String? _selectedSex = 'hombre';
 
@@ -70,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
     'Lactosa',
     'Gluten',
     'Huevos',
-    'Crustáceos',
+    'Crustaceos',
     'Pescado',
     'Frutos Secos',
     'Soja',
@@ -94,34 +95,29 @@ class _ProfilePageState extends State<ProfilePage> {
   double kcal = 0;
   double kcalGoal = 0;
 
+  String actBBDD = '';
+
   String formatDate(String date) {
     if(date.contains('-')) {
       List<String> partes = date.split('-');
-      if(partes[2].length == 4) {
-        return '${partes[2]}-${partes[1]}-${partes[0]}';
-      } else {
-        return date;
-      }
+      return '${partes[2]}-${partes[1]}-${partes[0]}';
     } else {
       return date;
     }
   }
 
-  double getTbm(String? sex, String? birth, String? weight, String? height) {
+  double getTbm(String? sex, String? birth, String? weight, String? height, double defecto) {
     double tbm = 0;
     if(sex == null || birth == '' || weight == '' || height == '') {
-      return tbm = getTbm(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura);
+      return tbm = defecto;
     } else {
-      print(birth);
-      print(weight);
-      print(height);
       DateTime fecha = DateTime.parse(formatDate(birth!));
       DateTime today = DateTime.now();
       int anoToday = today.year;
       int anoFecha = fecha.year;
       int edad = anoToday - anoFecha;
-      double peso = double.parse(weight!);
-      double altura = double.parse(height!);
+      double peso = double.tryParse(weight!) ?? 0;
+      double altura = double.tryParse(height!) ?? 0;
       if (sex == 'hombre') {
         tbm = 10*peso + 6.25*altura - 5*edad + 5;
         return tbm;
@@ -132,39 +128,53 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  double getKcal(String? sex, String? birth, String? weight, String? height, String? act) {
-    double tbm = getTbm(sex, birth, weight, height);
-    double kcal = 0;
-    if(act == 'activo') {
-      kcal = tbm*1.8;
-    } else if(act == 'moderado') {
-      kcal = tbm*1.55;
-    } else if(act == 'sedentario') {
-      kcal = tbm*1.2;
+  double getKcal(String? sex, String? birth, String? weight, String? height, String? act, double defecto) {
+    double tbm = getTbm(sex, birth, weight, height, defecto);
+    double kcal = defecto;
+    if(sex == null || birth == '' || weight == '' || height == '') {
+      return tbm = defecto;
     } else {
-      kcal = 0;
+      if(act == 'activo') {
+        kcal = tbm*1.8;
+      } else if(act == 'moderado') {
+        kcal = tbm*1.55;
+      } else if(act == 'sedentario') {
+        kcal = tbm*1.2;
+      } else {
+        kcal = 0;
+      }
+      return kcal;
     }
-    return kcal;
   }
-  double getKcalGoal(String? sex, String? birth, String? weight, String? height, String? act, String? goalStr, String? goal) {
-    double kcal = getKcal(sex, birth, weight, height, act);
-    double kcalGoal = getKcalGoal(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura, widget.actividad_diaria, widget.objetivo, widget.kcalGoal);
+
+  double getKcalGoal(String? sex, String? birth, String? weight, String? height, String? act, String? goalStr, String? goal, double defecto) {
+    double kcal = getKcal(sex, birth, weight, height, act, defecto);
     if(goal != '') {
-      if(goalStr == 'déficit calórico') {
-        return kcalGoal = kcal - double.parse(goal!);
-      } else if(goalStr == 'superávit calórico') {
-        return kcalGoal = kcal + double.parse(goal!);
-      } else if(goalStr == 'alimentación hiperproteica') {
+      if(goalStr == 'deficitcalorico') {
+        if(kcal == 0) {
+          return kcalGoal = 0;
+        } else {
+          return kcalGoal = kcal - (double.tryParse(goal!) ?? 0);
+        }
+      } else if(goalStr == 'superavitcalorico') {
+        if(kcal == 0) {
+          return kcalGoal = 0;
+        } else {
+          return kcalGoal = kcal + (double.tryParse(goal!) ?? 0);
+        }
+      } else if(goalStr == 'alimentacionhiperproteica') {
         if(weight == '') {
           return kcalGoal = 0;
         } else {
-          return kcalGoal = double.parse(weight!)*double.parse(goal!);
+          return kcalGoal = (double.tryParse(weight!) ?? 0) * (double.tryParse(goal!) ?? 0);
         }
-      } else {
+      } else if(goalStr == 'caloriastbm') {
         return kcalGoal = kcal;
+      } else {
+        return kcalGoal = 0;
       }
     } else {
-      return kcalGoal;
+      return kcalGoal = defecto;
     }
   }
 
@@ -172,9 +182,17 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _selectedAllergens = widget.alergenos;
-    tbm = getTbm(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura);
-    kcal = getKcal(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura, widget.altura);
-    kcalGoal = getKcalGoal(widget.sexo, widget.fecha_nacimiento, widget.peso, widget.altura, widget.altura, widget.objetivo, widget.kcalGoal);
+    widget.actividad_diaria == 0 ? actBBDD = 'sedentario'
+      : (widget.actividad_diaria == 1 ? actBBDD == 'moderado' : actBBDD = 'activo');
+    _selectedActivity = actBBDD;
+    _selectedGoal = widget.objetivo;
+    _selectedSex = widget.sexo;
+    print(actBBDD);
+    print(widget.objetivo);
+    print(widget.kcalGoal);
+    tbm = getTbm(widget.sexo, widget.fecha_nacimiento, widget.peso.toString(), widget.altura.toString(), 0);
+    kcal = getKcal(widget.sexo, widget.fecha_nacimiento, widget.peso.toString(), widget.altura.toString(), actBBDD, 0);
+    kcalGoal = getKcalGoal(widget.sexo, widget.fecha_nacimiento, widget.peso.toString(), widget.altura.toString(), actBBDD, widget.objetivo, widget.kcalGoal.toString(), 0);
   }
 
   @override
@@ -226,7 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               // Center(
-              //   child: DefaultTextStyle(
+              //   child: defectoTextStyle(
               //     style: TextStyle(
               //       color: Colors.green,
               //       fontSize: 24,
@@ -257,7 +275,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     labelText: 'Sexo',
                     border: OutlineInputBorder(),
                   ),
-                  value: widget.sexo,
+                  value: widget.sexo!,
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedSex = newValue;
@@ -317,7 +335,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: Text(
-                  'Tu Tasa de Metabolismo Basal (TMB) (Fórmula Mifflin-St. Jeor) es ${getTbm(_selectedSex, fechaController.text, pesoController.text, alturaController.text).toStringAsFixed(2)}',
+                  'Tu Tasa de Metabolismo Basal (TMB) (Fórmula Mifflin-St. Jeor) es ${getTbm(_selectedSex, fechaController.text, pesoController.text, alturaController.text, tbm)}',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -360,7 +378,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: Text(
-                  'Dependiendo del tipo de actividad física que realices, la cantidad mínima de energía variará: ${getKcal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity).toStringAsFixed(2)}} Kcal',
+                  'Dependiendo del tipo de actividad física que realices, la cantidad mínima de energía variará: ${getKcal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, kcal)} Kcal',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -375,7 +393,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     labelText: 'Objetivo',
                     border: OutlineInputBorder(),
                   ),
-                  value: _selectedGoal,
+                  value: widget.objetivo!,
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedGoal = newValue;
@@ -383,35 +401,35 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   items: [
                     DropdownMenuItem<String>(
-                      value: 'déficit calórico',
-                      child: Text('Déficit calórico'),
+                      value: 'deficitcalorico',
+                      child: Text('Déficit Calórico'),
                     ),
                     DropdownMenuItem<String>(
-                      value: 'calorías TBM',
-                      child: Text('Calorías TBM'),
+                      value: 'caloriastbm',
+                      child: Text('Calorias TBM'),
                     ),
                     DropdownMenuItem<String>(
-                      value: 'superávit calórico',
-                      child: Text('Superávit calórico'),
+                      value: 'superavitcalorico',
+                      child: Text('Superávit Calórico'),
                     ),
                     DropdownMenuItem<String>(
-                      value: 'alimentación hiperproteica',
-                      child: Text('Alimentación hiperproteica'),
+                      value: 'alimentacionhiperproteica',
+                      child: Text('Alimentación Hiperproteica'),
                     ),
                   ],
                 ),
               ),
-              (_selectedGoal == 'déficit calórico' || _selectedGoal == 'superávit calórico')
-                ? buildNumericField("Ajusta las Kcal", "500", goal)
-                : _selectedGoal == 'alimentación hiperproteica'
-                  ? buildNumericField("Ajusta los g/peso", "1.5", goal)
+              (_selectedGoal == 'deficitcalorico' || _selectedGoal == 'superavitcalorico')
+                ? buildNumericField("Ajusta las Kcal", widget.kcalGoal!.toString(), goal)
+                : _selectedGoal == 'alimentacionhiperproteica'
+                  ? buildNumericField("Ajusta los g/peso", widget.kcalGoal!.toString(), goal)
                   : Container(),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Text(
-                  _selectedGoal == 'alimentación hiperproteica' 
-                  ? 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text).toStringAsFixed(2)} g proteinas'
-                    : 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text).toStringAsFixed(2)} kcal',
+                  _selectedGoal == 'alimentacionhiperproteica' 
+                  ? 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text, kcalGoal)} g proteinas'
+                    : 'El objetivo establecido es: ${getKcalGoal(_selectedSex, fechaController.text, pesoController.text, alturaController.text, _selectedActivity, _selectedGoal, goal.text, kcalGoal)} kcal',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -506,6 +524,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       var alturaMod = int.tryParse(alturaController.text) ?? widget.altura;
                       var actividadFisicaMod =
                           actividad(_selectedActivity.toString());
+                      var objetivoMod = _selectedGoal.toString();
+                      var objetivonumMod = double.tryParse(goal.text) ?? widget.kcalGoal;
       
                       List<Map<String, String>> alergenosMod = _selectedAllergens.map((alergeno) {
                         return {'nombre': alergeno};
@@ -518,6 +538,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       print(alturaMod);
                       print(actividadFisicaMod);
                       print(alergenosMod);
+                      print(objetivoMod);
+                      print(objetivonumMod);
                       final response = await http.put(
                         Uri.parse('${globalVariables.ipVM}/modify-user'),
                         body: jsonEncode({
@@ -529,6 +551,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           'sexo': sexoMod,
                           'fecha_nacimiento': fechaNacimientoMod,
                           'actividad_diaria': actividadFisicaMod,
+                          'objetivo': objetivoMod,
+                          'num_objetivo': objetivonumMod
                         }),
                         headers: <String, String>{
                           'Content-Type': 'application/json; charset=UTF-8',

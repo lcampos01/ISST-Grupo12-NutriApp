@@ -30,15 +30,15 @@ bool validatePassword(String value) {
 
 bool validateEmail(String email) {
   if (email.isEmpty) {
-    return false;
+    return false; 
   }
 
   final RegExp emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
   return emailRegExp.hasMatch(email);
 }
 
-bool validateData(String username, String fechaNacimiento, String peso, String altura) {
-  if(username.isEmpty || fechaNacimiento.isEmpty || peso.isEmpty || altura.isEmpty) {
+bool validateData(String username, String fechaNacimiento, String peso, String altura, String objetivo) {
+  if(username.isEmpty || fechaNacimiento.isEmpty || peso.isEmpty || altura.isEmpty || objetivo.isEmpty) {
     return false;
   } 
   return true;
