@@ -393,7 +393,7 @@ class _DataSignPageState extends State<DataSignPage> {
                   var actividadFisicaStrSign =
                       actividad((_selectedActivity.toString())).toString();
                   var objetivoStringSign = _selectedGoal.toString();
-                  var objetivoNumKcalSign = double.tryParse(goal.text);
+                  var objetivoNumKcalSign = double.tryParse(goal.text) ?? 0;
                   var objetivoNumKcalStrSign = _selectedGoal == 'caloriastbm' ? 'TBM' : goal.text;
                   var alergenosSign = _selectedAllergens;
                   List<Map<String, String>> alergenosJson = alergenosSign.map((alergeno) {
