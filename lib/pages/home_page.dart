@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:nutri_app/pages/progress_page.dart';
+import 'package:nutri_app/variables/global.dart';
+import 'dart:convert';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,7 +16,52 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   //Filtro del buscador de alimentos
-  void filtroAlimentos(String value) {}
+
+  dynamic jsonData;
+  dynamic alimentosDiarios;
+  dynamic alimentosDiariosDES;
+  dynamic alimentosDiariosCOM;
+  dynamic alimentosDiariosCENA;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchConsumo();
+  }
+
+  Future<void> fetchConsumo() async {
+    final response = await http.get(
+      Uri.parse('${globalVariables.ipVM}/consumo'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': globalVariables.tokenUser,
+      },
+    );
+    if (response.statusCode == 200) {
+      jsonData = jsonDecode(response.body);
+      //print(jsonData);
+      if (jsonData.length != 0) {
+        for (var data in jsonData) {
+          if (data["dia"].contains(DateFormat.Md().format(DateTime.now()))) {
+            alimentosDiarios.add(data);
+            for (var data in alimentosDiarios) {
+              final alimentoSTR = data["alimento"] as String?;
+
+              if (data["momento"].contains("desayuno")) {
+                alimentosDiariosDES.add(alimentoSTR);
+              } else if (data["momento"].contains("comida")) {
+                alimentosDiariosCOM.add(alimentoSTR);
+              } else {
+                alimentosDiariosCENA.add(alimentoSTR);
+              }
+            }
+          }
+        }
+      }
+    } else {
+      throw Exception('Failed to connect to the server');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -464,220 +513,29 @@ class _HomePageState extends State<HomePage> {
                                                           ),
                                                         ),
                                                       ),
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Text(
-                                                            'Cereales',
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          4,
-                                                                          0,
-                                                                          4,
-                                                                          0),
-                                                              child:
-                                                                  TextFormField(
-                                                                autofocus: true,
-                                                                obscureText:
-                                                                    false,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  hintText:
-                                                                      '(Kcal)',
-                                                                  enabledBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  errorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedErrorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Text(
-                                                            'Café',
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          4,
-                                                                          0,
-                                                                          4,
-                                                                          0),
-                                                              child:
-                                                                  TextFormField(
-                                                                autofocus: true,
-                                                                obscureText:
-                                                                    false,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  hintText:
-                                                                      '(Kcal)',
-                                                                  enabledBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  errorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedErrorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                      alimentosDiariosDES !=
+                                                              null
+                                                          ? ListView.builder(
+                                                              shrinkWrap: true,
+                                                              itemCount:
+                                                                  alimentosDiariosDES
+                                                                          .length ??
+                                                                      0,
+                                                              itemBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      int index) {
+                                                                return ListTile(
+                                                                  title: Text(
+                                                                      alimentosDiariosDES[
+                                                                          index]),
+                                                                );
+                                                              },
+                                                            )
+                                                          : Container(
+                                                              child: Text(
+                                                                  'No hay ningún alimento de desayuno registrado'),
+                                                            )
                                                     ],
                                                   ),
                                                   Column(
@@ -692,220 +550,29 @@ class _HomePageState extends State<HomePage> {
                                                               FontWeight.bold,
                                                         ),
                                                       ),
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Text(
-                                                            'Burrito',
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          4,
-                                                                          0,
-                                                                          4,
-                                                                          0),
-                                                              child:
-                                                                  TextFormField(
-                                                                autofocus: true,
-                                                                obscureText:
-                                                                    false,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  hintText:
-                                                                      '(Kcal)',
-                                                                  enabledBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  errorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedErrorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Text(
-                                                            'Lasaña',
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          4,
-                                                                          0,
-                                                                          4,
-                                                                          0),
-                                                              child:
-                                                                  TextFormField(
-                                                                autofocus: true,
-                                                                obscureText:
-                                                                    false,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  hintText:
-                                                                      '(Kcal)',
-                                                                  enabledBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  errorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedErrorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                      alimentosDiariosCOM !=
+                                                              null
+                                                          ? ListView.builder(
+                                                              shrinkWrap: true,
+                                                              itemCount:
+                                                                  alimentosDiariosCOM
+                                                                          .length ??
+                                                                      0,
+                                                              itemBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      int index) {
+                                                                return ListTile(
+                                                                  title: Text(
+                                                                      alimentosDiariosCOM[
+                                                                          index]),
+                                                                );
+                                                              },
+                                                            )
+                                                          : Container(
+                                                              child: Text(
+                                                                  'No hay ningún alimento de comida registrado'),
+                                                            )
                                                     ],
                                                   ),
                                                   Column(
@@ -920,220 +587,29 @@ class _HomePageState extends State<HomePage> {
                                                               FontWeight.bold,
                                                         ),
                                                       ),
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Text(
-                                                            'Sopa',
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          4,
-                                                                          0,
-                                                                          4,
-                                                                          0),
-                                                              child:
-                                                                  TextFormField(
-                                                                autofocus: true,
-                                                                obscureText:
-                                                                    false,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  hintText:
-                                                                      '(Kcal)',
-                                                                  enabledBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  errorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedErrorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Text(
-                                                            'Tortilla',
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          4,
-                                                                          0,
-                                                                          4,
-                                                                          0),
-                                                              child:
-                                                                  TextFormField(
-                                                                autofocus: true,
-                                                                obscureText:
-                                                                    false,
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  hintText:
-                                                                      '(Kcal)',
-                                                                  enabledBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  errorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                  focusedErrorBorder:
-                                                                      UnderlineInputBorder(
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                      color: Color(
-                                                                          0x00000000),
-                                                                      width: 1,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              4.0),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              4.0),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                      alimentosDiariosCENA !=
+                                                              null
+                                                          ? ListView.builder(
+                                                              shrinkWrap: true,
+                                                              itemCount:
+                                                                  alimentosDiariosCENA
+                                                                          .length ??
+                                                                      0,
+                                                              itemBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      int index) {
+                                                                return ListTile(
+                                                                  title: Text(
+                                                                      alimentosDiariosCENA[
+                                                                          index]),
+                                                                );
+                                                              },
+                                                            )
+                                                          : Container(
+                                                              child: Text(
+                                                                  'No hay ningún alimento de cena registrado'),
+                                                            )
                                                     ],
                                                   ),
                                                 ],

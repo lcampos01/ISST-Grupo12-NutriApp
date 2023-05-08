@@ -15,11 +15,12 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyHttpOverrides extends HttpOverrides{
+class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext? context){
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
 
@@ -74,7 +75,7 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.light,
         ),
         home: SignPage());
-        //home: SafeArea(child: NavigationScreen(page: screens[0])));
+    //home: SafeArea(child: NavigationScreen(page: screens[0])));
     //home: SignPage(),);
     //No ha cargado todavía la petición a la API
     // if (prueba == null) {
@@ -260,7 +261,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 );
                 print(response.statusCode);
                 print(responseAlergenos.statusCode);
-                if ((response.statusCode == 200) && (responseAlergenos.statusCode == 200)) {
+                if ((response.statusCode == 200) &&
+                    (responseAlergenos.statusCode == 200)) {
                   final jsonData = jsonDecode(response.body);
                   final jsonDataAler = jsonDecode(responseAlergenos.body);
                   final nombre = jsonData['nombre'];
@@ -277,24 +279,28 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   print(jsonDataAler);
                   print(fotoPerfilJson);
                   print(fotoPerfilJson);
-                  final alergenosJson = jsonDataAler; //se recibe [{'nombre': _}, {'nombre': _},...]
-                  List<String> alergenos = alergenosJson.map((alergeno) => alergeno['nombre']).toList().cast<String>();
+                  final alergenosJson =
+                      jsonDataAler; //se recibe [{'nombre': _}, {'nombre': _},...]
+                  List<String> alergenos = alergenosJson
+                      .map((alergeno) => alergeno['nombre'])
+                      .toList()
+                      .cast<String>();
                   print(alergenos);
                   print('cambia a profile');
                   setState(() {
                     widget.page = ProfilePage(
-                        nombre: nombre,
-                        email: email,
-                        password: password,
-                        sexo: sexo,
-                        fecha_nacimiento: fecha_nacimiento,
-                        peso: peso,
-                        altura: altura,
-                        actividad_diaria: actividad_diaria,
-                        objetivo: objetivo,
-                        kcalGoal: num_objetivo,
-                        alergenos: alergenos,
-                        fotoPerfil: fotoPerfilJson,
+                      nombre: nombre,
+                      email: email,
+                      password: password,
+                      sexo: sexo,
+                      fecha_nacimiento: fecha_nacimiento,
+                      peso: peso,
+                      altura: altura,
+                      actividad_diaria: actividad_diaria,
+                      objetivo: objetivo,
+                      kcalGoal: num_objetivo,
+                      alergenos: alergenos,
+                      fotoPerfil: fotoPerfilJson,
                     );
                     currentTab = 3;
                   });
