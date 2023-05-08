@@ -53,6 +53,8 @@ class _FoodLectorState extends State<FoodLector> {
         final imageIngredientsUrls = await fetchItemImageIngredients(jsonData);
         final cantidades = await fetchCantidad(jsonData);
         final isFav = await isfavorite(barcodeScanRes);
+        final alergenos = await fetchAlergenos(jsonData);
+        final misAler = await misAlergenos();
         var t3 = DateTime.now().millisecondsSinceEpoch;
         print('--------------------------------------------');
         print(t2 - t1);
@@ -69,6 +71,8 @@ class _FoodLectorState extends State<FoodLector> {
               imageIngredientes: imageIngredientsUrls,
               barcode: barcodeScanRes,
               isFavorite: isFav, //esto se debe obtener al hacer get para comprobar si esta en favoritos
+              alergenos: alergenos,
+              misAlergenos: misAler,
             ),
           ),
         );
@@ -189,5 +193,34 @@ class _FoodLectorState extends State<FoodLector> {
     } else {
       return 'NS/NC';
     }
+  }
+
+  Future<String> fetchAlergenos(Map<String, dynamic> jsonData) async {
+    final alergenos = jsonData["allergens_hierarchy"] as List<dynamic>?;
+    print(alergenos);
+    if (alergenos != null) {
+      return alergenos.join(", ");
+    } else {
+      return "";
+    }
+  }
+
+  Future<List<String>> misAlergenos() async {
+    List<String> alergenos = [];
+    final responseAlergenos = await http.get(
+      Uri.parse('${globalVariables.ipVM}/alergenos'),
+      headers: <String, String>{
+        'authorization': globalVariables.tokenUser,
+      },
+    );
+    if (responseAlergenos.statusCode == 200) {
+      final jsonDataAler = jsonDecode(responseAlergenos.body);
+      final alergenosJson = jsonDataAler; //se recibe [{'nombre': _}, {'nombre': _},...]
+      alergenos = alergenosJson.map((alergeno) => alergeno['nombre']).toList().cast<String>();
+    } else {
+      print(responseAlergenos.statusCode);
+      print("Ha habido un error con tus alergenos");
+    }
+    return alergenos;
   }
 }

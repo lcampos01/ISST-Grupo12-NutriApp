@@ -31,6 +31,8 @@ class FoodSearcher extends SearchDelegate<String> {
                   List<String> cantidades = await fetchCantidad(query);
                   List<String> barcodes = await fetchBarcode(query);
                   bool isFav = await isfavorite(barcodes[index]);
+                  final alergenos = await fetchAlergenos(query);
+                  final misAler = await misAlergenos();
                   print("--------------------------------------------");
                   print(barcodes);
                   print("--------------------------------------------");
@@ -50,6 +52,8 @@ class FoodSearcher extends SearchDelegate<String> {
                         imageIngredientes: imageIngredientsUrls[index],
                         barcode: barcodes[index],
                         isFavorite: isFav, //esto se debe obtener al hacer get y buscar si esta en favoritos
+                        alergenos: alergenos[index],
+                        misAlergenos: misAler,
                       ),
                     ),
                   );
@@ -114,6 +118,8 @@ class FoodSearcher extends SearchDelegate<String> {
                   List<String> cantidades = await fetchCantidad(query);
                   List<String> barcodes = await fetchBarcode(query);
                   bool isFav = await isfavorite(barcodes[index]);
+                  final alergenos = await fetchAlergenos(query);
+                  final misAler = await misAlergenos();
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => ItemPage(
@@ -130,6 +136,8 @@ class FoodSearcher extends SearchDelegate<String> {
                         imageIngredientes: imageIngredientsUrls[index],
                         barcode: barcodes[index],
                         isFavorite: isFav, //esto se debe obtener al hacer get y ver si esta en favoritos
+                        alergenos: alergenos[index],
+                        misAlergenos: misAler,
                       ),
                     ),
                   );
@@ -156,7 +164,7 @@ class FoodSearcher extends SearchDelegate<String> {
     );
     if (response.statusCode == 200) {
       jsonData = jsonDecode(response.body);
-      print(jsonData);
+      //print(jsonData);
       final products = jsonData['products'] as List<dynamic>;
       final names = <String>[];
       for (var product in products) {
@@ -182,7 +190,7 @@ class FoodSearcher extends SearchDelegate<String> {
     );
     if (responseFav.statusCode == 200) {
       final jsonDataFav = jsonDecode(responseFav.body);
-      print(jsonDataFav);
+      //print(jsonDataFav);
       List<String> barcodes = jsonDataFav.map((bar) => bar['barcode']).toList().cast<String>();
       if(barcodes.contains(barcode)) {
         return true;
@@ -299,5 +307,38 @@ class FoodSearcher extends SearchDelegate<String> {
       }
     }
     return barcodes;
+  }
+  
+  Future<List<String>> fetchAlergenos(String query) async {
+    final products = jsonData['products'] as List<dynamic>;
+    List<String> alergenosLista = [];
+    for (var product in products) {
+      final alergenos = product["allergens_hierarchy"] as List<dynamic>?;
+      if (alergenos != null) {
+        alergenosLista.add(alergenos.join(", "));
+      } else {
+        alergenosLista.add("");
+      }
+    }
+    return alergenosLista;
+  }
+
+  Future<List<String>> misAlergenos() async {
+    List<String> alergenos = [];
+    final responseAlergenos = await http.get(
+      Uri.parse('${globalVariables.ipVM}/alergenos'),
+      headers: <String, String>{
+        'authorization': globalVariables.tokenUser,
+      },
+    );
+    if (responseAlergenos.statusCode == 200) {
+      final jsonDataAler = jsonDecode(responseAlergenos.body);
+      final alergenosJson = jsonDataAler; //se recibe [{'nombre': _}, {'nombre': _},...]
+      alergenos = alergenosJson.map((alergeno) => alergeno['nombre']).toList().cast<String>();
+    } else {
+      print(responseAlergenos.statusCode);
+      print("Ha habido un error con tus alergenos");
+    }
+    return alergenos;
   }
 }

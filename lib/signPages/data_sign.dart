@@ -41,13 +41,20 @@ class _DataSignPageState extends State<DataSignPage> {
   String? _selectedSex = "hombre";
 
   List<MultiSelectItem<String>> _allergens = [
-    'Lactosa',
-    'Gluten',
-    'Huevos',
-    'Crustaceos',
-    'Pescado',
-    'Frutos Secos',
-    'Soja',
+    'Crustaceos', //crustaceans
+    'Cacahuetes', //peanuts
+    'Nueces', //nuts
+    'Mostaza', //mustard
+    'Altramuces',  //lupin
+    'Gluten', //gluten
+    'Soja', //soybeans
+    'Apio', //celery
+    'Dioxido de azufre y sulfitos',   //sulphur-dioxide-and-sulphites
+    'Pescado',   //fish
+    'Moluscos',   //molluscs
+    'Leche',   //milk
+    'Huevos',   //eggs
+    'Sesamo',   //sesame-seeds
   ].map((allergen) => MultiSelectItem<String>(allergen, allergen)).toList();
 
   List<String> _selectedAllergens = [];
