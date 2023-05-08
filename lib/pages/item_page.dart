@@ -40,108 +40,109 @@ class _ItemPageState extends State<ItemPage> {
   void initState() {
     super.initState();
     _isFavorite = widget.isFavorite;
-    
-    if(widget.alergenos.contains(',')) {
-      alergenos = (widget.alergenos).split(", ");
-    } else if(widget.alergenos.length == 0) {
-      alergenos = [];
-    } else {
-      alergenos.add(widget.alergenos);
-    }
-    for(String alergeno in alergenos) {
-      switch(alergeno) {
-        case 'en:crustaceans':
-          if(widget.misAlergenos.contains('Crustaceos')) {
-            alertaAler = true;
-            alerSi.add('Crustaceos');
-          }
-          break;
-        case 'en:peanuts':
-          if(widget.misAlergenos.contains('Cacahuetes')) {
-            alertaAler = true;
-            alerSi.add('Cacahuetes');
-          }
-          break;
-        case 'en:nuts':
-          if(widget.misAlergenos.contains('Nueces')) {
-            alertaAler = true;
-            alerSi.add('Nueces');
-          }
-          break;
-        case 'en:mustard':
-          if(widget.misAlergenos.contains('Mostaza')) {
-            alertaAler = true;
-            alerSi.add('Mostaza');
-          }
-          break;
-        case 'en:lupin':
-          if(widget.misAlergenos.contains('Altramuces')) {
-            alertaAler = true;
-            alerSi.add('Altramuces');
-          }
-          break;
-        case 'en:gluten':
-          if(widget.misAlergenos.contains('Gluten')) {
-            alertaAler = true;
-            alerSi.add('Gluten');
-          }
-          break;
-        case 'en:soybeans':
-          if(widget.misAlergenos.contains('Soja')) {
-            alertaAler = true;
-            alerSi.add('Soja');
-          }
-          break;
-        case 'en:celery':
-          if(widget.misAlergenos.contains('Apio')) {
-            alertaAler = true;
-            alerSi.add('Apio');
-          }
-          break;
-        case 'en:sulphur-dioxide-and-sulphites':
-          if(widget.misAlergenos.contains('Dioxido de azufre y sulfitos')) {
-            alertaAler = true;
-            alerSi.add('Dioxido de azufre y sulfitos');
-          }
-          break;
-        case 'en:fish':
-          if(widget.misAlergenos.contains('Pescado')) {
-            alertaAler = true;
-            alerSi.add('Pescado');
-          }
-          break;
-        case 'en:mollusc':
-          if(widget.misAlergenos.contains('Moluscos')) {
-            alertaAler = true;
-            alerSi.add('Moluscos');
-          }
-          break;
-        case 'en:milk':
-          if(widget.misAlergenos.contains('Leche')) {
-            alertaAler = true;
-            alerSi.add('Leche');
-          }
-          break;
-        case 'en:eggs':
-          if(widget.misAlergenos.contains('Huevos')) {
-            alertaAler = true;
-            alerSi.add('Huevos');
-          }
-          break;
-        case 'en:sesame-seeds':
-          if(widget.misAlergenos.contains('Sesamo')) {
-            alertaAler = true;
-            alerSi.add('Sesamo');
-          }
-          break;
-        default: 
-          break;
+    if(widget.alergenos != null) {
+      if(widget.alergenos.contains(',')) {
+        alergenos = (widget.alergenos).split(", ");
+      } else if(widget.alergenos.length == 0) {
+        alergenos = [];
+      } else {
+        alergenos.add(widget.alergenos);
       }
-    }
-    if(alertaAler) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showAlertDialog();
-    });
+      for(String alergeno in alergenos) {
+        switch(alergeno) {
+          case 'en:crustaceans':
+            if(widget.misAlergenos.contains('Crustaceos')) {
+              alertaAler = true;
+              alerSi.add('Crustaceos');
+            }
+            break;
+          case 'en:peanuts':
+            if(widget.misAlergenos.contains('Cacahuetes')) {
+              alertaAler = true;
+              alerSi.add('Cacahuetes');
+            }
+            break;
+          case 'en:nuts':
+            if(widget.misAlergenos.contains('Nueces')) {
+              alertaAler = true;
+              alerSi.add('Nueces');
+            }
+            break;
+          case 'en:mustard':
+            if(widget.misAlergenos.contains('Mostaza')) {
+              alertaAler = true;
+              alerSi.add('Mostaza');
+            }
+            break;
+          case 'en:lupin':
+            if(widget.misAlergenos.contains('Altramuces')) {
+              alertaAler = true;
+              alerSi.add('Altramuces');
+            }
+            break;
+          case 'en:gluten':
+            if(widget.misAlergenos.contains('Gluten')) {
+              alertaAler = true;
+              alerSi.add('Gluten');
+            }
+            break;
+          case 'en:soybeans':
+            if(widget.misAlergenos.contains('Soja')) {
+              alertaAler = true;
+              alerSi.add('Soja');
+            }
+            break;
+          case 'en:celery':
+            if(widget.misAlergenos.contains('Apio')) {
+              alertaAler = true;
+              alerSi.add('Apio');
+            }
+            break;
+          case 'en:sulphur-dioxide-and-sulphites':
+            if(widget.misAlergenos.contains('Dioxido de azufre y sulfitos')) {
+              alertaAler = true;
+              alerSi.add('Dioxido de azufre y sulfitos');
+            }
+            break;
+          case 'en:fish':
+            if(widget.misAlergenos.contains('Pescado')) {
+              alertaAler = true;
+              alerSi.add('Pescado');
+            }
+            break;
+          case 'en:mollusc':
+            if(widget.misAlergenos.contains('Moluscos')) {
+              alertaAler = true;
+              alerSi.add('Moluscos');
+            }
+            break;
+          case 'en:milk':
+            if(widget.misAlergenos.contains('Leche')) {
+              alertaAler = true;
+              alerSi.add('Leche');
+            }
+            break;
+          case 'en:eggs':
+            if(widget.misAlergenos.contains('Huevos')) {
+              alertaAler = true;
+              alerSi.add('Huevos');
+            }
+            break;
+          case 'en:sesame-seeds':
+            if(widget.misAlergenos.contains('Sesamo')) {
+              alertaAler = true;
+              alerSi.add('Sesamo');
+            }
+            break;
+          default: 
+            break;
+        }
+      }
+      if(alertaAler) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showAlertDialog();
+      });
+      }
     }
   }
 
@@ -578,7 +579,7 @@ class _ItemPageState extends State<ItemPage> {
                         SizedBox(height: 10),
               
                         //Text('$calorias [Kcal]'), para cuando se cree el array de macros
-                        widget.macros[0] == null ? Text(
+                        widget.macros[0] == "" ? Text(
                           'NS/NC',
                           style: TextStyle(
                             fontSize: 13,
@@ -599,7 +600,7 @@ class _ItemPageState extends State<ItemPage> {
                         Text('Proteínas'),
                         SizedBox(height: 10),
                         //Text('$proteinas [g]'), para cuando se cree el array de macros
-                        widget.macros[1] == null ? Text(
+                        widget.macros[1] == "" ? Text(
                           'NS/NC',
                           style: TextStyle(
                             fontSize: 13,
@@ -620,7 +621,7 @@ class _ItemPageState extends State<ItemPage> {
                         Text('Carbohidratos'),
                         SizedBox(height: 10),
                         //Text('$carbohidratos [g]'), para cuando se cree el array de macros
-                        widget.macros[2] == null ? Text(
+                        widget.macros[2] == "" ? Text(
                           'NS/NC',
                           style: TextStyle(
                             fontSize: 13,
@@ -641,7 +642,7 @@ class _ItemPageState extends State<ItemPage> {
                         Text('Grasas'),
                         SizedBox(height: 10),
                         //Text('$grasas [g]'), para cuando se cree el array de macros
-                        widget.macros[3] == null ? Text(
+                        widget.macros[3] == "" ? Text(
                           'NS/NC',
                           style: TextStyle(
                             fontSize: 13,
