@@ -29,6 +29,7 @@ class _FavPageState extends State<FavPage> {
 
   TextEditingController searchController = TextEditingController();
   List<dynamic> filteredNombres = [];
+  List<dynamic> filteredImageUrls = [];
 
   @override
   void initState() {
@@ -124,21 +125,22 @@ class _FavPageState extends State<FavPage> {
                             print(proteinass[index]);
                             print(carbohidratoss[index]);
                             print(grasass[index]);
+                            final indexed = nombres.indexOf(filteredNombres[index]);
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => ItemPage(
-                                  name: nombres[index],
-                                  barcode: barcodes[index],
-                                  imageUrl: NetworkImage(imageUrls[index]),
-                                  imageNutriScore: imageNutriScores[index],
-                                  details: cantidadess[index],
+                                  name: nombres[indexed],
+                                  barcode: barcodes[indexed],
+                                  imageUrl: NetworkImage(imageUrls[indexed]),
+                                  imageNutriScore: imageNutriScores[indexed],
+                                  details: cantidadess[indexed],
                                   imageIngredientes:
-                                      NetworkImage(imageIngredientess[index]),
+                                      NetworkImage(imageIngredientess[indexed]),
                                   macros: [
-                                    caloriass[index],
-                                    proteinass[index],
-                                    carbohidratoss[index],
-                                    grasass[index],
+                                    caloriass[indexed],
+                                    proteinass[indexed],
+                                    carbohidratoss[indexed],
+                                    grasass[indexed],
                                   ],
                                   isFavorite: true,
                                   
