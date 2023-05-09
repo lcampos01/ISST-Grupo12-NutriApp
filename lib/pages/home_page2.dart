@@ -1,1231 +1,759 @@
-import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_app/widges/bargraph.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import '../functions/scanBarcode.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:nutri_app/pages/progress_page.dart';
+import 'package:nutri_app/variables/global.dart';
+import 'dart:convert';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage2 extends StatefulWidget {
+  const HomePage2({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePage2State createState() => _HomePage2State();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePage2State extends State<HomePage2> {
+  dynamic jsonData;
+  dynamic jsonDataUser;
+  
+  dynamic alimentosDiarios;
+  dynamic alimentosDiariosDES = [];
+  dynamic alimentosDiariosALM = [];
+  dynamic alimentosDiariosCOM = [];
+  dynamic alimentosDiariosMER = [];
+  dynamic alimentosDiariosCENA = [];
+
+  dynamic nombre;
+  dynamic sexo;
+  dynamic fecha_nacimiento;
+  dynamic peso;
+  dynamic altura;
+  dynamic actividad_diaria;
+  dynamic objetivo;
+  dynamic num_objetivo;
+
+  double tbm = 0;
+  double kcal = 0;
+  double kcalGoal = 0;
+
+  double kcalConsumo = 0;
+  double protConsumo = 0;
+  double hidrConsumo = 0;
+  double grasConsumo = 0;
+
+  List<String> diasGrafica = ['a', 'b', '', '', '', '', ''];
+  List<double> sumarioKcal = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+  List<double> sumarioProt = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+
+  String formatDate(String date) {
+    if(date.contains('-')) {
+      List<String> partes = date.split('-');
+      return '${partes[2]}-${partes[1]}-${partes[0]}';
+    } else {
+      return date;
+    }
+  }
+
+  double getTbm(String? sex, String? birth, String? weight, String? height) {
+    double tbm = 0;
+    if(sex == '' || birth == '' || weight == '' || height == '') {
+      return tbm = 0;
+    } else {
+      DateTime fecha = DateTime.parse(formatDate(birth!));
+      DateTime today = DateTime.now();
+      int anoToday = today.year;
+      int anoFecha = fecha.year;
+      int edad = anoToday - anoFecha;
+      double peso = double.tryParse(weight!) ?? 0;
+      double altura = double.tryParse(height!) ?? 0;
+      if (sex == 'hombre') {
+        tbm = 10*peso + 6.25*altura - 5*edad + 5;
+        return tbm;
+      } else {
+        tbm = 10*peso + 6.25*altura - 5*edad - 161;
+        return tbm;
+      }
+    }
+  }
+
+  double getKcal(String? sex, String? birth, String? weight, String? height, String? act) {
+    double tbm = getTbm(sex, birth, weight, height);
+    double kcal = 0;
+    if(act == 'activo') {
+      kcal = tbm*1.8;
+    } else if(act == 'moderado') {
+      kcal = tbm*1.55;
+    } else if(act == 'sedentario') {
+      kcal = tbm*1.2;
+    } else {
+      kcal = 0;
+    }
+    return kcal;
+  }
+  double getKcalGoal(String? sex, String? birth, String? weight, String? height, String? act, String? goalStr, String? goal) {
+    double kcal = getKcal(sex, birth, weight, height, act);
+    if(goal != '') {
+      if(goalStr == 'deficitcalorico') {
+        if(kcal == 0) {
+          return kcalGoal = 0;
+        } else {
+          return kcalGoal = kcal - (double.tryParse(goal!) ?? 0);
+        }
+      } else if(goalStr == 'superavitcalorico') {
+        if(kcal == 0) {
+          return kcalGoal = 0;
+        } else {
+          return kcalGoal = kcal + (double.tryParse(goal!) ?? 0);
+        }
+      } else if(goalStr == 'alimentacionhiperproteica') {
+        if(weight == '') {
+          return kcalGoal = 0;
+        } else {
+          return kcalGoal = (double.tryParse(weight!) ?? 0) * (double.tryParse(goal!) ?? 0);
+        }
+      } else if(goalStr == 'caloriastbm') {
+        return kcalGoal = kcal;
+      } else {
+        return kcalGoal = 0;
+      }
+    } else {
+      return kcalGoal = 0;
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    fetchAlimentosDiarios().then((_) {
+      setState(() {
+        
+      });
+    });
+    _initializeUser().then((_) {
+      setState(() {
+        
+      });
+    });
+    _initializeGrafica().then((_) {
+      setState(() {
+        
+      });
+    });
+  }
+
+  void initializeData() {
+    fetchAlimentosDiarios().then((_) {
+      _initializeUser().then((_) {
+        _initializeGrafica().then((_) {
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(
-                child: Column(children: [
-              Wrap(
-                  spacing: 8, // ajusta el espacio entre las dos columnas
-                  runSpacing: 0,
-                  alignment: WrapAlignment.start,
-                  crossAxisAlignment: WrapCrossAlignment.start,
-                  direction: Axis.horizontal,
-                  runAlignment: WrapAlignment.start,
-                  verticalDirection: VerticalDirection.down,
-                  children: [
-                    Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.40,
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 4,
-                                  color: Color(0x34090F13),
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(12, 8, 12, 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 4, 0, 4),
-                                    child: Text(
-                                      'Seguimiento diario',
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 5, 0, 0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Calorías (Kcal)',
-                                          ),
-                                          Expanded(
-                                            child: CircularPercentIndicator(
-                                              percent: 0.4,
-                                              radius: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                              lineWidth: 5,
-                                              animation: true,
-                                              progressColor: Color(0xFF046701),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 5, 0, 0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Grasas',
-                                          ),
-                                          Expanded(
-                                            child: CircularPercentIndicator(
-                                              percent: 0.8,
-                                              radius: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                              lineWidth: 5,
-                                              animation: true,
-                                              progressColor: Color(0xFF046701),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 5, 0, 0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Proteinas',
-                                          ),
-                                          Expanded(
-                                            child: CircularPercentIndicator(
-                                              percent: 0.6,
-                                              radius: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                              lineWidth: 5,
-                                              animation: true,
-                                              progressColor: Color(0xFF046701),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 5, 0, 0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Fibra',
-                                          ),
-                                          Expanded(
-                                            child: CircularPercentIndicator(
-                                              percent: 0.2,
-                                              radius: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                              lineWidth: 5,
-                                              animation: true,
-                                              progressColor: Color(0xFF046701),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 20,
+            ),
+          ),
+          SliverAppBar(
+            toolbarHeight: 100,
+            title: Padding(
+              padding: EdgeInsets.all(12.0),
+              child: Text(
+                'Seguimiento diario',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          //hacer 2 opciones esta si objetivo calorias y otra si objetivo es proteico
+          objetivo == 'alimentacionhiperproteica' 
+          ? SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Container(
+                  padding: EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 159, 221, 161),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Tu objetivo de proteinas es: ${kcalGoal.toStringAsFixed(2)} g', //objetivo del usuario.
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.40,
-                            height: MediaQuery.of(context).size.height * 0.30,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 4,
-                                  color: Color(0x34090F13),
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(12, 8, 12, 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0, 12, 0, 0),
-                                        child: Text(
-                                          'Comidas favoritas',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 4, 0, 0),
-                                    child: Text(
-                                      'Comidas que has guardado',
-                                    ),
-                                  ),
-                                  SingleChildScrollView(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 5, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Huevos',
-                                              ),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/eggs.jpeg'),
-                                                width: 30,
-                                                height: 30,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 5, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Kiwi',
-                                              ),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/kiwi.jpg'),
-                                                width: 30,
-                                                height: 30,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 5, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Leche',
-                                              ),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/leche.jpg'),
-                                                width: 30,
-                                                height: 30,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0, 5, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Tomate',
-                                              ),
-                                              Image(
-                                                image: AssetImage(
-                                                    'assets/tomatos.jpg'),
-                                                width: 30,
-                                                height: 30,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            'HAS CONSUMIDO: ${protConsumo.toStringAsFixed(2)} g', //proteinas sumadas consumidas por el usuario.
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.40,
-                            height: MediaQuery.of(context).size.height * 0.20,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 4,
-                                  color: Color(0x34090F13),
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(12, 8, 12, 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 8, 0, 8),
-                                    child: Text(
-                                      'Busca un nuevo producto',
-                                    ),
-                                  ),
-                                  Container(
-                                    width: double.infinity,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: Color(0x790E151B),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  4, 0, 4, 0),
-                                          child: Icon(
-                                            Icons.search_rounded,
-                                            color: Color(0xFF030404),
-                                            size: 24,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    4, 0, 0, 0),
-                                            child: TextField(),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        25, 10, 25, 0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        String barcode = await scanBarcode();
-                                        print(barcode);
-                                      },
-                                      child: BarcodeWidget(
-                                        data: 'Barcode',
-                                        barcode: Barcode.code128(),
-                                        width: 100,
-                                        height: 50,
-                                        color: Colors.black,
-                                        backgroundColor: Colors.transparent,
-                                        errorBuilder: (_context, _error) =>
-                                            SizedBox(
-                                          width: 100,
-                                          height: 50,
-                                        ),
-                                        drawText: true,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            kcalGoal<protConsumo ? 'Te has pasado: ${(protConsumo-kcalGoal).toStringAsFixed(2)} g' 
+                              : 'Te faltan: ${(kcalGoal-protConsumo).toStringAsFixed(2)} g',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      CircularPercentIndicator(
+                        percent: protConsumo/kcalGoal > 1 ? 1 : protConsumo/kcalGoal, //hacer ratio entre consumido/objetivo
+                        radius: MediaQuery.of(context).size.width * 0.15,
+                        lineWidth: 20,
+                        animation: true,
+                        progressColor: Color.fromARGB(255, 10, 60, 8),
+                        backgroundColor: Color.fromARGB(255, 196, 221, 196),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
+          : SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Container(
+                  padding: EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 159, 221, 161),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Tu objetivo de calorías es: ${kcalGoal.toStringAsFixed(2)} kcal', //objetivo del usuario.
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            'HAS CONSUMIDO: ${kcalConsumo.toStringAsFixed(2)} kcal', //calorias sumadas consumidas por el usuario.
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            kcalGoal<kcalConsumo ? 'Te has pasado: ${(kcalConsumo-kcalGoal).toStringAsFixed(2)} g' 
+                              : 'Te faltan: ${(kcalGoal-kcalConsumo).toStringAsFixed(2)} g',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      CircularPercentIndicator(
+                        percent: kcalConsumo/kcalGoal > 1 ? 1 : kcalConsumo/kcalGoal, //hacer ratio entre consumido/objetivo
+                        radius: MediaQuery.of(context).size.width * 0.15,
+                        lineWidth: 20,
+                        animation: true,
+                        progressColor: Color.fromARGB(255, 10, 60, 8),
+                        backgroundColor: Color.fromARGB(255, 196, 221, 196),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          objetivo == 'alimentacionhiperproteica' 
+          ? SliverToBoxAdapter(
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text( //si el objetivo es proteico cambiar por calorias
+                    'CALORÍAS: ${kcalConsumo.toStringAsFixed(2)} kcal', //calorías sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
-                    Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.40,
-                            height: MediaQuery.of(context).size.height * 0.57,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 4,
-                                  color: Color(0x34090F13),
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(12, 8, 12, 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text(
-                                            'Calorías diarias',
-                                          ),
-                                        ],
-                                      ),
-                                      TextFormField(
-                                        autofocus: true,
-                                        obscureText: false,
-                                        decoration: InputDecoration(
-                                          hintText: '[Some hint text...]',
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Color(0x00000000),
-                                              width: 1,
-                                            ),
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(4.0),
-                                              topRight: Radius.circular(4.0),
-                                            ),
-                                          ),
-                                          focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Color(0x00000000),
-                                              width: 1,
-                                            ),
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(4.0),
-                                              topRight: Radius.circular(4.0),
-                                            ),
-                                          ),
-                                          errorBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Color(0x00000000),
-                                              width: 1,
-                                            ),
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(4.0),
-                                              topRight: Radius.circular(4.0),
-                                            ),
-                                          ),
-                                          focusedErrorBorder:
-                                              UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Color(0x00000000),
-                                              width: 1,
-                                            ),
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(4.0),
-                                              topRight: Radius.circular(4.0),
-                                            ),
-                                          ),
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                  SingleChildScrollView(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Text(
-                                          'Comidas diarias',
-                                        ),
-                                        ListView(
-                                          padding: EdgeInsets.zero,
-                                          shrinkWrap: true,
-                                          scrollDirection: Axis.vertical,
-                                          children: [
-                                            Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(0, 8, 0, 0),
-                                                  child: Text(
-                                                    'Desayuno',
-                                                  ),
-                                                ),
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Text(
-                                                      'Cereales',
-                                                    ),
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    4, 0, 4, 0),
-                                                        child: TextFormField(
-                                                          autofocus: true,
-                                                          obscureText: false,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText: '(Kcal)',
-                                                            enabledBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            errorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedErrorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Text(
-                                                      'Café',
-                                                    ),
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    4, 0, 4, 0),
-                                                        child: TextFormField(
-                                                          autofocus: true,
-                                                          obscureText: false,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText: '(Kcal)',
-                                                            enabledBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            errorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedErrorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Text(
-                                                  'Comida',
-                                                ),
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Text(
-                                                      'Burrito',
-                                                    ),
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    4, 0, 4, 0),
-                                                        child: TextFormField(
-                                                          autofocus: true,
-                                                          obscureText: false,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText: '(Kcal)',
-                                                            enabledBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            errorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedErrorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Text(
-                                                      'Lasaña',
-                                                    ),
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    4, 0, 4, 0),
-                                                        child: TextFormField(
-                                                          autofocus: true,
-                                                          obscureText: false,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText: '(Kcal)',
-                                                            enabledBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            errorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedErrorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Text(
-                                                  'Cena',
-                                                ),
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Text(
-                                                      'Sopa',
-                                                    ),
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    4, 0, 4, 0),
-                                                        child: TextFormField(
-                                                          autofocus: true,
-                                                          obscureText: false,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText: '(Kcal)',
-                                                            enabledBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            errorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedErrorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Text(
-                                                      'Tortilla',
-                                                    ),
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    4, 0, 4, 0),
-                                                        child: TextFormField(
-                                                          autofocus: true,
-                                                          obscureText: false,
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText: '(Kcal)',
-                                                            enabledBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            errorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                            focusedErrorBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
-                                                                color: Color(
-                                                                    0x00000000),
-                                                                width: 1,
-                                                              ),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        4.0),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.40,
-                            height: MediaQuery.of(context).size.height * 0.21,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 4,
-                                  color: Color(0x34090F13),
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(12, 8, 12, 8),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0, 8, 0, 8),
-                                        child: Text(
-                                          'Sigue tu \nprogreso',
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.insert_chart,
-                                        color: Color(0xFF272626),
-                                        size: 38,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ])
-            ]))
-          ]),
+                  ),
+                  Text(
+                    'HIDRATOS: ${hidrConsumo.toStringAsFixed(2)} g', //hidratos sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'GRASAS: ${grasConsumo.toStringAsFixed(2)} g', //grasas sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+          : SliverToBoxAdapter(
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text( //si el objetivo es proteico cambiar por calorias
+                    'PROTEINAS: ${protConsumo.toStringAsFixed(2)} g', //proteinas sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'HIDRATOS: ${hidrConsumo.toStringAsFixed(2)} g', //hidratos sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'GRASAS: ${grasConsumo.toStringAsFixed(2)} g', //grasas sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'DESAYUNO:', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  alimentosDiariosDES.isEmpty 
+                  ? Text(
+                    'No hay alimentos registrados', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                  : Text(
+                    alimentosDiariosDES.join(', '),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'ALMUERZO:', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  alimentosDiariosALM.isEmpty 
+                  ? Text(
+                    'No hay alimentos registrados', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                  : Text(
+                    alimentosDiariosALM.join(', '),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'COMIDA:', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  alimentosDiariosCOM.isEmpty 
+                  ? Text(
+                    'No hay alimentos registrados', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                  : Text(
+                    alimentosDiariosCOM.join(', '),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'MERIENDA:', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  alimentosDiariosMER.isEmpty 
+                  ? Text(
+                    'No hay alimentos registrados', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                  : Text(
+                    alimentosDiariosMER.join(', '),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'CENA:', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  alimentosDiariosCENA.isEmpty 
+                  ? Text(
+                    'No hay alimentos registrados', //calorias sumadas consumidas por el usuario.
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                  : Text(
+                    alimentosDiariosCENA.join(', '),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverAppBar(
+            toolbarHeight: 50,
+            title: Padding(
+              padding: EdgeInsets.all(12.0),
+              child: Text(
+                'Seguimiento semanal',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          objetivo == 'alimentacionhiperproteica'
+          ? SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 60),
+              child: Text(
+                'g',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          )
+          : SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 60),
+              child: Text(
+                'Kcal',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 20,
+            ),
+          ),
+          objetivo == 'alimentacionhiperproteica'
+          ? SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              child: SizedBox(
+                height: 600,
+                child: MyBarGraph(
+                  sumario1: sumarioProt,
+                  objetivo: kcalGoal + 10,
+                  tipo: objetivo,
+                  dias: diasGrafica,
+                ),
+              ),
+            ),
+          )
+          : SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              child: SizedBox(
+                height: 600,
+                child: MyBarGraph(
+                  sumario1: sumarioKcal,
+                  objetivo: kcalGoal + 1000,
+                  tipo: objetivo,
+                  dias: diasGrafica,
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 50,
+            ),
+          ),
+        ]
+      ),
     );
+  }
+  Future<List<Map<String, dynamic>>> fetchAlimentosDiarios() async {
+    List<Map<String, dynamic>> alimentosDiarios = [];
+    final response = await http.get(
+      Uri.parse('${globalVariables.ipVM}/consumo'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': globalVariables.tokenUser,
+      },
+    );
+    if (response.statusCode == 200) {
+      jsonData = jsonDecode(response.body);
+      print(jsonData);
+      if (jsonData.length != 0) {
+        for (var data in jsonData) {
+          DateTime fecha = DateTime.now();
+          String fechaFormateada = fecha.toString().split(" ")[0];
+          if (data["dia"].contains(fechaFormateada)) {
+            alimentosDiarios.add(data);
+          }
+        }
+        print(alimentosDiarios);
+        return alimentosDiarios;
+      } else {
+        return alimentosDiarios = [];
+      }
+    } else {
+      throw Exception('Failed to connect to the server');
+    }
+  }
+  
+  Future<Map<String, dynamic>> fetchJsonUser() async {
+    final response = await http.get(
+      Uri.parse('${globalVariables.ipVM}/currentuser'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'authorization': globalVariables.tokenUser,
+      },
+    );
+    if (response.statusCode == 200) {
+      jsonDataUser = jsonDecode(response.body);
+      print(jsonDataUser);
+      return jsonDataUser;
+    } else {
+      throw Exception('Failed to connect to the server');
+    }
+  }
+  Future<String> fetchNombre(Map<String, dynamic> json) async {
+    return json['nombre'];
+  }
+  Future<String> fetchSexo(Map<String, dynamic> json) async {
+    return json['sexo'];
+  }
+  Future<String> fetchFecha(Map<String, dynamic> json) async {
+    return json['fecha_nacimiento'];
+  }
+  Future<int> fetchPeso(Map<String, dynamic> json) async {
+    return json['peso'];
+  }
+  Future<int> fetchAltura(Map<String, dynamic> json) async {
+    return json['altura'];
+  }
+  Future<int> fetchActividad(Map<String, dynamic> json) async {
+    return json['actividad_diaria'];
+  }
+  Future<String> fetchObjetivo(Map<String, dynamic> json) async {
+    return json['objetivo'];
+  }
+  Future<double> fetchNumObjetivo(Map<String, dynamic> json) async {
+    return json['num_objetivo'];
+  }
+
+  Future<void> _initializeUser() async {
+    final jsonUser = await fetchJsonUser();
+    jsonDataUser = jsonUser;
+    nombre = await fetchNombre(jsonUser);
+    sexo = await fetchSexo(jsonUser);
+    fecha_nacimiento = await fetchFecha(jsonUser);
+    peso = await fetchPeso(jsonUser);
+    altura = await fetchAltura(jsonUser);
+    actividad_diaria = await fetchActividad(jsonUser);
+    objetivo = await fetchObjetivo(jsonUser);
+    num_objetivo = await fetchNumObjetivo(jsonUser);
+    actividad_diaria == 0 ? actividad_diaria = 'sedentario'
+      : (actividad_diaria == 1 ? actividad_diaria == 'moderado' : actividad_diaria = 'activo');
+    tbm = getTbm(sexo, fecha_nacimiento, peso.toString(), altura.toString());
+    kcal = getKcal(sexo, fecha_nacimiento, peso.toString(), altura.toString(), actividad_diaria);
+    kcalGoal = getKcalGoal(sexo, fecha_nacimiento, peso.toString(), altura.toString(), actividad_diaria, objetivo, num_objetivo.toString());
+    alimentosDiarios = await fetchAlimentosDiarios();
+    print(alimentosDiarios);
+    if(alimentosDiarios != null) {
+      for (var data in alimentosDiarios) {
+        final alimentoSTR = data["alimento"] as String?;
+        kcalConsumo = kcalConsumo + data["calorias"];
+        protConsumo = protConsumo + data["proteinas"];
+        hidrConsumo = hidrConsumo + data["carbohidratos"];
+        grasConsumo = grasConsumo + data["grasas"];
+        if (data["momento"].contains("Desayuno")) {
+          alimentosDiariosDES.add(alimentoSTR);
+        } else if (data["momento"].contains("Almuerzo")) {
+          alimentosDiariosALM.add(alimentoSTR);
+        } else if (data["momento"].contains("Comida")) {
+          alimentosDiariosCOM.add(alimentoSTR);
+        } else if (data["momento"].contains("Merienda")) {
+          alimentosDiariosMER.add(alimentoSTR);
+        } else {
+          alimentosDiariosCENA.add(alimentoSTR);
+        }
+        print(kcalConsumo);
+        print(protConsumo);
+        print(hidrConsumo);
+        print(grasConsumo);
+      }
+    }
+  }
+  Future<void> _initializeGrafica() async {
+    alimentosDiarios = await fetchAlimentosDiarios();
+    diasGrafica = getDays(DateTime.now());
+    sumarioKcal = getSumarioKcal(alimentosDiarios);
+    sumarioProt = getSumarioProt(alimentosDiarios);
+  }
+
+  List<String> getDays(DateTime fechaHoy) {
+    List<String> dias = [];
+    for (int i = 0; i < 7; i++) {
+      DateTime fecha = fechaHoy.subtract(Duration(days: i));
+      String fechaFormateada = fecha.toString().split(" ")[0];
+      dias.add(fechaFormateada);
+    }
+    dias.sort((a, b) => a.compareTo(b));
+    return dias;
+  }
+  List<double> getSumarioKcal(List<Map<String, dynamic>> alimentosDiarios) {
+    List<String> ultimos7Dias = getDays(DateTime.now());
+    List<double> sumario = [];
+    for (String dia in ultimos7Dias) {
+      double sumaCalorias = 0.0;
+      for (var alimento in alimentosDiarios) {
+        if (alimento['dia'] == dia) {
+          sumaCalorias += alimento['calorias'];
+        }
+      }
+      sumario.add(sumaCalorias);
+    }
+    return sumario;
+  }
+  List<double> getSumarioProt(List<Map<String, dynamic>> alimentosDiarios) {
+    List<String> ultimos7Dias = getDays(DateTime.now());
+    List<double> sumario = [];
+    for (String dia in ultimos7Dias) {
+      double sumaProteinas = 0.0;
+      for (var alimento in alimentosDiarios) {
+        if (alimento['dia'] == dia) {
+          sumaProteinas += alimento['proteinas'];
+        }
+      }
+      sumario.add(sumaProteinas);
+    }
+    return sumario;
   }
 }

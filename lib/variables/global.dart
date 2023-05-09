@@ -5,7 +5,7 @@ class GlobalVariables {
 
   GlobalVariables._internal();
 
-  String ipVM = 'https://2.138.230.164:25565'; 
+  String ipVM = 'https://34.142.113.166:443';   //'https://2.138.230.164:25565'; 
   String tokenUser = '';
 }
 

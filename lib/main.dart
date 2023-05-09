@@ -3,10 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:nutri_app/pages/fav_page.dart';
+import 'package:nutri_app/pages/home_page2.dart';
 import 'package:nutri_app/pages/profile_page.dart';
 import 'package:nutri_app/pages/search_page.dart';
 import 'package:nutri_app/signPages/sign.dart';
-import 'package:nutri_app/pages/home_page.dart';
+// import 'package:nutri_app/pages/home_page.dart';
 import 'package:nutri_app/variables/global.dart';
 import 'package:http/http.dart' as http;
 
@@ -111,7 +112,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 final List<Widget> screens = [
-  HomePage(),
+  HomePage2(),
   SearchPage(),
   FavPage(),
   ProfilePage(),
@@ -129,7 +130,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   int currentTab = 0;
 
   final PageStorageBucket bucket = PageStorageBucket();
-  //Widget currentScreen = HomePage();
+  //Widget currentScreen = HomePage2();
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +164,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               minWidth: 40,
               onPressed: () {
                 setState(() {
-                  widget.page = HomePage();
+                  widget.page = HomePage2();
                   currentTab = 0;
                 });
               },

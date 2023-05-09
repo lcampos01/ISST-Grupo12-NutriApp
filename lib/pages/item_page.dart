@@ -31,6 +31,10 @@ class _ItemPageState extends State<ItemPage> {
   String momentoDia= 'Comida';
   int cantidad= 0;
   double cantidadCalculadora= 100;
+  dynamic calorias;
+  dynamic proteinas;
+  dynamic carbohidratos;
+  dynamic grasas;
 
   String? _selectedMomento = 'Comida';
   TextEditingController cantidadController = TextEditingController();
@@ -40,6 +44,55 @@ class _ItemPageState extends State<ItemPage> {
   void initState() {
     super.initState();
     _isFavorite = widget.isFavorite;
+    
+    if (widget.macros[0] != null) {
+      if (widget.macros[0].runtimeType == int) {
+        calorias = (widget.macros[0] as int).toDouble();
+      } else if (widget.macros[0].runtimeType == String) {
+        calorias = double.tryParse(widget.macros[0]) ?? '';
+      } else if (widget.macros[0].runtimeType == double) {
+        calorias = widget.macros[0];
+      }
+    } else {
+      calorias = '';
+    }
+
+    if (widget.macros[1] != null) {
+      if (widget.macros[1].runtimeType == int) {
+        proteinas = (widget.macros[1] as int).toDouble();
+      } else if (widget.macros[1].runtimeType == String) {
+        proteinas = double.tryParse(widget.macros[1]) ?? '';
+      } else if (widget.macros[1].runtimeType == double) {
+        proteinas = widget.macros[1];
+      }
+    } else {
+      proteinas = '';
+    }
+
+    if (widget.macros[2] != null) {
+      if (widget.macros[2].runtimeType == int) {
+        carbohidratos = (widget.macros[2] as int).toDouble();
+      } else if (widget.macros[2].runtimeType == String) {
+        carbohidratos = double.tryParse(widget.macros[2]) ?? '';
+      } else if (widget.macros[2].runtimeType == double) {
+        carbohidratos = widget.macros[2];
+      }
+    } else {
+      carbohidratos = '';
+    }
+
+    if (widget.macros[3] != null) {
+      if (widget.macros[3].runtimeType == int) {
+        grasas = (widget.macros[3] as int).toDouble();
+      } else if (widget.macros[3].runtimeType == String) {
+        grasas = double.tryParse(widget.macros[3]) ?? '';
+      } else if (widget.macros[3].runtimeType == double) {
+        grasas = widget.macros[3];
+      }
+    } else {
+      grasas = '';
+    }
+    
     if(widget.alergenos != null) {
       if(widget.alergenos.contains(',')) {
         alergenos = (widget.alergenos).split(", ");
@@ -340,10 +393,10 @@ class _ItemPageState extends State<ItemPage> {
                             double cantidadMod = double.tryParse(cantidadController.text) ?? 0;
                             String momentoDiaMod = _selectedMomento.toString();
                             String esteDia = DateTime.now().toString().split(" ")[0];
-                            double grasaMod = (cantidadMod * widget.macros[3] /100);
-                            double carbohidratosMod = (cantidadMod * widget.macros[2] /100);
-                            double proteinasMod = (cantidadMod * widget.macros[1] /100);
-                            double caloriasMod = (cantidadMod * widget.macros[0] /100);
+                            double grasaMod = grasas == '' ? 0 : (cantidadMod * grasas /100);
+                            double carbohidratosMod = carbohidratos == '' ? 0 : (cantidadMod * carbohidratos /100);
+                            double proteinasMod = proteinas == '' ? 0 : (cantidadMod * proteinas /100);
+                            double caloriasMod = calorias == '' ? 0 : (cantidadMod * calorias /100);
                             String nombreMod = widget.name;
 
 
@@ -579,7 +632,7 @@ class _ItemPageState extends State<ItemPage> {
                         SizedBox(height: 10),
               
                         //Text('$calorias [Kcal]'), para cuando se cree el array de macros
-                        widget.macros[0] == "" ? Text(
+                        calorias == '' ? Text(
                           'NS/NC',
                           style: TextStyle(
                             fontSize: 13,
@@ -587,7 +640,7 @@ class _ItemPageState extends State<ItemPage> {
                           ),
                         ) 
                         : Text(
-                            '${(widget.macros[0] * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(2)} [Kcal]',
+                            '${(calorias * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(2)} [Kcal]',
                             style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -600,7 +653,7 @@ class _ItemPageState extends State<ItemPage> {
                         Text('Proteínas'),
                         SizedBox(height: 10),
                         //Text('$proteinas [g]'), para cuando se cree el array de macros
-                        widget.macros[1] == "" ? Text(
+                        proteinas == '' ? Text(
                           'NS/NC',
                           style: TextStyle(
                             fontSize: 13,
@@ -608,7 +661,7 @@ class _ItemPageState extends State<ItemPage> {
                           ),
                         ) 
                         : Text(
-                          '${(widget.macros[1] * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(2)} [g]',
+                          '${(proteinas * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(2)} [g]',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -621,7 +674,7 @@ class _ItemPageState extends State<ItemPage> {
                         Text('Carbohidratos'),
                         SizedBox(height: 10),
                         //Text('$carbohidratos [g]'), para cuando se cree el array de macros
-                        widget.macros[2] == "" ? Text(
+                        carbohidratos == '' ? Text(
                           'NS/NC',
                           style: TextStyle(
                             fontSize: 13,
@@ -629,7 +682,7 @@ class _ItemPageState extends State<ItemPage> {
                           ),
                         ) 
                         : Text(
-                          '${(widget.macros[2] * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(2)} [g]',
+                          '${(carbohidratos * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(2)} [g]',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -642,7 +695,7 @@ class _ItemPageState extends State<ItemPage> {
                         Text('Grasas'),
                         SizedBox(height: 10),
                         //Text('$grasas [g]'), para cuando se cree el array de macros
-                        widget.macros[3] == "" ? Text(
+                        grasas == '' ? Text(
                           'NS/NC',
                           style: TextStyle(
                             fontSize: 13,
@@ -650,7 +703,7 @@ class _ItemPageState extends State<ItemPage> {
                           ),
                         ) 
                         : Text(
-                          '${(widget.macros[3] * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(2)} [g]',
+                          '${(grasas * (double.tryParse(cantidadCalculadoraController.text) ?? 0) / 100).toStringAsFixed(2)} [g]',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
