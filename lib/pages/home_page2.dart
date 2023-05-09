@@ -163,7 +163,7 @@ class _HomePage2State extends State<HomePage2> {
             ),
           ),
           SliverAppBar(
-            toolbarHeight: 100,
+            toolbarHeight: 80,
             title: Padding(
               padding: EdgeInsets.all(12.0),
               child: Text(
@@ -180,7 +180,7 @@ class _HomePage2State extends State<HomePage2> {
           objetivo == 'alimentacionhiperproteica' 
           ? SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Container(
@@ -189,51 +189,60 @@ class _HomePage2State extends State<HomePage2> {
                     color: const Color.fromARGB(255, 159, 221, 161),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Tu objetivo de proteinas es: ${kcalGoal.toStringAsFixed(2)} g', //objetivo del usuario.
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tu objetivo de proteinas es: \n${kcalGoal.toStringAsFixed(2)} g', //objetivo del usuario.
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.visible,
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                'HAS CONSUMIDO: \n${protConsumo.toStringAsFixed(2)} g', //proteinas sumadas consumidas por el usuario.
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                                overflow: TextOverflow.visible,
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                kcalGoal<protConsumo ? 'Te has pasado: ${(protConsumo-kcalGoal).toStringAsFixed(2)} g' 
+                                  : 'Te faltan: ${(kcalGoal-protConsumo).toStringAsFixed(2)} g',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                                overflow: TextOverflow.visible,
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            height: 15,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: CircularPercentIndicator(
+                            percent: protConsumo/kcalGoal > 1 ? 1 : protConsumo/kcalGoal, //hacer ratio entre consumido/objetivo
+                            radius: MediaQuery.of(context).size.width * 0.15,
+                            lineWidth: 20,
+                            animation: true,
+                            progressColor: Color.fromARGB(255, 10, 60, 8),
+                            backgroundColor: Color.fromARGB(255, 196, 221, 196),
                           ),
-                          Text(
-                            'HAS CONSUMIDO: ${protConsumo.toStringAsFixed(2)} g', //proteinas sumadas consumidas por el usuario.
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Text(
-                            kcalGoal<protConsumo ? 'Te has pasado: ${(protConsumo-kcalGoal).toStringAsFixed(2)} g' 
-                              : 'Te faltan: ${(kcalGoal-protConsumo).toStringAsFixed(2)} g',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ],
-                      ),
-                      CircularPercentIndicator(
-                        percent: protConsumo/kcalGoal > 1 ? 1 : protConsumo/kcalGoal, //hacer ratio entre consumido/objetivo
-                        radius: MediaQuery.of(context).size.width * 0.15,
-                        lineWidth: 20,
-                        animation: true,
-                        progressColor: Color.fromARGB(255, 10, 60, 8),
-                        backgroundColor: Color.fromARGB(255, 196, 221, 196),
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -241,7 +250,7 @@ class _HomePage2State extends State<HomePage2> {
           )
           : SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Container(
@@ -250,51 +259,62 @@ class _HomePage2State extends State<HomePage2> {
                     color: const Color.fromARGB(255, 159, 221, 161),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Tu objetivo de calorías es: ${kcalGoal.toStringAsFixed(2)} kcal', //objetivo del usuario.
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        
+                         Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tu objetivo de calorías es: \n${kcalGoal.toStringAsFixed(2)} kcal', //objetivo del usuario.
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.visible,
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                'HAS CONSUMIDO: \n${kcalConsumo.toStringAsFixed(2)} kcal', //calorias sumadas consumidas por el usuario.
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                                overflow: TextOverflow.visible,
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                kcalGoal<kcalConsumo ? 'Te has pasado: ${(kcalConsumo-kcalGoal).toStringAsFixed(2)} g' 
+                                  : 'Te faltan: ${(kcalGoal-kcalConsumo).toStringAsFixed(2)} g',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.visible,
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            height: 15,
+                        
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: CircularPercentIndicator(
+                            percent: kcalConsumo/kcalGoal > 1 ? 1 : kcalConsumo/kcalGoal, //hacer ratio entre consumido/objetivo
+                            radius: MediaQuery.of(context).size.width * 0.2,
+                            lineWidth: 15,
+                            animation: true,
+                            progressColor: Color.fromARGB(255, 10, 60, 8),
+                            backgroundColor: Color.fromARGB(255, 196, 221, 196),
                           ),
-                          Text(
-                            'HAS CONSUMIDO: ${kcalConsumo.toStringAsFixed(2)} kcal', //calorias sumadas consumidas por el usuario.
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Text(
-                            kcalGoal<kcalConsumo ? 'Te has pasado: ${(kcalConsumo-kcalGoal).toStringAsFixed(2)} g' 
-                              : 'Te faltan: ${(kcalGoal-kcalConsumo).toStringAsFixed(2)} g',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      CircularPercentIndicator(
-                        percent: kcalConsumo/kcalGoal > 1 ? 1 : kcalConsumo/kcalGoal, //hacer ratio entre consumido/objetivo
-                        radius: MediaQuery.of(context).size.width * 0.15,
-                        lineWidth: 20,
-                        animation: true,
-                        progressColor: Color.fromARGB(255, 10, 60, 8),
-                        backgroundColor: Color.fromARGB(255, 196, 221, 196),
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -308,26 +328,65 @@ class _HomePage2State extends State<HomePage2> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text( //si el objetivo es proteico cambiar por calorias
-                    'CALORÍAS: ${kcalConsumo.toStringAsFixed(2)} kcal', //calorías sumadas consumidas por el usuario.
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Column(
+                    children: [
+                      Text( //si el objetivo es proteico cambiar por calorias
+                        'CALORÍAS: ${kcalConsumo.toStringAsFixed(2)} kcal', //calorías sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                      Text( //si el objetivo es proteico cambiar por calorias
+                        '${kcalConsumo.toStringAsFixed(2)} kcal', //calorías sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                    ],
                   ),
-                  Text(
-                    'HIDRATOS: ${hidrConsumo.toStringAsFixed(2)} g', //hidratos sumadas consumidas por el usuario.
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Column(
+                    children: [
+                      Text(
+                        'HIDRATOS:', //hidratos sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                      Text( //si el objetivo es proteico cambiar por calorias
+                        '${hidrConsumo.toStringAsFixed(2)} g', //calorías sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                    ],
                   ),
-                  Text(
-                    'GRASAS: ${grasConsumo.toStringAsFixed(2)} g', //grasas sumadas consumidas por el usuario.
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Column(
+                    children: [
+                      Text(
+                        'GRASAS:', //grasas sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                      Text(
+                        '${grasConsumo.toStringAsFixed(2)} g', //grasas sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -340,26 +399,65 @@ class _HomePage2State extends State<HomePage2> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text( //si el objetivo es proteico cambiar por calorias
-                    'PROTEINAS: ${protConsumo.toStringAsFixed(2)} g', //proteinas sumadas consumidas por el usuario.
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Column(
+                    children: [
+                      Text( //si el objetivo es proteico cambiar por calorias
+                        'PROTEINAS:', //proteinas sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                      Text( //si el objetivo es proteico cambiar por calorias
+                        '${protConsumo.toStringAsFixed(2)} g', //proteinas sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                    ],
                   ),
-                  Text(
-                    'HIDRATOS: ${hidrConsumo.toStringAsFixed(2)} g', //hidratos sumadas consumidas por el usuario.
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Column(
+                    children: [
+                      Text(
+                        'HIDRATOS:', //hidratos sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                      Text(
+                        '${hidrConsumo.toStringAsFixed(2)} g', //hidratos sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                    ],
                   ),
-                  Text(
-                    'GRASAS: ${grasConsumo.toStringAsFixed(2)} g', //grasas sumadas consumidas por el usuario.
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Column(
+                    children: [
+                      Text(
+                        'GRASAS:', //grasas sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                      Text(
+                        '${grasConsumo.toStringAsFixed(2)} g', //grasas sumadas consumidas por el usuario.
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -368,7 +466,7 @@ class _HomePage2State extends State<HomePage2> {
           SliverToBoxAdapter(
             child: Container(
               color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,6 +481,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   alimentosDiariosDES.isEmpty 
                   ? Text(
@@ -392,6 +491,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   )
                   : Text(
                     alimentosDiariosDES.join(', '),
@@ -399,6 +499,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   SizedBox(
                     height: 20,
@@ -410,6 +511,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   alimentosDiariosALM.isEmpty 
                   ? Text(
@@ -419,6 +521,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   )
                   : Text(
                     alimentosDiariosALM.join(', '),
@@ -426,6 +529,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   SizedBox(
                     height: 20,
@@ -437,6 +541,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   alimentosDiariosCOM.isEmpty 
                   ? Text(
@@ -446,6 +551,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   )
                   : Text(
                     alimentosDiariosCOM.join(', '),
@@ -453,6 +559,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   SizedBox(
                     height: 20,
@@ -464,6 +571,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   alimentosDiariosMER.isEmpty 
                   ? Text(
@@ -473,6 +581,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   )
                   : Text(
                     alimentosDiariosMER.join(', '),
@@ -480,6 +589,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   SizedBox(
                     height: 20,
@@ -491,6 +601,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   alimentosDiariosCENA.isEmpty 
                   ? Text(
@@ -500,6 +611,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   )
                   : Text(
                     alimentosDiariosCENA.join(', '),
@@ -507,6 +619,7 @@ class _HomePage2State extends State<HomePage2> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
+                    overflow: TextOverflow.visible,
                   ),
                   SizedBox(
                     height: 30,
@@ -526,13 +639,14 @@ class _HomePage2State extends State<HomePage2> {
                   fontSize: 30.0,
                   fontWeight: FontWeight.w600,
                 ),
+                overflow: TextOverflow.visible,
               ),
             ),
           ),
           objetivo == 'alimentacionhiperproteica'
           ? SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 60),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 'g',
                 style: TextStyle(
@@ -544,7 +658,7 @@ class _HomePage2State extends State<HomePage2> {
           )
           : SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 60),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 'Kcal',
                 style: TextStyle(
@@ -562,7 +676,7 @@ class _HomePage2State extends State<HomePage2> {
           objetivo == 'alimentacionhiperproteica'
           ? SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: SizedBox(
                 height: 600,
                 child: MyBarGraph(
@@ -576,7 +690,7 @@ class _HomePage2State extends State<HomePage2> {
           )
           : SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: SizedBox(
                 height: 600,
                 child: MyBarGraph(

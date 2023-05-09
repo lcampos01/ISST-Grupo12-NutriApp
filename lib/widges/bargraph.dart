@@ -120,7 +120,12 @@ class _MyBarGraphState extends State<MyBarGraph> {
         );
         break;
     }
-    return SideTitleWidget(axisSide: AxisSide.bottom, child: text);
+    return SideTitleWidget(
+      child: text, 
+      axisSide: meta.axisSide,
+      space: 10,
+      angle: pi/5,
+    );
   }
 
   @override
